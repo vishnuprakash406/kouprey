@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kouprey Master Login</title>
+    <link rel="stylesheet" href="/styles.css" />
+    <script src="/theme.js"></script>
+  </head>
+  <body>
+    <main class="store-login">
+      <div class="store-card">
+        <div class="logo">
+          <img class="logo-img" src="/assets/logo.png" alt="Kouprey logo" />
+        </div>
+        <h1>Master access</h1>
+        <p data-brand-text>Brand customization and admin controls for Kouprey.</p>
+        <div class="auth-block">
+          <h4>Master login</h4>
+          <input id="masterEmail" placeholder="master@kouprey.com" />
+          <input id="masterPassword" type="password" placeholder="Master password" />
+          <button class="primary" id="masterLogin">Login</button>
+          <small id="masterStatus">Not logged in</small>
+        </div>
+        <a class="ghost" href="/">Back to store</a>
+      </div>
+    </main>
+    <script src="/settings.js"></script>
+    <script src="/master-login.js"></script>
+  </body>
+</html>

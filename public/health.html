@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kouprey System Health</title>
+    <link rel="stylesheet" href="/styles.css" />
+    <script src="/theme.js"></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="logo">
+        <img class="logo-img" src="/assets/logo.png" alt="Kouprey logo" />
+      </div>
+      <nav class="nav">
+        <a href="/">Store</a>
+        <a href="/master-login/admin">Master</a>
+      </nav>
+      <button class="ghost" id="refreshHealth">Refresh</button>
+    </header>
+
+    <main class="dashboard-main">
+      <section class="section">
+        <div class="section-header">
+          <h2>System Health</h2>
+          <p>Live status for server + database.</p>
+        </div>
+        <div class="panel">
+          <div class="panel-split">
+            <div>
+              <small>Status</small>
+              <h3 id="healthStatus">Checking...</h3>
+            </div>
+            <div>
+              <small>Database</small>
+              <h3 id="healthDb">Checking...</h3>
+            </div>
+          </div>
+          <div class="panel-split">
+            <div>
+              <small>Payment gateway</small>
+              <p id="healthGateway">-</p>
+            </div>
+            <div>
+              <small>Last PayU callback</small>
+              <p id="healthPayu">-</p>
+            </div>
+          </div>
+          <div class="panel-split">
+            <div>
+              <small>Server time</small>
+              <p id="healthTime">-</p>
+            </div>
+            <div>
+              <small>Uptime</small>
+              <p id="healthUptime">-</p>
+            </div>
+          </div>
+          <div class="panel-split">
+            <div>
+              <small>Node</small>
+              <p id="healthNode">-</p>
+            </div>
+            <div>
+              <small>Endpoint</small>
+              <p>/api/health</p>
+            </div>
+          </div>
+          <p class="hint" id="healthError"></p>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-header">
+          <h2>Latest failed orders</h2>
+          <p>Orders with failed or pending payment.</p>
+        </div>
+        <div class="panel">
+          <div class="orders-table">
+            <div class="orders-head">
+              <span>Order</span>
+              <span>Customer</span>
+              <span>Total</span>
+              <span>Status</span>
+              <span>Payment</span>
+              <span>Date</span>
+            </div>
+            <div id="failedOrders"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-header">
+          <h2>Server logs</h2>
+          <p>Latest server logs (info, warn, error).</p>
+        </div>
+        <div class="panel">
+          <pre id="healthErrors" class="code-block">No logs.</pre>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a id="footerLink" href="https://theaiq.net/" target="_blank" rel="noopener">
+            <span id="footerText">Website provided by AIQ</span>
+          </a>
+          <p id="footerNote" data-brand-text>Premium retail experience tailored for Kouprey.</p>
+        </div>
+        <div class="footer-contact">
+          <h4>Contact</h4>
+          <p id="footerAddress" data-brand-text>Kouprey Studio, 23 City Walk, Chennai</p>
+          <p id="footerPhone">+91 8438217212</p>
+          <p id="footerEmail">support@kouprey.com</p>
+          <p id="footerWhatsApp">WhatsApp: 8438217212</p>
+          <p id="footerHours">Mon-Sat, 10:00-19:00</p>
+        </div>
+      </div>
+    </footer>
+
+    <script src="/settings.js"></script>
+    <script src="/health.js"></script>
+  </body>
+</html>

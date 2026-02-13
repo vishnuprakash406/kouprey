@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kouprey Checkout</title>
+    <link rel="stylesheet" href="/styles.css" />
+    <script src="/theme.js"></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="logo">
+        <img class="logo-img" src="/assets/logo.png" alt="Kouprey logo" />
+      </div>
+      <nav class="nav">
+        <a href="/">Store</a>
+        <a href="/#new">New</a>
+        <a href="/#sale">Sale</a>
+      </nav>
+      <button class="ghost" id="backToStore">Continue shopping</button>
+    </header>
+
+    <main class="checkout">
+      <section class="checkout-panel">
+        <h2>Delivery details</h2>
+        <div class="address-book" id="addressBook"></div>
+        <form id="checkoutForm" class="checkout-form">
+          <div>
+            <label for="fullName">Full name</label>
+            <input id="fullName" name="fullName" required />
+          </div>
+          <div>
+            <label for="email">Email</label>
+            <input id="email" name="email" type="email" required />
+          </div>
+          <div>
+            <label for="phone">Phone</label>
+            <input id="phone" name="phone" type="tel" required />
+          </div>
+          <div class="full">
+            <label for="addressLine">Address</label>
+            <input id="addressLine" name="addressLine" required />
+          </div>
+          <div class="full">
+            <label for="landmark">Landmark</label>
+            <input id="landmark" name="landmark" />
+          </div>
+          <div>
+            <label for="city">City</label>
+            <input id="city" name="city" required />
+          </div>
+          <div>
+            <label for="state">State</label>
+            <input id="state" name="state" required />
+          </div>
+          <div>
+            <label for="zip">Postal code</label>
+            <input id="zip" name="zip" required />
+          </div>
+          <div class="full">
+            <label>
+              <input type="checkbox" id="saveAddress" checked />
+              Save this address for next time
+            </label>
+          </div>
+        </form>
+      </section>
+
+      <section class="checkout-panel">
+        <h2>Your order</h2>
+        <div id="checkoutItems"></div>
+        <div class="checkout-summary">
+          <div>
+            <span>Subtotal</span>
+            <strong id="checkoutSubtotal">₹0.00</strong>
+          </div>
+          <div>
+            <span>Shipping</span>
+            <strong>₹0.00</strong>
+          </div>
+          <div class="total">
+            <span>Total</span>
+            <strong id="checkoutTotal">₹0.00</strong>
+          </div>
+        </div>
+        <div id="paypal-button-container"></div>
+        <small class="hint" id="gatewayHint">Payment gateway: Not configured</small>
+        <small class="hint" id="checkoutStatus"></small>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a id="footerLink" href="https://theaiq.net/" target="_blank" rel="noopener">
+            <span id="footerText">Website provided by AIQ</span>
+          </a>
+          <p id="footerNote" data-brand-text>Premium retail experience tailored for Kouprey.</p>
+        </div>
+        <div class="footer-contact">
+          <h4>Contact</h4>
+          <p id="footerAddress" data-brand-text>Kouprey Studio, 23 City Walk, Chennai</p>
+          <p id="footerPhone">+91 8438217212</p>
+          <p id="footerEmail">support@kouprey.com</p>
+          <p id="footerWhatsApp">WhatsApp: 8438217212</p>
+          <p id="footerHours">Mon-Sat, 10:00-19:00</p>
+        </div>
+      </div>
+    </footer>
+
+    <script src="/settings.js"></script>
+    <script src="/checkout.js"></script>
+  </body>
+</html>

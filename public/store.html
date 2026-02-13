@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kouprey Store Login</title>
+    <link rel="stylesheet" href="/styles.css" />
+    <script src="/theme.js"></script>
+  </head>
+  <body>
+    <main class="store-login">
+      <div class="store-card">
+        <div class="logo">
+          <img class="logo-img" src="/assets/logo.png" alt="Kouprey logo" />
+        </div>
+        <h1>Store access</h1>
+        <p>Master login creates store accounts. Store login unlocks the studio.</p>
+        <div class="auth-block">
+          <h4>Store login</h4>
+          <input id="storeEmail" placeholder="store@kouprey.com" />
+          <input id="storePassword" type="password" placeholder="Store password" />
+          <button class="primary" id="storeLogin">Login as store</button>
+          <small id="storeStatus">Not logged in</small>
+        </div>
+        <a class="ghost" href="/">Back to store</a>
+      </div>
+    </main>
+    <footer class="site-footer">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a id="footerLink" href="https://theaiq.net/" target="_blank" rel="noopener">
+            <span id="footerText">Website provided by AIQ</span>
+          </a>
+          <p id="footerNote" data-brand-text>Premium retail experience tailored for Kouprey.</p>
+        </div>
+        <div class="footer-contact">
+          <h4>Contact</h4>
+          <p id="footerAddress" data-brand-text>Kouprey Studio, 23 City Walk, Chennai</p>
+          <p id="footerPhone">+91 8438217212</p>
+          <p id="footerEmail">support@kouprey.com</p>
+          <p id="footerWhatsApp">WhatsApp: 8438217212</p>
+          <p id="footerHours">Mon-Sat, 10:00-19:00</p>
+        </div>
+      </div>
+    </footer>
+    <script src="/settings.js"></script>
+    <script src="/store.js"></script>
+  </body>
+</html>

@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kouprey — Modern Essentials</title>
+    <link rel="stylesheet" href="/styles.css" />
+    <script src="/theme.js"></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="logo">
+        <img class="logo-img" src="/assets/logo.png" alt="Kouprey logo" />
+      </div>
+      <nav class="nav">
+        <a href="#new">New</a>
+        <a href="#essentials">Essentials</a>
+        <a href="#sale">Sale</a>
+        <a href="/track">Track Order</a>
+        <a href="/returns">Returns</a>
+      </nav>
+      <button class="bag-button" id="bagButton" aria-expanded="false">
+        Bag <span id="bagCount">0</span>
+      </button>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div class="hero-content">
+          <p class="eyebrow" id="heroEyebrow">Kouprey — Elegance in Every Thread.</p>
+          <h1 id="heroTitle">Minimal, bold, and built to move with you.</h1>
+          <p class="hero-copy" id="heroCopy">
+            Elevated basics and expressive statement pieces. Transparent pricing, quality fabrics,
+            and a faster path from store to wardrobe.
+          </p>
+          <div class="hero-actions">
+            <button class="primary" data-scroll="#new">Shop New In</button>
+          </div>
+        </div>
+        <div class="hero-card" id="heroCard" data-home-item="heroCard">
+          <div class="hero-tag" id="heroTag">Live Stock</div>
+          <h2 id="heroCardTitle">Track what matters</h2>
+          <p id="heroCardCopy">
+            Update price, availability, sizes, discount pricing, and images in one place. Payment
+            gateway is ready for integration later.
+          </p>
+          <div class="hero-meta">
+            <div>
+              <span id="stat1Value">25</span>
+              <small id="stat1Label">Active Styles</small>
+            </div>
+            <div>
+              <span id="stat2Value">4</span>
+              <small id="stat2Label">Stores Online</small>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="new" data-section="new">
+        <div class="section-header">
+          <h2>New in</h2>
+          <p id="newSubtitle">Fresh arrivals curated for the Kouprey season.</p>
+        </div>
+        <div class="filters">
+          <button class="chip active" data-filter="all">All</button>
+          <button class="chip" data-filter="men">Men</button>
+          <button class="chip" data-filter="women">Women</button>
+          <button class="chip" data-filter="kids">Kids</button>
+        </div>
+        <div class="inventory-toolbar">
+          <input id="productSearch" placeholder="Search by name, category, subcategory, or product code" />
+        </div>
+        <div class="product-grid" id="productGrid"></div>
+      </section>
+
+      <section class="section alt" id="essentials" data-section="essentials">
+        <div class="section-header">
+          <h2>Essentials</h2>
+          <p id="essentialsSubtitle">Everyday pieces with intentional cuts and flexible fits.</p>
+        </div>
+        <div class="essentials">
+          <div data-home-item="essential1">
+            <h3 id="essential1Title">Soft Armour Tees</h3>
+            <p id="essential1Copy">Midweight cotton with a clean neckline and reinforced shoulder.</p>
+          </div>
+          <div data-home-item="essential2">
+            <h3 id="essential2Title">Structured Denim</h3>
+            <p id="essential2Copy">Relaxed, straight leg silhouettes with a slightly tapered finish.</p>
+          </div>
+          <div data-home-item="essential3">
+            <h3 id="essential3Title">Outerwear Core</h3>
+            <p id="essential3Copy">Layerable neutrals for work, travel, and late-night city walks.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="sale" data-section="sale">
+        <div class="section-header">
+          <h2>Sale studio</h2>
+          <p id="saleSubtitle">Limited-time pricing across curated Kouprey best sellers.</p>
+        </div>
+        <div class="sale-banner" data-home-item="saleBanner">
+          <div>
+            <h3 id="saleBannerTitle">Up to 40% off</h3>
+            <p id="saleBannerCopy">Auto-applied discounts on selected lines.</p>
+          </div>
+          <button class="primary" data-scroll="#new">Shop discounted</button>
+        </div>
+      </section>
+
+    </main>
+
+    <aside class="bag" id="bag">
+      <div class="bag-header">
+        <h3>Your bag</h3>
+        <button class="ghost" id="closeBag">Close</button>
+      </div>
+      <p class="bag-empty hidden" id="bagEmpty">Your bag is empty.</p>
+      <div class="bag-items" id="bagItems"></div>
+      <div class="bag-footer">
+        <div class="bag-total">
+          <span>Total</span>
+          <strong id="bagTotal">₹0.00</strong>
+        </div>
+        <button class="primary" id="checkoutButton">Checkout</button>
+      </div>
+    </aside>
+
+    <footer class="site-footer">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a id="footerLink" href="https://theaiq.net/" target="_blank" rel="noopener">
+            <span id="footerText">Website provided by AIQ</span>
+          </a>
+          <p id="footerNote" data-brand-text>Premium retail experience tailored for Kouprey.</p>
+        </div>
+        <div class="footer-contact">
+          <h4>Contact</h4>
+          <p id="footerAddress" data-brand-text>Kouprey Studio, 23 City Walk, Chennai</p>
+          <p id="footerPhone">+91 8438217212</p>
+          <p id="footerEmail">support@kouprey.com</p>
+          <p id="footerWhatsApp">WhatsApp: 8438217212</p>
+          <p id="footerHours">Mon-Sat, 10:00-19:00</p>
+        </div>
+      </div>
+    </footer>
+
+    <script src="/settings.js"></script>
+    <script src="/app.js"></script>
+  </body>
+</html>

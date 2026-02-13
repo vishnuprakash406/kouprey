@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kouprey Product</title>
+    <link rel="stylesheet" href="/styles.css" />
+    <script src="/theme.js"></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="logo">
+        <img class="logo-img" src="/assets/logo.png" alt="Kouprey logo" />
+      </div>
+      <nav class="nav">
+        <a href="/">Store</a>
+        <a href="/#new">New</a>
+        <a href="/#sale">Sale</a>
+        <a href="/returns">Returns</a>
+      </nav>
+      <button class="bag-button" id="bagButton" aria-expanded="false">
+        Bag <span id="bagCount">0</span>
+      </button>
+    </header>
+
+    <main>
+      <section class="section" id="productDetail"></section>
+      <section class="section alt" id="suggestions">
+        <div class="section-header">
+          <h2>You may also like</h2>
+          <p>Suggested pieces curated from the same category.</p>
+        </div>
+        <div class="product-grid" id="suggestionGrid"></div>
+      </section>
+    </main>
+
+    <aside class="bag" id="bag">
+      <div class="bag-header">
+        <h3>Your bag</h3>
+        <button class="ghost" id="closeBag">Close</button>
+      </div>
+      <p class="bag-empty hidden" id="bagEmpty">Your bag is empty.</p>
+      <div class="bag-items" id="bagItems"></div>
+      <div class="bag-footer">
+        <div class="bag-total">
+          <span>Total</span>
+          <strong id="bagTotal">₹0.00</strong>
+        </div>
+        <button class="primary" id="checkoutButton">Checkout</button>
+      </div>
+    </aside>
+
+    <footer class="site-footer">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a id="footerLink" href="https://theaiq.net/" target="_blank" rel="noopener">
+            <span id="footerText">Website provided by AIQ</span>
+          </a>
+          <p id="footerNote" data-brand-text>Premium retail experience tailored for Kouprey.</p>
+        </div>
+        <div class="footer-contact">
+          <h4>Contact</h4>
+          <p id="footerAddress" data-brand-text>Kouprey Studio, 23 City Walk, Chennai</p>
+          <p id="footerPhone">+91 8438217212</p>
+          <p id="footerEmail">support@kouprey.com</p>
+          <p id="footerWhatsApp">WhatsApp: 8438217212</p>
+          <p id="footerHours">Mon-Sat, 10:00-19:00</p>
+        </div>
+      </div>
+    </footer>
+
+    <script src="/settings.js"></script>
+    <script src="/product.js"></script>
+  </body>
+</html>

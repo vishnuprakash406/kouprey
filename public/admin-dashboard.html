@@ -1,0 +1,662 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kouprey Admin Studio</title>
+    <link rel="stylesheet" href="/styles.css" />
+    <script src="/theme.js"></script>
+  </head>
+  <body class="dashboard-body admin-dashboard">
+    <header class="dashboard-header">
+      <div class="dashboard-brand">
+        <span class="logo-text">Admin Studio</span>
+        <small>User Management</small>
+      </div>
+      <nav class="nav">
+        <a href="/staff-login/dashboard">Store Studio</a>
+        <a href="#users">Staff Users</a>
+      </nav>
+      <button class="ghost" id="logout">Log out</button>
+    </header>
+
+    <main class="dashboard-main">
+      <section class="section">
+        <div class="section-header">
+          <h2>Theme settings</h2>
+          <p>Pick multiple colors for the background gradient.</p>
+        </div>
+          <div class="panel">
+            <div class="theme-picker">
+            <label>
+              Primary color
+              <input type="color" id="themeA" value="#fff7ec" />
+            </label>
+            <label>
+              Secondary color
+              <input type="color" id="themeB" value="#efe4d5" />
+            </label>
+            <label>
+              Accent color
+              <input type="color" id="themeC" value="#e8dccb" />
+            </label>
+            <button class="primary" id="applyTheme">Apply theme</button>
+          </div>
+          <small class="hint" id="themeStatus"></small>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-header">
+          <h2>Site settings</h2>
+          <p>Update logo and return policy contact details.</p>
+        </div>
+        <div class="panel">
+          <div class="panel-split">
+            <label>
+              Logo URL
+              <input type="text" id="logoUrl" placeholder="/assets/logo.png" />
+            </label>
+            <label>
+              Upload logo
+              <input type="file" id="logoUpload" accept="image/*" />
+            </label>
+          </div>
+          <div class="panel-split">
+            <label>
+              Payment gateway
+              <select id="paymentGateway">
+                <option value="paypal">PayPal</option>
+                <option value="razorpay">Razorpay</option>
+                <option value="payu">PayU</option>
+                <option value="none">None</option>
+              </select>
+            </label>
+            <label>
+              Currency
+              <select id="paymentCurrency">
+                <option value="USD">USD</option>
+                <option value="INR">INR</option>
+              </select>
+            </label>
+            <label>
+              PayPal Client ID
+              <input type="text" id="paypalClientId" placeholder="Paste sandbox client ID" />
+            </label>
+            <label>
+              Razorpay Key ID
+              <input type="text" id="razorpayKeyId" placeholder="Paste Razorpay key ID" />
+            </label>
+            <label>
+              PayU Key
+              <input type="text" id="payuKey" placeholder="Paste PayU key" />
+            </label>
+            <label>
+              PayU Salt
+              <input type="text" id="payuSalt" placeholder="Paste PayU salt" />
+            </label>
+          </div>
+          <button class="primary" id="savePayment">Save payment settings</button>
+          <div class="panel-split">
+            <label>
+              Return days
+              <input type="number" id="returnDays" min="1" max="30" value="7" />
+            </label>
+            <label>
+              WhatsApp number
+              <input type="text" id="returnWhatsAppInput" placeholder="8438217212" />
+            </label>
+          </div>
+          <label class="full">
+            Brand name
+            <input type="text" id="brandNameInput" value="Kouprey" />
+          </label>
+          </div>
+          <label class="full">
+            Return policy text
+            <textarea id="returnPolicyInput" rows="3">Returns are accepted within 7 days for damaged items and size-related issues.</textarea>
+          </label>
+          <label class="full">
+            Return condition text
+            <textarea id="returnConditionInput" rows="2">Items must be unused, unwashed, and in original packaging.</textarea>
+          </label>
+          <label>
+            Show condition note
+            <input type="checkbox" id="showReturnCondition" checked />
+          </label>
+          <div class="panel footer-panel">
+            <div class="section-header">
+              <h3>Footer settings</h3>
+              <p>Manage contact details shown in the footer.</p>
+            </div>
+            <div class="panel-split">
+              <label>
+                Footer text
+                <input type="text" id="footerTextInput" value="Website provided by AIQ" />
+              </label>
+              <label>
+                Footer link
+                <input type="text" id="footerUrlInput" value="https://theaiq.net/" />
+              </label>
+            </div>
+            <label class="full">
+              Address
+              <input type="text" id="footerAddressInput" placeholder="Kouprey Studio, 23 City Walk, Chennai" />
+            </label>
+            <div class="panel-split">
+              <label>
+                Phone
+                <input type="text" id="footerPhoneInput" placeholder="+91 8438217212" />
+              </label>
+              <label>
+                Email
+                <input type="text" id="footerEmailInput" placeholder="support@kouprey.com" />
+              </label>
+            </div>
+            <div class="panel-split">
+              <label>
+                WhatsApp
+                <input type="text" id="footerWhatsAppInput" placeholder="8438217212" />
+              </label>
+              <label>
+                Hours
+                <input type="text" id="footerHoursInput" placeholder="Mon-Sat, 10:00-19:00" />
+              </label>
+            </div>
+            <label class="full">
+              Note
+              <input type="text" id="footerNoteInput" value="Premium retail experience tailored for Kouprey." />
+            </label>
+          </div>
+          <button class="primary" id="saveSettings">Save settings</button>
+          <small class="hint" id="settingsStatus"></small>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-header">
+          <h2>Home page content</h2>
+          <p>Edit hero text, live stock card, and stats. Hide sections if needed.</p>
+        </div>
+        <div class="panel">
+          <div class="theme-picker">
+            <label>
+              Hero eyebrow
+              <input type="text" id="heroEyebrowInput" value="Kouprey — Elegance in Every Thread." />
+            </label>
+            <label>
+              Hero title
+              <input type="text" id="heroTitleInput" value="Minimal, bold, and built to move with you." />
+            </label>
+            <label>
+              Hero copy
+              <input type="text" id="heroCopyInput" value="Elevated basics and expressive statement pieces. Transparent pricing, quality fabrics, and a faster path from store to wardrobe." />
+            </label>
+            <label>
+              Live stock tag
+              <input type="text" id="heroTagInput" value="Live Stock" />
+            </label>
+            <label>
+              Card title
+              <input type="text" id="heroCardTitleInput" value="Track what matters" />
+            </label>
+            <label>
+              Card copy
+              <input type="text" id="heroCardCopyInput" value="Update price, availability, sizes, discount pricing, and images in one place. Payment gateway is ready for integration later." />
+            </label>
+            <label>
+              Stat 1 value
+              <input type="text" id="stat1ValueInput" value="25" />
+            </label>
+            <label>
+              Stat 1 label
+              <input type="text" id="stat1LabelInput" value="Active Styles" />
+            </label>
+            <label>
+              Stat 2 value
+              <input type="text" id="stat2ValueInput" value="4" />
+            </label>
+            <label>
+              Stat 2 label
+              <input type="text" id="stat2LabelInput" value="Stores Online" />
+            </label>
+          </div>
+          <div class="theme-picker">
+            <label>
+              New in subtitle
+              <input type="text" id="newSubtitleInput" value="Fresh arrivals curated for the Kouprey season." />
+            </label>
+            <label>
+              Essentials subtitle
+              <input type="text" id="essentialsSubtitleInput" value="Everyday pieces with intentional cuts and flexible fits." />
+            </label>
+            <label>
+              Essential 1 title
+              <input type="text" id="essential1TitleInput" value="Soft Armour Tees" />
+            </label>
+            <label>
+              Essential 1 copy
+              <input type="text" id="essential1CopyInput" value="Midweight cotton with a clean neckline and reinforced shoulder." />
+            </label>
+            <label>
+              Essential 2 title
+              <input type="text" id="essential2TitleInput" value="Structured Denim" />
+            </label>
+            <label>
+              Essential 2 copy
+              <input type="text" id="essential2CopyInput" value="Relaxed, straight leg silhouettes with a slightly tapered finish." />
+            </label>
+            <label>
+              Essential 3 title
+              <input type="text" id="essential3TitleInput" value="Outerwear Core" />
+            </label>
+            <label>
+              Essential 3 copy
+              <input type="text" id="essential3CopyInput" value="Layerable neutrals for work, travel, and late-night city walks." />
+            </label>
+            <label>
+              Sale subtitle
+              <input type="text" id="saleSubtitleInput" value="Limited-time pricing across curated Kouprey best sellers." />
+            </label>
+            <label>
+              Sale banner title
+              <input type="text" id="saleBannerTitleInput" value="Up to 40% off" />
+            </label>
+            <label>
+              Sale banner copy
+              <input type="text" id="saleBannerCopyInput" value="Auto-applied discounts on selected lines." />
+            </label>
+          </div>
+          <div class="theme-picker">
+            <label>
+              Show Essentials section
+              <input type="checkbox" id="showEssentials" checked />
+            </label>
+            <label>
+              Show Sale section
+              <input type="checkbox" id="showSale" checked />
+            </label>
+            <label>
+              Show New In section
+              <input type="checkbox" id="showNew" checked />
+            </label>
+            <label>
+              Show Live Stock card
+              <input type="checkbox" id="showHeroCard" checked />
+            </label>
+            <label>
+              Show Essential 1
+              <input type="checkbox" id="showEssential1" checked />
+            </label>
+            <label>
+              Show Essential 2
+              <input type="checkbox" id="showEssential2" checked />
+            </label>
+            <label>
+              Show Essential 3
+              <input type="checkbox" id="showEssential3" checked />
+            </label>
+            <label>
+              Show Sale banner
+              <input type="checkbox" id="showSaleBanner" checked />
+            </label>
+          </div>
+          <button class="primary" id="saveHome">Save home content</button>
+          <small class="hint" id="homeStatus"></small>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-header">
+          <h2>Home section colors</h2>
+          <p>Control header bar, essentials background, and sale banner colors.</p>
+        </div>
+        <div class="panel">
+          <div class="panel-split">
+            <label>
+              Header bar
+              <input type="color" id="headerBgColor" value="#f5efe6" />
+            </label>
+            <label>
+              Essentials background
+              <input type="color" id="essentialsBgColor" value="#efe4d5" />
+            </label>
+          </div>
+          <div class="panel-split">
+            <label>
+              Sale banner start
+              <input type="color" id="saleBgStart" value="#1e1b18" />
+            </label>
+            <label>
+              Sale banner end
+              <input type="color" id="saleBgEnd" value="#3a2f2b" />
+            </label>
+          </div>
+          <label class="full">
+            Sale text color
+            <input type="color" id="saleTextColor" value="#fffaf2" />
+          </label>
+          <button class="primary" id="saveColors">Save color settings</button>
+          <small class="hint" id="colorStatus"></small>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-header">
+          <h2>Header seasonal image</h2>
+          <p>Upload a seasonal banner image for the header bar.</p>
+        </div>
+        <div class="panel">
+          <div class="panel-split">
+            <label>
+              Upload image
+              <input type="file" id="headerImageUpload" accept="image/*" />
+            </label>
+            <label>
+              Image URL
+              <input type="text" id="headerImageUrl" placeholder="/uploads/your-image.png" />
+            </label>
+          </div>
+          <div class="panel-split">
+            <button class="ghost" id="removeHeaderImage">Remove header image</button>
+            <button class="primary" id="saveHeaderImage">Save header image</button>
+          </div>
+          <small class="hint" id="headerImageStatus"></small>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-header">
+          <h2>Hero seasonal image</h2>
+          <p>Upload a seasonal image for the home page hero block.</p>
+        </div>
+        <div class="panel">
+          <div class="panel-split">
+            <label>
+              Upload image
+              <input type="file" id="heroImageUpload" accept="image/*" />
+            </label>
+            <label>
+              Image URL
+              <input type="text" id="heroImageUrl" placeholder="/uploads/your-image.png" />
+            </label>
+          </div>
+          <div class="panel-split">
+            <button class="ghost" id="removeHeroImage">Remove hero image</button>
+            <button class="primary" id="saveHeroImage">Save hero image</button>
+          </div>
+          <small class="hint" id="heroImageStatus"></small>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-header">
+          <h2>Health check</h2>
+          <p>Server, database, and payment status for live troubleshooting.</p>
+        </div>
+        <div class="panel">
+          <div class="panel-split">
+            <div>
+              <small>Status</small>
+              <h3 id="healthStatus">Checking...</h3>
+            </div>
+            <div>
+              <small>Database</small>
+              <h3 id="healthDb">Checking...</h3>
+            </div>
+          </div>
+          <div class="panel-split">
+            <div>
+              <small>Payment gateway</small>
+              <p id="healthGateway">-</p>
+            </div>
+            <div>
+              <small>Last PayU callback</small>
+              <p id="healthPayu">-</p>
+            </div>
+          </div>
+          <div class="panel-split">
+            <div>
+              <small>Server time</small>
+              <p id="healthTime">-</p>
+            </div>
+            <div>
+              <small>Uptime</small>
+              <p id="healthUptime">-</p>
+            </div>
+          </div>
+          <div class="panel-split">
+            <div>
+              <small>Node</small>
+              <p id="healthNode">-</p>
+            </div>
+            <div>
+              <button class="ghost" id="refreshHealth">Refresh</button>
+            </div>
+          </div>
+          <p class="hint" id="healthError"></p>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-header">
+          <h2>Latest failed orders</h2>
+          <p>Orders with failed or pending payment.</p>
+        </div>
+        <div class="panel">
+          <div class="orders-table">
+            <div class="orders-head">
+              <span>Order</span>
+              <span>Customer</span>
+              <span>Total</span>
+              <span>Status</span>
+              <span>Payment</span>
+              <span>Date</span>
+            </div>
+            <div id="failedOrders"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-header">
+          <h2>Server logs</h2>
+          <p>Latest server logs (info, warn, error).</p>
+        </div>
+        <div class="panel">
+          <pre id="healthErrors" class="code-block">No logs.</pre>
+        </div>
+      </section>
+      <section class="section" id="users">
+        <div class="section-header">
+          <h2>Staff users</h2>
+          <p>Create and manage store staff access.</p>
+        </div>
+        <div class="panel">
+          <form class="studio-form" id="userForm">
+            <div>
+              <label for="staffEmail">Staff email</label>
+              <input id="staffEmail" name="email" placeholder="staff@kouprey.com" required />
+            </div>
+            <div>
+              <label for="staffPassword">Temporary password</label>
+              <input id="staffPassword" name="password" type="password" required />
+            </div>
+            <div class="studio-actions full">
+              <button class="primary" type="submit">Create staff user</button>
+            </div>
+            <small id="userStatus" class="hint"></small>
+          </form>
+
+          <div class="inventory-toolbar">
+            <div class="search">
+              <input id="userSearch" placeholder="Search by email" />
+            </div>
+            <select id="roleFilter">
+              <option value="staff">Staff</option>
+            </select>
+          </div>
+
+          <div class="orders-table">
+            <div class="orders-head">
+              <span>Email</span>
+              <span>Created at</span>
+              <span>Actions</span>
+            </div>
+            <div id="userList"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="masters">
+        <div class="section-header">
+          <h2>Master users</h2>
+          <p>Create additional master accounts.</p>
+        </div>
+        <div class="panel">
+          <form class="studio-form" id="masterForm">
+            <div>
+              <label for="masterEmail">Master email</label>
+              <input id="masterEmail" name="email" required />
+            </div>
+            <div>
+              <label for="masterPassword">Temporary password</label>
+              <input id="masterPassword" name="password" type="password" required />
+            </div>
+            <div class="studio-actions full">
+              <button class="primary" type="submit">Create master</button>
+            </div>
+            <small id="masterStatus" class="hint"></small>
+          </form>
+
+          <div class="orders-table">
+            <div class="orders-head">
+              <span>Email</span>
+              <span>Created at</span>
+            </div>
+            <div id="masterList"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="payu-hash">
+        <div class="section-header">
+          <h2>PayU Hash Generator</h2>
+          <p>Generate the PayU hash using your key and salt.</p>
+        </div>
+        <div class="panel">
+          <div class="theme-picker">
+            <label>
+              Key
+              <input type="text" id="hashKey" placeholder="PayU key" />
+            </label>
+            <label>
+              Salt
+              <input type="text" id="hashSalt" placeholder="PayU salt" />
+            </label>
+            <label>
+              Txn ID
+              <input type="text" id="hashTxnId" placeholder="TXN123456" />
+            </label>
+            <label>
+              Amount
+              <input type="text" id="hashAmount" placeholder="100.00" />
+            </label>
+            <label>
+              Product Info
+              <input type="text" id="hashProductInfo" placeholder="Kouprey Order" />
+            </label>
+            <label>
+              First Name
+              <input type="text" id="hashFirstName" placeholder="Customer name" />
+            </label>
+            <label>
+              Email
+              <input type="text" id="hashEmail" placeholder="email@example.com" />
+            </label>
+          </div>
+          <button class="primary" id="generateHash">Generate Hash</button>
+          <label class="full">
+            Hash Output
+            <textarea id="hashOutput" rows="2" readonly></textarea>
+          </label>
+          <small class="hint">Hash string format: key|txnid|amount|productinfo|firstname|email|||||||||||salt</small>
+        </div>
+      </section>
+
+      <section class="section" id="database">
+        <div class="section-header">
+          <h2>Database</h2>
+          <p>View and edit SQLite tables.</p>
+        </div>
+        <div class="panel">
+          <div class="inventory-toolbar">
+            <select id="tableSelect"></select>
+            <button class="ghost" id="loadTable">Load table</button>
+          </div>
+          <div id="tableColumns" class="hint"></div>
+          <div class="orders-table">
+            <div class="orders-head" id="dbHeader"></div>
+            <div id="dbBody"></div>
+          </div>
+          <h3>Add row</h3>
+          <div id="dbInsertForm" class="studio-form"></div>
+          <button class="primary" id="insertRow">Insert row</button>
+          <small class="hint" id="dbStatus"></small>
+        </div>
+      </section>
+
+      <section class="section" id="sql">
+        <div class="section-header">
+          <h2>SQL Console</h2>
+          <p>Run custom SQL queries.</p>
+        </div>
+        <div class="panel">
+          <textarea id="sqlInput" rows="5" placeholder="SELECT * FROM products;"></textarea>
+          <button class="primary" id="runSql">Execute</button>
+          <pre id="sqlOutput" class="hint"></pre>
+        </div>
+      </section>
+
+      <section class="section" id="audit">
+        <div class="section-header">
+          <h2>Audit log</h2>
+          <p>Recent admin actions and security events.</p>
+        </div>
+        <div class="panel">
+          <div class="orders-table">
+            <div class="orders-head">
+              <span>Time</span>
+              <span>Actor</span>
+              <span>Action</span>
+              <span>Target</span>
+              <span>Detail</span>
+            </div>
+            <div id="auditBody"></div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a id="footerLink" href="https://theaiq.net/" target="_blank" rel="noopener">
+            <span id="footerText">Website provided by AIQ</span>
+          </a>
+          <p id="footerNote" data-brand-text>Premium retail experience tailored for Kouprey.</p>
+        </div>
+        <div class="footer-contact">
+          <h4>Contact</h4>
+          <p id="footerAddress" data-brand-text>Kouprey Studio, 23 City Walk, Chennai</p>
+          <p id="footerPhone">+91 8438217212</p>
+          <p id="footerEmail">support@kouprey.com</p>
+          <p id="footerWhatsApp">WhatsApp: 8438217212</p>
+          <p id="footerHours">Mon-Sat, 10:00-19:00</p>
+        </div>
+      </div>
+    </footer>
+    <script src="/settings.js"></script>
+    <script src="/admin-dashboard.js"></script>
+  </body>
+</html>
