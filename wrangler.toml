@@ -1,7 +1,6 @@
 name = "kouprey"
 main = "server/cloudflare.js"
 compatibility_date = "2024-02-01"
-node_compat = true
 
 # Cloudflare Pages configuration
 [site]
@@ -12,51 +11,19 @@ bucket = "./public"
 PORT = "8787"
 NODE_ENV = "production"
 
-# For production, set these in Cloudflare dashboard:
-# wrangler secret put JWT_SECRET
-# wrangler secret put MASTER_EMAIL  
-# wrangler secret put MASTER_PASSWORD
-
-# Cloudflare D1 Database for production
-# Step 1: Create database: wrangler d1 create kouprey-production
-# Step 2: Get the database_id from output
-# Step 3: Uncomment and update below:
-# [[d1_databases]]
-# binding = "DB"
-# database_name = "kouprey-production"
-# database_id = "your-database-id"
-
-# For local development with D1:
-# [[d1_databases]]
-# binding = "DB"
-# database_name = "kouprey"
-# database_id = "local-db-id"
+# Cloudflare D1 Database
+[[d1_databases]]
+binding = "DB"
+database_name = "kouprey-production"
+database_id = "your-database-id"
 
 # R2 Storage for file uploads
-# Step 1: Create bucket: wrangler r2 bucket create kouprey-uploads
-# Step 2: Uncomment below:
-# [[r2_buckets]]
-# binding = "UPLOADS"
-# bucket_name = "kouprey-uploads"
-# jurisdiction = "eu"
+[[r2_buckets]]
+binding = "UPLOADS"
+bucket_name = "kouprey-uploads"
 
-# Build configuration
-[build]
-command = "npm install"
-cwd = "./server"
-main = "./cloudflare.js"
-
-# Routes configuration
-[routes]
-pattern = "kouprey.workers.dev/*"
-zone_id = ""
-
-# KV Namespaces for session storage (optional)
-# [[kv_namespaces]]
-# binding = "SESSION"
-# id = "your-kv-id"
-# preview_id = "your-preview-kv-id"
-
-# Triggers for scheduled tasks (optional)
-# [triggers]
-# crons = ["0 0 * * *"]
+# Compatibility flags
+[env.production]
+routes = [
+  { pattern = "kouprey.workers.dev/*", zone_id = "" }
+]
