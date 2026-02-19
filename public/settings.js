@@ -102,6 +102,26 @@
         footerLink.classList.remove('hidden');
       }
     }
+
+    const footerInstagram = document.getElementById('footerInstagram');
+    if (footerInstagram) {
+      if (settings.footerInstagram) {
+        footerInstagram.href = `https://instagram.com/${settings.footerInstagram.replace('@', '')}`;
+        footerInstagram.style.display = 'inline-flex';
+      } else {
+        footerInstagram.style.display = 'none';
+      }
+    }
+
+    const footerFacebook = document.getElementById('footerFacebook');
+    if (footerFacebook) {
+      if (settings.footerFacebook) {
+        footerFacebook.href = `https://facebook.com/${settings.footerFacebook}`;
+        footerFacebook.style.display = 'inline-flex';
+      } else {
+        footerFacebook.style.display = 'none';
+      }
+    }
   }
 
   function applyHomeSettings(home) {

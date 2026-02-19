@@ -34,6 +34,8 @@ const footerPhoneInput = document.getElementById('footerPhoneInput');
 const footerEmailInput = document.getElementById('footerEmailInput');
 const footerWhatsAppInput = document.getElementById('footerWhatsAppInput');
 const footerHoursInput = document.getElementById('footerHoursInput');
+const footerInstagramInput = document.getElementById('footerInstagramInput');
+const footerFacebookInput = document.getElementById('footerFacebookInput');
 const footerNoteInput = document.getElementById('footerNoteInput');
 const saveSettings = document.getElementById('saveSettings');
 const settingsStatus = document.getElementById('settingsStatus');
@@ -365,6 +367,8 @@ function loadSettings() {
     footerEmailInput.value = saved.footerEmail || footerEmailInput.value;
     footerWhatsAppInput.value = saved.footerWhatsApp || footerWhatsAppInput.value;
     footerHoursInput.value = saved.footerHours || footerHoursInput.value;
+    footerInstagramInput.value = saved.footerInstagram || footerInstagramInput.value;
+    footerFacebookInput.value = saved.footerFacebook || footerFacebookInput.value;
     footerNoteInput.value = saved.footerNote || footerNoteInput.value;
     headerImageUrl.value = saved.headerImageUrl || headerImageUrl.value;
     heroImageUrl.value = saved.heroImageUrl || heroImageUrl.value;
@@ -458,6 +462,8 @@ saveSettings.addEventListener('click', () => {
     footerEmail: footerEmailInput.value.trim(),
     footerWhatsApp: footerWhatsAppInput.value.trim(),
     footerHours: footerHoursInput.value.trim(),
+    footerInstagram: footerInstagramInput.value.trim(),
+    footerFacebook: footerFacebookInput.value.trim(),
     footerNote: footerNoteInput.value.trim(),
     headerImageUrl: headerImageUrl.value.trim(),
     heroImageUrl: heroImageUrl.value.trim(),

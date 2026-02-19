@@ -1459,6 +1459,39 @@ main {
   }
 }
 
+/* Footer Social Media */
+.footer-social {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: center;
+  margin-top: 12px;
+}
+
+.footer-social a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(30, 27, 24, 0.05);
+  color: rgba(30, 27, 24, 0.7);
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.footer-social a:hover {
+  background: rgba(30, 27, 24, 0.1);
+  color: rgba(30, 27, 24, 0.9);
+  transform: translateY(-2px);
+}
+
+.footer-social svg {
+  width: 20px;
+  height: 20px;
+}
+
 /* WhatsApp Floating Button */
 .whatsapp-float {
   position: fixed;
