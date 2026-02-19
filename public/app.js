@@ -1,3 +1,4 @@
+const pageLoader = document.getElementById('pageLoader');
 const productGrid = document.getElementById('productGrid');
 const bagButton = document.getElementById('bagButton');
 const bag = document.getElementById('bag');
@@ -60,12 +61,27 @@ async function apiFetch(url, options = {}) {
   return response.json();
 }
 
+function hideLoader() {
+  if (pageLoader) {
+    pageLoader.classList.add('hidden');
+  }
+}
+
+function showLoader() {
+  if (pageLoader) {
+    pageLoader.classList.remove('hidden');
+  }
+}
+
 async function loadProducts() {
+  showLoader();
   try {
     products = await apiFetch('/api/products');
     renderProducts();
   } catch (error) {
     productGrid.innerHTML = '<p>Unable to load products. Start the server.</p>';
+  } finally {
+    hideLoader();
   }
 }
 

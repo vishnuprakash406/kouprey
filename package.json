@@ -1,10 +1,36 @@
 {
   "name": "kouprey-store",
   "version": "1.0.0",
-  "description": "Kouprey store with admin + SQLite backend",
+  "description": "Kouprey modern e-commerce platform with admin control",
   "main": "server/index.js",
   "scripts": {
-    "dev": "node server/index.js"
+    "dev": "node server/index.js",
+    "start": "node server/index.js",
+    "build": "echo 'Build complete - ready for deployment'",
+    "deploy": "wrangler deploy",
+    "deploy:staging": "wrangler deploy --env staging",
+    "deploy:production": "wrangler deploy --env production",
+    "cf:login": "wrangler login",
+    "cf:dev": "wrangler dev",
+    "cf:tail": "wrangler tail",
+    "db:export": "sqlite3 data/kouprey.db .dump > migrations/backup.sql",
+    "test": "node server/index.js"
+  },
+  "keywords": [
+    "e-commerce",
+    "fashion",
+    "retail",
+    "kouprey"
+  ],
+  "author": "Vishnu Prakash",
+  "license": "UNLICENSED",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vishnuprakash406/kouprey.git"
+  },
+  "engines": {
+    "node": ">=20.20.0",
+    "npm": ">=10.0.0"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
@@ -12,5 +38,6 @@
     "jsonwebtoken": "^9.0.2",
     "multer": "^1.4.5-lts.1",
     "sqlite3": "^5.1.7"
-  }
+  },
+  "devDependencies": {}
 }

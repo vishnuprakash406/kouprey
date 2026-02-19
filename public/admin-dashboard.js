@@ -1,3 +1,4 @@
+const pageLoader = document.getElementById('pageLoader');
 const userForm = document.getElementById('userForm');
 const userList = document.getElementById('userList');
 const userStatus = document.getElementById('userStatus');
@@ -160,6 +161,12 @@ async function apiFetch(url, options = {}) {
     throw new Error(payload.error || 'Request failed');
   }
   return response.json();
+}
+
+function hideLoader() {
+  if (pageLoader) {
+    pageLoader.classList.add('hidden');
+  }
 }
 
 async function loadUsers() {
@@ -814,12 +821,22 @@ userSearch.addEventListener('input', (event) => {
 if (!masterToken) {
   window.location.href = '/master-login';
 } else {
-  loadUsers();
-  loadAuditLogs();
-loadTheme();
-loadSettings();
-loadHomeSettings();
-loadColorSettings();
-  loadMasters();
-  loadTables();
+  showLoader();
+  async function initDashboard() {
+    try {
+      await Promise.all([
+        loadUsers(),
+        loadAuditLogs(),
+        loadMasters(),
+        loadTables()
+      ]);
+      loadTheme();
+      loadSettings();
+      loadHomeSettings();
+      loadColorSettings();
+    } finally {
+      hideLoader();
+    }
+  }
+  initDashboard();
 }

@@ -1,0 +1,54 @@
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment variables
+.env
+.env.local
+.env.production
+
+# Database
+data/*.db
+data/*.db-journal
+*.sqlite
+*.sqlite3
+
+# Logs
+logs/
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor directories
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Build outputs
+dist/
+build/
+.cache/
+
+# Cloudflare
+.wrangler/
+wrangler.toml.backup
+
+# Uploads
+public/uploads/*
+!public/uploads/.gitkeep
+
+# Backup files
+*.backup
+*.bak
+migrations/backup.sql
+*-export.json
+
+# Temporary files
+tmp/
+temp/

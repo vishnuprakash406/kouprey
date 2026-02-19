@@ -1,3 +1,4 @@
+const pageLoader = document.getElementById('pageLoader');
 const inventoryBody = document.getElementById('inventoryBody');
 const inventorySearch = document.getElementById('inventorySearch');
 const inventoryFilter = document.getElementById('inventoryFilter');
@@ -70,9 +71,23 @@ async function apiFetch(url, options = {}) {
   return response.json();
 }
 
+function hideLoader() {
+  if (pageLoader) {
+    pageLoader.classList.add('hidden');
+  }
+}
+
+function showLoader() {
+  if (pageLoader) {
+    pageLoader.classList.remove('hidden');
+  }
+}
+
 async function loadProducts() {
+  showLoader();
   products = await apiFetch('/api/products');
   renderProducts();
+  hideLoader();
 }
 
 function renderProducts() {
@@ -158,6 +173,7 @@ function renderOrders() {
 }
 
 async function loadOrders() {
+  showLoader();
   try {
     orders = await apiFetch('/api/orders', {
       headers: { Authorization: `Bearer ${storeToken}` },
@@ -165,6 +181,8 @@ async function loadOrders() {
     renderOrders();
   } catch (error) {
     ordersBody.innerHTML = `<p class="hint">Unable to load orders: ${error.message}</p>`;
+  } finally {
+    hideLoader();
   }
 }
 

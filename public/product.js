@@ -1,3 +1,4 @@
+const pageLoader = document.getElementById('pageLoader');
 const productDetail = document.getElementById('productDetail');
 const suggestionGrid = document.getElementById('suggestionGrid');
 const bagButton = document.getElementById('bagButton');
@@ -281,11 +282,25 @@ function similarItems(allProducts, product) {
   return suggestions.slice(0, 4);
 }
 
+function hideLoader() {
+  if (pageLoader) {
+    pageLoader.classList.add('hidden');
+  }
+}
+
+function showLoader() {
+  if (pageLoader) {
+    pageLoader.classList.remove('hidden');
+  }
+}
+
 async function init() {
+  showLoader();
   const params = new URLSearchParams(window.location.search);
   const id = params.get('id');
   if (!id) {
     productDetail.innerHTML = '<p>Product not found.</p>';
+    hideLoader();
     return;
   }
 
@@ -306,6 +321,8 @@ async function init() {
     });
   } catch (error) {
     productDetail.innerHTML = '<p>Unable to load product.</p>';
+  } finally {
+    hideLoader();
   }
 }
 
