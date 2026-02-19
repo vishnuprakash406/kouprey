@@ -14,7 +14,7 @@ NODE_ENV = "production"
 [[d1_databases]]
 binding = "DB"
 database_name = "kouprey-production"
-database_id = "your-database-id"
+database_id = "4e2f5ed4-dffd-4d47-86a9-620f478ae7a2"
 
 # Compatibility flags
 [env.production]
