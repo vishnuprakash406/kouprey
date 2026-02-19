@@ -9,7 +9,7 @@ let dbModule = null;
 
 // Initialize database based on environment
 async function initDb(env) {
-  if (isCloudflare && env?.DB) {
+  if (env?.DB) {
     // Cloudflare D1 mode
     db = env.DB;
     dbModule = 'cloudflare-d1';
@@ -36,7 +36,7 @@ async function initDb(env) {
 
 // Promise-based database operations
 async function run(sql, params = [], env = null) {
-  if (!db && isCloudflare && env?.DB) {
+  if (!db && env?.DB) {
     db = env.DB;
     dbModule = 'cloudflare-d1';
   }
@@ -60,7 +60,7 @@ async function run(sql, params = [], env = null) {
 }
 
 async function get(sql, params = [], env = null) {
-  if (!db && isCloudflare && env?.DB) {
+  if (!db && env?.DB) {
     db = env.DB;
     dbModule = 'cloudflare-d1';
   }
@@ -84,7 +84,7 @@ async function get(sql, params = [], env = null) {
 }
 
 async function all(sql, params = [], env = null) {
-  if (!db && isCloudflare && env?.DB) {
+  if (!db && env?.DB) {
     db = env.DB;
     dbModule = 'cloudflare-d1';
   }

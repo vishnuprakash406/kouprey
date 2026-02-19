@@ -17,11 +17,6 @@ binding = "DB"
 database_name = "kouprey-production"
 database_id = "your-database-id"
 
-# R2 Storage for file uploads
-[[r2_buckets]]
-binding = "UPLOADS"
-bucket_name = "kouprey-uploads"
-
 # Compatibility flags
 [env.production]
 routes = [
