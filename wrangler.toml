@@ -1,5 +1,4 @@
 name = "kouprey"
-main = "server/cloudflare.js"
 compatibility_date = "2024-02-01"
 
 # Cloudflare Pages configuration
