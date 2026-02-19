@@ -13,6 +13,8 @@ const themeStatus = document.getElementById('themeStatus');
 const logoUrl = document.getElementById('logoUrl');
 const logoUpload = document.getElementById('logoUpload');
 const paymentGateway = document.getElementById('paymentGateway');
+const stripePublishableKey = document.getElementById('stripePublishableKey');
+const stripeSecretKey = document.getElementById('stripeSecretKey');
 const paypalClientId = document.getElementById('paypalClientId');
 const razorpayKeyId = document.getElementById('razorpayKeyId');
 const payuKey = document.getElementById('payuKey');
@@ -339,6 +341,8 @@ function loadSettings() {
     logoUrl.value = saved.logoUrl || logoUrl.value;
     paymentGateway.value = saved.paymentGateway || paymentGateway.value;
     paymentCurrency.value = saved.paymentCurrency || paymentCurrency.value;
+    stripePublishableKey.value = saved.stripePublishableKey || stripePublishableKey.value;
+    stripeSecretKey.value = saved.stripeSecretKey || stripeSecretKey.value;
     paypalClientId.value = saved.paypalClientId || paypalClientId.value;
     razorpayKeyId.value = saved.razorpayKeyId || razorpayKeyId.value;
     payuKey.value = saved.payuKey || payuKey.value;
@@ -434,6 +438,8 @@ saveSettings.addEventListener('click', () => {
   const settings = {
     logoUrl: logoUrl.value.trim(),
     paymentGateway: paymentGateway.value,
+    stripePublishableKey: stripePublishableKey.value.trim(),
+    stripeSecretKey: stripeSecretKey.value.trim(),
     paypalClientId: paypalClientId.value.trim(),
     razorpayKeyId: razorpayKeyId.value.trim(),
     payuKey: payuKey.value.trim(),
@@ -466,6 +472,8 @@ savePayment.addEventListener('click', () => {
     ...saved,
     paymentGateway: paymentGateway.value,
     paymentCurrency: paymentCurrency.value,
+    stripePublishableKey: stripePublishableKey.value.trim(),
+    stripeSecretKey: stripeSecretKey.value.trim(),
     paypalClientId: paypalClientId.value.trim(),
     razorpayKeyId: razorpayKeyId.value.trim(),
     payuKey: payuKey.value.trim(),

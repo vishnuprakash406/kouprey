@@ -67,6 +67,7 @@
             <label>
               Payment gateway
               <select id="paymentGateway">
+                <option value="stripe">Stripe</option>
                 <option value="paypal">PayPal</option>
                 <option value="razorpay">Razorpay</option>
                 <option value="payu">PayU</option>
@@ -79,6 +80,14 @@
                 <option value="USD">USD</option>
                 <option value="INR">INR</option>
               </select>
+            </label>
+            <label>
+              Stripe Publishable Key
+              <input type="text" id="stripePublishableKey" placeholder="Paste Stripe publishable key" />
+            </label>
+            <label>
+              Stripe Secret Key
+              <input type="password" id="stripeSecretKey" placeholder="Paste Stripe secret key" />
             </label>
             <label>
               PayPal Client ID
