@@ -74,6 +74,20 @@ function normalizeOrderItems(items) {
   return [];
 }
 
+function makeUploadKey(originalName = 'file') {
+  const safeName = String(originalName).replace(/[^a-zA-Z0-9._-]/g, '_');
+  const suffix = typeof crypto !== 'undefined' && crypto.randomUUID
+    ? crypto.randomUUID()
+    : Math.random().toString(36).slice(2, 10);
+  return `${Date.now()}-${suffix}-${safeName}`;
+}
+
+function buildPublicUrl(env, key) {
+  const base = env.R2_PUBLIC_BASE_URL;
+  if (!base) return null;
+  return `${base.replace(/\/$/, '')}/${key}`;
+}
+
 async function logEvent(env, level, message) {
   const entry = { time: new Date().toISOString(), level, message };
   errorLogs.push(entry);
@@ -817,9 +831,42 @@ export async function onRequest(context) {
     const auth = await requireAuth(request, env, ['store', 'master']);
     if (auth.response) return auth.response;
 
-    return jsonResponse({
-      error: 'Uploads are disabled on Pages. Use an R2 upload worker instead.',
-    }, 501);
+    if (!env.UPLOADS) {
+      return jsonResponse({
+        error: 'Uploads bucket not configured. Bind R2 as UPLOADS in Pages.',
+      }, 501);
+    }
+
+    const contentType = request.headers.get('content-type') || '';
+    if (!contentType.includes('multipart/form-data')) {
+      return jsonResponse({ error: 'Expected multipart/form-data' }, 400);
+    }
+
+    const form = await request.formData();
+    const files = form.getAll('files');
+    if (!files.length) {
+      return jsonResponse({ error: 'No files uploaded' }, 400);
+    }
+
+    const results = [];
+    for (const entry of files) {
+      if (!(entry instanceof File)) continue;
+      const key = makeUploadKey(entry.name);
+      const buffer = await entry.arrayBuffer();
+      await env.UPLOADS.put(key, buffer, {
+        httpMetadata: {
+          contentType: entry.type || 'application/octet-stream',
+        },
+      });
+
+      results.push({
+        key,
+        url: buildPublicUrl(env, key),
+        type: entry.type || 'application/octet-stream',
+      });
+    }
+
+    return jsonResponse({ files: results });
   }
 
   return jsonResponse({ error: 'Not found' }, 404);
