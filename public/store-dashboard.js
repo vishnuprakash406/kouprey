@@ -10,6 +10,8 @@ const drawerContent = document.getElementById('drawerContent');
 const studioForm = document.getElementById('studioForm');
 const resetFormButton = document.getElementById('resetForm');
 const logoutButton = document.getElementById('logout');
+const emailAccessBtn = document.getElementById('emailAccessBtn');
+const emailStatus = document.getElementById('emailStatus');
 const mediaUpload = document.getElementById('mediaUpload');
 const uploadStatus = document.getElementById('uploadStatus');
 const stockInput = document.getElementById('stock');
@@ -373,6 +375,33 @@ resetFormButton.addEventListener('click', resetForm);
 logoutButton.addEventListener('click', () => {
   localStorage.removeItem('kouprey_store_token');
   window.location.href = '/staff-login';
+});
+
+emailAccessBtn.addEventListener('click', () => {
+  const SETTINGS_KEY = 'kouprey_settings';
+  try {
+    const settings = JSON.parse(localStorage.getItem(SETTINGS_KEY) || '{}');
+    const username = settings.storeEmailUsername;
+    const password = settings.storeEmailPassword;
+    
+    if (!username || !password) {
+      emailStatus.textContent = 'Email credentials not configured. Contact admin.';
+      emailStatus.style.color = '#d34f2f';
+      return;
+    }
+    
+    // Open Titan email portal in new tab
+    const emailUrl = 'https://secureserver.titan.email/mail/';
+    window.open(emailUrl, '_blank', 'noopener,noreferrer');
+    
+    // Show credentials for manual login
+    emailStatus.textContent = `Username: ${username} | Password: ${password}`;
+    emailStatus.style.color = 'rgba(30, 27, 24, 0.6)';
+    
+  } catch (error) {
+    emailStatus.textContent = 'Error accessing email settings.';
+    emailStatus.style.color = '#d34f2f';
+  }
 });
 
 mediaUpload.addEventListener('change', async (event) => {
