@@ -108,15 +108,6 @@ const tableColumns = document.getElementById('tableColumns');
 const sqlInput = document.getElementById('sqlInput');
 const runSql = document.getElementById('runSql');
 const sqlOutput = document.getElementById('sqlOutput');
-const healthStatus = document.getElementById('healthStatus');
-const healthDb = document.getElementById('healthDb');
-const healthGateway = document.getElementById('healthGateway');
-const healthPayu = document.getElementById('healthPayu');
-const healthTime = document.getElementById('healthTime');
-const healthUptime = document.getElementById('healthUptime');
-const healthNode = document.getElementById('healthNode');
-const healthError = document.getElementById('healthError');
-const refreshHealth = document.getElementById('refreshHealth');
 const failedOrders = document.getElementById('failedOrders');
 const healthErrors = document.getElementById('healthErrors');
 
@@ -197,82 +188,6 @@ async function loadMasters() {
   }
 }
 
-async function loadHealth() {
-  if (!healthStatus) return;
-  healthError.textContent = '';
-  healthStatus.textContent = 'Checking...';
-  healthDb.textContent = 'Checking...';
-  healthGateway.textContent = 'Checking...';
-  try {
-    const data = await apiFetch('/api/health', {
-      headers: { Authorization: `Bearer ${masterToken}` },
-    });
-    healthStatus.textContent = data.status === 'ok' ? 'Online' : 'Degraded';
-    healthDb.textContent = data.database === 'ok' ? 'Connected' : 'Error';
-    healthTime.textContent = new Date(data.time).toLocaleString();
-    healthUptime.textContent = formatUptime(data.uptime_seconds || 0);
-    healthNode.textContent = data.node || '-';
-    healthPayu.textContent = data.last_payu_callback
-      ? new Date(data.last_payu_callback).toLocaleString()
-      : 'Never';
-
-    try {
-      const settings = JSON.parse(localStorage.getItem(SETTINGS_KEY) || '{}');
-      const gateway = settings.paymentGateway || 'not configured';
-      const detail =
-        gateway === 'payu'
-          ? settings.payuKey
-            ? 'PayU configured'
-            : 'PayU missing key'
-          : gateway;
-      healthGateway.textContent = detail;
-    } catch {
-      healthGateway.textContent = 'Unavailable';
-    }
-
-    if (failedOrders) {
-      if (!data.failed_orders || data.failed_orders.length === 0) {
-        failedOrders.innerHTML = '<p class="hint">No failed orders found.</p>';
-      } else {
-        failedOrders.innerHTML = data.failed_orders
-          .map(
-            (order) => `
-            <div class="orders-row">
-              <span>${order.id}</span>
-              <span>${order.customer_name || '-'}</span>
-              <span>₹${Number(order.total || 0).toFixed(2)}</span>
-              <span>${order.status}</span>
-              <span>${order.payment_status}</span>
-              <span>${formatDate(order.created_at)}</span>
-            </div>
-          `
-          )
-          .join('');
-      }
-    }
-
-    if (healthErrors) {
-      if (!data.errors || data.errors.length === 0) {
-        healthErrors.textContent = 'No logs.';
-      } else {
-        healthErrors.textContent = data.errors
-          .map((entry) => `[${entry.time}] ${entry.level || 'info'} ${entry.message}`)
-          .join('\n');
-      }
-    }
-  } catch (error) {
-    healthStatus.textContent = 'Offline';
-    healthDb.textContent = '-';
-    healthTime.textContent = '-';
-    healthUptime.textContent = '-';
-    healthNode.textContent = '-';
-    healthGateway.textContent = '-';
-    healthPayu.textContent = '-';
-    healthError.textContent = error.message;
-    if (failedOrders) failedOrders.innerHTML = '<p class="hint">Unable to load failed orders.</p>';
-    if (healthErrors) healthErrors.textContent = 'Unable to load logs.';
-  }
-}
 function renderUsers() {
   userList.innerHTML = '';
   const filtered = users.filter((user) =>

@@ -16,6 +16,7 @@
       <nav class="nav">
         <a href="/staff-login/dashboard">Store Studio</a>
         <a href="#users">Staff Users</a>
+        <a href="/health.html" target="_blank">Health Check</a>
       </nav>
       <button class="ghost" id="logout">Log out</button>
     </header>
@@ -386,55 +387,6 @@
             <button class="primary" id="saveHeroImage">Save hero image</button>
           </div>
           <small class="hint" id="heroImageStatus"></small>
-        </div>
-      </section>
-
-      <section class="section">
-        <div class="section-header">
-          <h2>Health check</h2>
-          <p>Server, database, and payment status for live troubleshooting.</p>
-        </div>
-        <div class="panel">
-          <div class="panel-split">
-            <div>
-              <small>Status</small>
-              <h3 id="healthStatus">Checking...</h3>
-            </div>
-            <div>
-              <small>Database</small>
-              <h3 id="healthDb">Checking...</h3>
-            </div>
-          </div>
-          <div class="panel-split">
-            <div>
-              <small>Payment gateway</small>
-              <p id="healthGateway">-</p>
-            </div>
-            <div>
-              <small>Last PayU callback</small>
-              <p id="healthPayu">-</p>
-            </div>
-          </div>
-          <div class="panel-split">
-            <div>
-              <small>Server time</small>
-              <p id="healthTime">-</p>
-            </div>
-            <div>
-              <small>Uptime</small>
-              <p id="healthUptime">-</p>
-            </div>
-          </div>
-          <div class="panel-split">
-            <div>
-              <small>Node</small>
-              <p id="healthNode">-</p>
-            </div>
-            <div>
-              <button class="ghost" id="refreshHealth">Refresh</button>
-            </div>
-          </div>
-          <p class="hint" id="healthError"></p>
         </div>
       </section>
 
