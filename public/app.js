@@ -135,12 +135,12 @@ function renderProducts() {
         ${discountPercent(product) > 0 ? `<del>${formatPrice(product.price)}</del>` : ''}
         ${discountPercent(product) > 0 ? `<span class="discount-tag">${discountPercent(product)}% off</span>` : ''}
       </div>
-      <div class="card-actions">
-        <button class="ghost wishlist-button${isWishlisted ? ' active' : ''}" data-action="wishlist" data-id="${product.id}">
-          ${isWishlisted ? 'Wishlisted' : 'Wishlist'}
-        </button>
-        <button class="primary" data-action="add-to-cart" data-id="${product.id}">Add to cart</button>
-      </div>
+      <button class="quick-add${isWishlisted ? ' wishlisted' : ''}" data-action="quick-add" data-id="${product.id}" title="${isWishlisted ? 'Remove from wishlist' : 'Add to wishlist'}">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <line x1="10" y1="5" x2="10" y2="15"/>
+          <line x1="5" y1="10" x2="15" y2="10"/>
+        </svg>
+      </button>
     `;
     productGrid.appendChild(card);
   });
@@ -331,23 +331,19 @@ productGrid.addEventListener('click', (event) => {
   const id = button.dataset.id;
   if (!action || !id) return;
 
-  if (action === 'add-to-cart') {
-    addToBag(id);
-    return;
-  }
-
-  if (action === 'wishlist') {
+  if (action === 'quick-add') {
     const wishlist = loadWishlist();
     if (wishlist.has(id)) {
       wishlist.delete(id);
-      button.classList.remove('active');
-      button.textContent = 'Wishlist';
+      button.classList.remove('wishlisted');
+      button.title = 'Add to wishlist';
     } else {
       wishlist.add(id);
-      button.classList.add('active');
-      button.textContent = 'Wishlisted';
+      button.classList.add('wishlisted');
+      button.title = 'Remove from wishlist';
     }
     saveWishlist(wishlist);
+    renderProducts();
   }
 });
 

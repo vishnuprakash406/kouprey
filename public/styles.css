@@ -838,6 +838,39 @@ main {
   font-size: 13px;
 }
 
+.quick-add {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: 2px solid rgba(30, 27, 24, 0.15);
+  background: rgba(255, 255, 255, 0.85);
+  color: var(--ink);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  padding: 0;
+  margin-left: auto;
+}
+
+.quick-add:hover {
+  transform: scale(1.1);
+  border-color: var(--accent);
+  background: rgba(255, 255, 255, 1);
+}
+
+.quick-add.wishlisted {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+  transform: rotate(45deg);
+}
+
+.quick-add.wishlisted:hover {
+  transform: rotate(45deg) scale(1.1);
+}
+
 .essentials {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
