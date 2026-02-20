@@ -8,6 +8,11 @@ const bagCount = document.getElementById('bagCount');
 const bagTotal = document.getElementById('bagTotal');
 const bagEmpty = document.getElementById('bagEmpty');
 const checkoutButton = document.getElementById('checkoutButton');
+const menuButton = document.getElementById('menuButton');
+const menuClose = document.getElementById('menuClose');
+const productMenu = document.getElementById('productMenu');
+const categoryList = document.getElementById('categoryList');
+const subcategoryList = document.getElementById('subcategoryList');
 
 const filters = document.querySelectorAll('[data-filter]');
 const scrollButtons = document.querySelectorAll('[data-scroll]');
@@ -18,6 +23,8 @@ const CART_KEY = 'kouprey_cart';
 let activeFilter = 'all';
 let searchQuery = '';
 let products = [];
+let activeSubcategory = '';
+let categoryMap = {};
 
 function formatPrice(value) {
   return `₹${Number(value).toFixed(2)}`;
@@ -77,6 +84,8 @@ async function loadProducts() {
   showLoader();
   try {
     products = await apiFetch('/api/products');
+    buildCategoryMap();
+    renderCategoryMenu();
     renderProducts();
   } catch (error) {
     productGrid.innerHTML = '<p>Unable to load products. Start the server.</p>';
@@ -88,6 +97,7 @@ async function loadProducts() {
 function renderProducts() {
   const filtered = products.filter((product) => {
     const matchesCategory = activeFilter === 'all' || product.category === activeFilter;
+    const matchesSubcategory = !activeSubcategory || product.subcategory === activeSubcategory;
     const query = searchQuery.toLowerCase();
     const matchesSearch =
       !query ||
@@ -95,7 +105,7 @@ function renderProducts() {
       product.id.toLowerCase().includes(query) ||
       (product.category || '').toLowerCase().includes(query) ||
       (product.subcategory || '').toLowerCase().includes(query);
-    return matchesCategory && matchesSearch;
+    return matchesCategory && matchesSubcategory && matchesSearch;
   });
 
   productGrid.innerHTML = '';
@@ -113,7 +123,6 @@ function renderProducts() {
         <span class="badge">${availabilityLabel(product.availability)}</span>
         <span>${product.sizes.join(', ')}</span>
       </div>
-      <p>${product.description}</p>
       <div class="price">
         <strong>${formatPrice(effectivePrice(product))}</strong>
         ${discountPercent(product) > 0 ? `<del>${formatPrice(product.price)}</del>` : ''}
@@ -121,6 +130,85 @@ function renderProducts() {
       </div>
     `;
     productGrid.appendChild(card);
+  });
+}
+
+function buildCategoryMap() {
+  const map = {};
+  products.forEach((product) => {
+    const category = (product.category || '').trim();
+    if (!category) return;
+    if (!map[category]) map[category] = new Set();
+    const subcategory = (product.subcategory || '').trim();
+    if (subcategory) map[category].add(subcategory);
+  });
+
+  categoryMap = {};
+  Object.keys(map)
+    .sort()
+    .forEach((key) => {
+      categoryMap[key] = Array.from(map[key]).sort();
+    });
+}
+
+function renderCategoryMenu() {
+  if (!categoryList || !subcategoryList) return;
+  categoryList.innerHTML = '';
+
+  const categoryKeys = Object.keys(categoryMap);
+  if (categoryKeys.length === 0) {
+    categoryList.innerHTML = '<div class="menu-item">No categories</div>';
+    subcategoryList.innerHTML = '<div class="menu-item">No subcategories</div>';
+    return;
+  }
+
+  categoryKeys.forEach((category) => {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = `menu-item${activeFilter === category ? ' active' : ''}`;
+    button.textContent = category;
+    button.addEventListener('click', () => {
+      activeFilter = category;
+      activeSubcategory = '';
+      syncFilterChips();
+      renderProducts();
+      renderSubcategoryMenu(category);
+    });
+    categoryList.appendChild(button);
+  });
+
+  const initialCategory = activeFilter !== 'all' ? activeFilter : categoryKeys[0];
+  renderSubcategoryMenu(initialCategory);
+}
+
+function renderSubcategoryMenu(category) {
+  if (!subcategoryList) return;
+  subcategoryList.innerHTML = '';
+
+  const subs = categoryMap[category] || [];
+  if (subs.length === 0) {
+    subcategoryList.innerHTML = '<div class="menu-item">No subcategories</div>';
+    return;
+  }
+
+  subs.forEach((sub) => {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = `menu-item${activeSubcategory === sub ? ' active' : ''}`;
+    button.textContent = sub;
+    button.addEventListener('click', () => {
+      activeFilter = category;
+      activeSubcategory = sub;
+      syncFilterChips();
+      renderProducts();
+    });
+    subcategoryList.appendChild(button);
+  });
+}
+
+function syncFilterChips() {
+  filters.forEach((chip) => {
+    chip.classList.toggle('active', chip.dataset.filter === activeFilter);
   });
 }
 
@@ -219,6 +307,7 @@ filters.forEach((filter) => {
     filters.forEach((chip) => chip.classList.remove('active'));
     filter.classList.add('active');
     activeFilter = filter.dataset.filter;
+    activeSubcategory = '';
     renderProducts();
   });
 });
@@ -250,6 +339,22 @@ closeBag.addEventListener('click', () => {
 checkoutButton.addEventListener('click', () => {
   window.location.href = '/checkout';
 });
+
+if (menuButton && productMenu) {
+  menuButton.addEventListener('click', () => {
+    const isOpen = productMenu.classList.toggle('open');
+    menuButton.setAttribute('aria-expanded', String(isOpen));
+    productMenu.setAttribute('aria-hidden', String(!isOpen));
+  });
+}
+
+if (menuClose && productMenu && menuButton) {
+  menuClose.addEventListener('click', () => {
+    productMenu.classList.remove('open');
+    productMenu.setAttribute('aria-hidden', 'true');
+    menuButton.setAttribute('aria-expanded', 'false');
+  });
+}
 
 function loadCart() {
   try {

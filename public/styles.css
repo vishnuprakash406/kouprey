@@ -206,6 +206,23 @@ button {
   align-items: center;
 }
 
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
 .logo img {
   height: 48px;
   width: auto;
@@ -224,6 +241,109 @@ button {
   display: flex;
   gap: 24px;
   font-weight: 500;
+}
+
+.menu-button {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  border: 1px solid rgba(30, 27, 24, 0.2);
+  background: #fff6ea;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  cursor: pointer;
+}
+
+.menu-icon,
+.menu-icon::before,
+.menu-icon::after {
+  display: block;
+  width: 18px;
+  height: 2px;
+  background: var(--ink);
+  border-radius: 999px;
+  content: '';
+}
+
+.menu-icon {
+  position: relative;
+}
+
+.menu-icon::before {
+  position: absolute;
+  transform: translateY(-6px);
+}
+
+.menu-icon::after {
+  position: absolute;
+  transform: translateY(6px);
+}
+
+.menu-panel {
+  position: fixed;
+  top: 90px;
+  left: 6vw;
+  right: 6vw;
+  max-width: 920px;
+  margin: 0 auto;
+  background: #fffaf2;
+  border-radius: 24px;
+  padding: 20px;
+  box-shadow: var(--shadow);
+  border: 1px solid rgba(30, 27, 24, 0.08);
+  display: none;
+  z-index: 40;
+}
+
+.menu-panel.open {
+  display: block;
+}
+
+.menu-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.menu-title {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: rgba(30, 27, 24, 0.6);
+  margin-bottom: 10px;
+}
+
+.menu-columns {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 18px;
+}
+
+.menu-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 320px;
+  overflow: auto;
+}
+
+.menu-item {
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(30, 27, 24, 0.12);
+  background: #fff;
+  cursor: pointer;
+  text-align: left;
+  font-weight: 600;
+}
+
+.menu-item.active {
+  background: var(--ink);
+  color: #fffaf2;
+  border-color: transparent;
 }
 
 .bag-button {
@@ -1660,6 +1780,12 @@ main {
   .section-header {
     flex-direction: column;
     align-items: flex-start;
+  }
+
+  .menu-panel {
+    left: 4vw;
+    right: 4vw;
+    top: 76px;
   }
 }
 
