@@ -1,10 +1,1 @@
-/product /product.html 301
-/staff-login /store.html 301
-/staff-login/dashboard /store-dashboard.html 301
-/master-login /master-login.html 301
-/master-login/admin /admin-dashboard.html 301
-/checkout /checkout.html 301
-/track /track.html 301
-/returns /returns.html 301
-/health-check /health.html 301
 /* /index.html 200
