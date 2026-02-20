@@ -869,5 +869,74 @@ export async function onRequest(context) {
     return jsonResponse({ files: results });
   }
 
+  // GET /api/settings - Public endpoint for all users to fetch settings
+  if (segments[0] === 'settings' && method === 'GET') {
+    try {
+      // Ensure settings table exists
+      await dbRun(
+        env,
+        `CREATE TABLE IF NOT EXISTS site_settings (
+          key TEXT PRIMARY KEY,
+          value TEXT NOT NULL,
+          updated_at TEXT NOT NULL
+        )`
+      );
+
+      // Fetch all settings
+      const rows = await dbAll(env, 'SELECT key, value FROM site_settings');
+      const settings = {};
+      rows.forEach(row => {
+        try {
+          settings[row.key] = JSON.parse(row.value);
+        } catch {
+          settings[row.key] = row.value;
+        }
+      });
+
+      return jsonResponse(settings);
+    } catch (error) {
+      return jsonResponse({ error: 'Failed to load settings' }, 500);
+    }
+  }
+
+  // PUT /api/settings - Master-only endpoint to update settings
+  if (segments[0] === 'settings' && method === 'PUT') {
+    const auth = await requireAuth(request, env, ['master']);
+    if (auth.response) return auth.response;
+
+    const payload = await readBody(request);
+    const now = new Date().toISOString();
+
+    try {
+      // Ensure settings table exists
+      await dbRun(
+        env,
+        `CREATE TABLE IF NOT EXISTS site_settings (
+          key TEXT PRIMARY KEY,
+          value TEXT NOT NULL,
+          updated_at TEXT NOT NULL
+        )`
+      );
+
+      // Save each setting
+      for (const [key, value] of Object.entries(payload)) {
+        const jsonValue = JSON.stringify(value);
+        await dbRun(
+          env,
+          `INSERT INTO site_settings (key, value, updated_at)
+           VALUES (?, ?, ?)
+           ON CONFLICT(key) DO UPDATE SET
+             value = excluded.value,
+             updated_at = excluded.updated_at`,
+          [key, jsonValue, now]
+        );
+      }
+
+      return jsonResponse({ success: true, updated_at: now });
+    } catch (error) {
+      return jsonResponse({ error: 'Failed to save settings' }, 500);
+    }
+  }
+
   return jsonResponse({ error: 'Not found' }, 404);
 }

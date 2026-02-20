@@ -162,6 +162,21 @@ function hideLoader() {
   }
 }
 
+// Save settings to API (server-side D1 database)
+async function saveSettingsToAPI(settings) {
+  try {
+    await apiFetch('/api/settings', {
+      method: 'PUT',
+      headers: { Authorization: `Bearer ${masterToken}` },
+      body: JSON.stringify(settings),
+    });
+    return true;
+  } catch (error) {
+    console.error('Failed to save settings:', error);
+    return false;
+  }
+}
+
 async function apiFetch(url, options = {}) {
   const headers = {
     'Content-Type': 'application/json',
@@ -497,7 +512,7 @@ saveSettings.addEventListener('click', () => {
   settingsStatus.textContent = 'Settings saved.';
 });
 
-savePayment.addEventListener('click', () => {
+savePayment.addEventListener('click', async () => {
   const saved = JSON.parse(localStorage.getItem(SETTINGS_KEY) || '{}');
   const settings = {
     ...saved,
@@ -510,8 +525,13 @@ savePayment.addEventListener('click', () => {
     payuKey: payuKey.value.trim(),
     payuSalt: payuSalt.value.trim(),
   };
-  localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
-  settingsStatus.textContent = 'Payment settings saved.';
+  const saved_api = await saveSettingsToAPI({ settings });
+  if (saved_api) {
+    localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+    settingsStatus.textContent = 'Payment settings saved for all users.';
+  } else {
+    settingsStatus.textContent = 'Failed to save payment settings.';
+  }
 });
 
 async function sha512(value) {
@@ -698,20 +718,30 @@ saveHome.addEventListener('click', () => {
       saleBanner: !showSaleBanner.checked,
     },
   };
-  localStorage.setItem(HOME_KEY, JSON.stringify(home));
-  homeStatus.textContent = 'Home content updated.';
+  const saved = await saveSettingsToAPI({ home });
+  if (saved) {
+    localStorage.setItem(HOME_KEY, JSON.stringify(home));
+    homeStatus.textContent = 'Home content saved for all users.';
+  } else {
+    homeStatus.textContent = 'Failed to save home content.';
+  }
 });
 
-saveColors.addEventListener('click', () => {
-  const payload = {
+saveColors.addEventListener('click', async () => {
+  const colors = {
     headerBgColor: headerBgColor.value,
     essentialsBgColor: essentialsBgColor.value,
     saleBgStart: saleBgStart.value,
     saleBgEnd: saleBgEnd.value,
     saleTextColor: saleTextColor.value,
   };
-  localStorage.setItem(COLOR_KEY, JSON.stringify(payload));
-  colorStatus.textContent = 'Color settings saved.';
+  const saved = await saveSettingsToAPI({ colors });
+  if (saved) {
+    localStorage.setItem(COLOR_KEY, JSON.stringify(colors));
+    colorStatus.textContent = 'Color settings saved for all users.';
+  } else {
+    colorStatus.textContent = 'Failed to save color settings.';
+  }
 });
 
 headerImageUpload.addEventListener('change', async (event) => {
@@ -737,25 +767,35 @@ headerImageUpload.addEventListener('change', async (event) => {
   }
 });
 
-saveHeaderImage.addEventListener('click', () => {
+saveHeaderImage.addEventListener('click', async () => {
   const saved = JSON.parse(localStorage.getItem(SETTINGS_KEY) || '{}');
   const settings = {
     ...saved,
     headerImageUrl: headerImageUrl.value.trim(),
   };
-  localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
-  headerImageStatus.textContent = 'Header image saved.';
+  const saved_api = await saveSettingsToAPI({ settings });
+  if (saved_api) {
+    localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+    headerImageStatus.textContent = 'Header image saved for all users.';
+  } else {
+    headerImageStatus.textContent = 'Failed to save header image.';
+  }
 });
 
-removeHeaderImage.addEventListener('click', () => {
+removeHeaderImage.addEventListener('click', async () => {
   headerImageUrl.value = '';
   const saved = JSON.parse(localStorage.getItem(SETTINGS_KEY) || '{}');
   const settings = {
     ...saved,
     headerImageUrl: '',
   };
-  localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
-  headerImageStatus.textContent = 'Header image removed.';
+  const saved_api = await saveSettingsToAPI({ settings });
+  if (saved_api) {
+    localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+    headerImageStatus.textContent = 'Header image removed for all users.';
+  } else {
+    headerImageStatus.textContent = 'Failed to remove header image.';
+  }
 });
 
 heroImageUpload.addEventListener('change', async (event) => {
@@ -781,25 +821,35 @@ heroImageUpload.addEventListener('change', async (event) => {
   }
 });
 
-saveHeroImage.addEventListener('click', () => {
+saveHeroImage.addEventListener('click', async () => {
   const saved = JSON.parse(localStorage.getItem(SETTINGS_KEY) || '{}');
   const settings = {
     ...saved,
     heroImageUrl: heroImageUrl.value.trim(),
   };
-  localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
-  heroImageStatus.textContent = 'Hero image saved.';
+  const saved_api = await saveSettingsToAPI({ settings });
+  if (saved_api) {
+    localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+    heroImageStatus.textContent = 'Hero image saved for all users.';
+  } else {
+    heroImageStatus.textContent = 'Failed to save hero image.';
+  }
 });
 
-removeHeroImage.addEventListener('click', () => {
+removeHeroImage.addEventListener('click', async () => {
   heroImageUrl.value = '';
   const saved = JSON.parse(localStorage.getItem(SETTINGS_KEY) || '{}');
   const settings = {
     ...saved,
     heroImageUrl: '',
   };
-  localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
-  heroImageStatus.textContent = 'Hero image removed.';
+  const saved_api = await saveSettingsToAPI({ settings });
+  if (saved_api) {
+    localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+    heroImageStatus.textContent = 'Hero image removed for all users.';
+  } else {
+    heroImageStatus.textContent = 'Failed to remove hero image.';
+  }
 });
 
 logoUpload.addEventListener('change', async (event) => {

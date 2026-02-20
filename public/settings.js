@@ -187,14 +187,54 @@
     }
   }
 
-  try {
-    const saved = JSON.parse(localStorage.getItem(SETTINGS_KEY));
-    applySettings(saved);
-    const home = JSON.parse(localStorage.getItem(HOME_KEY));
-    applyHomeSettings(home);
-    const colors = JSON.parse(localStorage.getItem(COLOR_KEY));
-    applyColorSettings(colors);
-  } catch {
-    // ignore
+  // Load settings from API (server-side) with localStorage fallback
+  async function loadSettings() {
+    try {
+      // Fetch settings from API
+      const response = await fetch('/api/settings');
+      if (response.ok) {
+        const serverSettings = await response.json();
+        
+        // Apply settings from server
+        if (serverSettings.settings) {
+          applySettings(serverSettings.settings);
+          localStorage.setItem(SETTINGS_KEY, JSON.stringify(serverSettings.settings));
+        }
+        if (serverSettings.theme) {
+          const colors = serverSettings.theme.colors || [];
+          if (colors.length >= 3) {
+            document.documentElement.style.setProperty('--bg-a', colors[0]);
+            document.documentElement.style.setProperty('--bg-b', colors[1]);
+            document.documentElement.style.setProperty('--bg-c', colors[2]);
+          }
+          localStorage.setItem(THEME_KEY, JSON.stringify(serverSettings.theme));
+        }
+        if (serverSettings.home) {
+          applyHomeSettings(serverSettings.home);
+          localStorage.setItem(HOME_KEY, JSON.stringify(serverSettings.home));
+        }
+        if (serverSettings.colors) {
+          applyColorSettings(serverSettings.colors);
+          localStorage.setItem(COLOR_KEY, JSON.stringify(serverSettings.colors));
+        }
+      } else {
+        // Fallback to localStorage if API fails
+        throw new Error('API unavailable');
+      }
+    } catch {
+      // Fallback to localStorage
+      try {
+        const saved = JSON.parse(localStorage.getItem(SETTINGS_KEY));
+        applySettings(saved);
+        const home = JSON.parse(localStorage.getItem(HOME_KEY));
+        applyHomeSettings(home);
+        const colors = JSON.parse(localStorage.getItem(COLOR_KEY));
+        applyColorSettings(colors);
+      } catch {
+        // ignore
+      }
+    }
   }
+  
+  loadSettings();
 })();
