@@ -123,26 +123,32 @@ function renderProducts() {
     const card = document.createElement('div');
     card.className = 'product-card';
     card.innerHTML = `
-      <a class="product-link" href="/product?id=${product.id}">
-        <img src="${product.image}" alt="${product.name}" />
-      </a>
-      <h4>${product.name}</h4>
-      <small class="product-code">${product.id}</small>
-      <div class="product-meta">
-        <span class="badge">${availabilityLabel(product.availability)}</span>
-        <span>${product.sizes.join(', ')}</span>
+      <div class="product-image-wrapper">
+        <a class="product-link" href="/product?id=${product.id}">
+          <img src="${product.image}" alt="${product.name}" />
+        </a>
+        <div class="product-overlay">
+          <div class="overlay-content">
+            <h4>${product.name}</h4>
+            <small class="product-code">${product.id}</small>
+            <div class="product-meta">
+              <span class="badge">${availabilityLabel(product.availability)}</span>
+              <span>${product.sizes.join(', ')}</span>
+            </div>
+            <div class="price">
+              <strong>${formatPrice(effectivePrice(product))}</strong>
+              ${discountPercent(product) > 0 ? `<del>${formatPrice(product.price)}</del>` : ''}
+              ${discountPercent(product) > 0 ? `<span class="discount-tag">${discountPercent(product)}% off</span>` : ''}
+            </div>
+          </div>
+          <button class="quick-add${isWishlisted ? ' wishlisted' : ''}" data-action="quick-add" data-id="${product.id}" title="${isWishlisted ? 'Remove from wishlist' : 'Add to wishlist'}">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <line x1="10" y1="5" x2="10" y2="15"/>
+              <line x1="5" y1="10" x2="15" y2="10"/>
+            </svg>
+          </button>
+        </div>
       </div>
-      <div class="price">
-        <strong>${formatPrice(effectivePrice(product))}</strong>
-        ${discountPercent(product) > 0 ? `<del>${formatPrice(product.price)}</del>` : ''}
-        ${discountPercent(product) > 0 ? `<span class="discount-tag">${discountPercent(product)}% off</span>` : ''}
-      </div>
-      <button class="quick-add${isWishlisted ? ' wishlisted' : ''}" data-action="quick-add" data-id="${product.id}" title="${isWishlisted ? 'Remove from wishlist' : 'Add to wishlist'}">
-        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-          <line x1="10" y1="5" x2="10" y2="15"/>
-          <line x1="5" y1="10" x2="15" y2="10"/>
-        </svg>
-      </button>
     `;
     productGrid.appendChild(card);
   });
