@@ -128,6 +128,7 @@ async function init(env = null) {
       image TEXT,
       images TEXT,
       videos TEXT,
+      instagram_video TEXT,
       color TEXT,
       rating REAL,
       review_count INTEGER DEFAULT 0,

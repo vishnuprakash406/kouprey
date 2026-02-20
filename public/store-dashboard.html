@@ -17,7 +17,9 @@
 
     <header class="dashboard-header">
       <div class="dashboard-brand">
-        <span class="logo-text">Store Studio</span>
+          <a class="logo-link" href="/">
+            <span class="logo-text">Store Studio</span>
+          </a>
         <small>Inventory Control</small>
       </div>
       <nav class="nav">
@@ -125,6 +127,11 @@
               <input id="videos" name="videos" placeholder="https://..., https://..." />
             </div>
             <div class="full">
+              <label for="instagramVideo">Instagram Video URL</label>
+              <input id="instagramVideo" name="instagram_video" placeholder="https://www.instagram.com/reel/..." />
+              <small class="hint">Paste Instagram reel/video URL for home page carousel.</small>
+            </div>
+            <div class="full">
               <label for="mediaUpload">Upload photos/videos</label>
               <input id="mediaUpload" type="file" name="files" accept="image/*,video/*" multiple />
               <small class="hint">Files are stored locally in public/uploads (requires multer).</small>
@@ -194,6 +201,20 @@
           <p>Recent customer orders and fulfillment status.</p>
         </div>
         <div class="panel">
+          <div class="orders-toolbar">
+            <div class="search">
+              <input id="ordersSearch" placeholder="Search by order ID or customer" />
+            </div>
+            <select id="ordersFilter">
+              <option value="all">All statuses</option>
+              <option value="pending">Pending</option>
+              <option value="paid">Paid</option>
+              <option value="packed">Packed</option>
+              <option value="shipped">Shipped</option>
+              <option value="delivered">Delivered</option>
+              <option value="canceled">Canceled</option>
+            </select>
+          </div>
           <div class="orders-table">
             <div class="orders-head">
               <span>Order</span>

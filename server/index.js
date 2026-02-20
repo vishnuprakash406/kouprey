@@ -116,6 +116,7 @@ app.get('/api/products', async (req, res) => {
       sizes: row.sizes.split(',').map((s) => s.trim()),
       images: row.images ? JSON.parse(row.images) : row.image ? [row.image] : [],
       videos: row.videos ? JSON.parse(row.videos) : [],
+      instagram_video: row.instagram_video || '',
       color: row.color || '',
       rating: row.rating || 0,
       review_count: row.review_count || 0,
@@ -136,6 +137,7 @@ app.get('/api/products/:id', async (req, res) => {
       sizes: product.sizes.split(',').map((s) => s.trim()),
       images: product.images ? JSON.parse(product.images) : product.image ? [product.image] : [],
       videos: product.videos ? JSON.parse(product.videos) : [],
+      instagram_video: product.instagram_video || '',
       color: product.color || '',
       rating: product.rating || 0,
       review_count: product.review_count || 0,
@@ -159,6 +161,7 @@ app.post('/api/products', authRole('store'), async (req, res) => {
     image,
     images = [],
     videos = [],
+    instagram_video,
     color,
     subcategory,
     rating,
@@ -182,8 +185,8 @@ app.post('/api/products', authRole('store'), async (req, res) => {
 
   try {
     await run(
-      `INSERT INTO products (id, name, category, subcategory, price, discount, sizes, stock, availability, image, images, videos, color, rating, review_count, description, updated_at)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+      `INSERT INTO products (id, name, category, subcategory, price, discount, sizes, stock, availability, image, images, videos, instagram_video, color, rating, review_count, description, updated_at)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
     , [
       productId,
       name,
@@ -197,6 +200,7 @@ app.post('/api/products', authRole('store'), async (req, res) => {
       image || (Array.isArray(images) && images[0]) || '',
       Array.isArray(images) ? JSON.stringify(images) : JSON.stringify(String(images).split(',')),
       Array.isArray(videos) ? JSON.stringify(videos) : JSON.stringify(String(videos).split(',')),
+      instagram_video || '',
       color || '',
       Number(rating) || 0,
       Number(review_count) || 0,
@@ -238,7 +242,7 @@ app.put('/api/products/:id', authRole('store'), async (req, res) => {
   try {
     await run(
       `UPDATE products
-       SET name = ?, category = ?, subcategory = ?, price = ?, discount = ?, sizes = ?, stock = ?, availability = ?, image = ?, images = ?, videos = ?, color = ?, rating = ?, review_count = ?, description = ?, updated_at = ?
+       SET name = ?, category = ?, subcategory = ?, price = ?, discount = ?, sizes = ?, stock = ?, availability = ?, image = ?, images = ?, videos = ?, instagram_video = ?, color = ?, rating = ?, review_count = ?, description = ?, updated_at = ?
        WHERE id = ?`
     , [
       updated.name,
@@ -256,6 +260,7 @@ app.put('/api/products/:id', authRole('store'), async (req, res) => {
       Array.isArray(updated.videos)
         ? JSON.stringify(updated.videos)
         : JSON.stringify(String(updated.videos || '').split(',').filter(Boolean)),
+      updated.instagram_video || '',
       updated.color || '',
       Number(updated.rating) || 0,
       Number(updated.review_count) || 0,

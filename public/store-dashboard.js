@@ -308,6 +308,7 @@ function populateForm(product) {
   studioForm.image.value = product.image;
   studioForm.images.value = (product.images || []).join(',');
   studioForm.videos.value = (product.videos || []).join(',');
+  studioForm.instagram_video.value = product.instagram_video || '';
   studioForm.description.value = product.description;
 }
 
@@ -378,6 +379,7 @@ studioForm.addEventListener('submit', async (event) => {
     image: data.image,
     images: data.images ? data.images.split(',').map((item) => item.trim()).filter(Boolean) : [],
     videos: data.videos ? data.videos.split(',').map((item) => item.trim()).filter(Boolean) : [],
+    instagram_video: data.instagram_video || '',
     description: data.description,
   };
 

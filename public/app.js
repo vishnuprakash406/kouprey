@@ -96,6 +96,7 @@ async function loadProducts() {
     buildCategoryMap();
     renderCategoryMenu();
     renderProducts();
+    renderInstagramVideos();
   } catch (error) {
     productGrid.innerHTML = '<p>Unable to load products. Start the server.</p>';
   } finally {
@@ -431,8 +432,14 @@ viewToggles.forEach((toggle) => {
     viewToggles.forEach(t => t.classList.remove('active'));
     toggle.classList.add('active');
     currentView = toggle.dataset.view;
-    productGrid.classList.remove('grid-view', 'list-view');
-    productGrid.classList.add(currentView === 'list' ? 'list-view' : 'grid-view');
+    productGrid.classList.remove('grid-view', 'small-grid', 'large-grid');
+    if (currentView === 'small') {
+      productGrid.classList.add('small-grid');
+    } else if (currentView === 'large') {
+      productGrid.classList.add('large-grid');
+    } else {
+      productGrid.classList.add('grid-view');
+    }
   });
 });
 
@@ -535,3 +542,51 @@ function loadCart() {
 loadCart();
 loadProducts();
 renderBag();
+
+// Instagram Video Carousel
+const instagramTrack = document.getElementById('instagramTrack');
+
+function renderInstagramVideos() {
+  if (!instagramTrack) return;
+  
+  // Collect all Instagram video URLs from products
+  const instagramVideos = [];
+  products.forEach((product) => {
+    if (product.instagram_video) {
+      instagramVideos.push({
+        url: product.instagram_video,
+        productId: product.id,
+        productName: product.name
+      });
+    }
+  });
+  
+  if (instagramVideos.length === 0) {
+    document.getElementById('instagramCarousel')?.classList.add('hidden');
+    return;
+  }
+  
+  document.getElementById('instagramCarousel')?.classList.remove('hidden');
+  
+  // Duplicate array for seamless loop
+  const allVideos = [...instagramVideos, ...instagramVideos];
+  
+  instagramTrack.innerHTML = allVideos.map((video) => `
+    <div class="instagram-video-item">
+      <iframe 
+        src="${video.url.replace('instagram.com', 'instagram.com').replace('/reel/', '/reel/').replace('/?', '/embed/?')}" 
+        frameborder="0" 
+        scrolling="no" 
+        allowtransparency="true"
+        allowfullscreen="true"
+      ></iframe>
+      <a href="/product?id=${video.productId}" class="instagram-video-link">${video.productName}</a>
+    </div>
+  `).join('');
+}
+
+// Call after products load
+const originalLoadProducts = loadProducts;
+async function loadProductsWithInstagram() {
+  await originalLoadProducts.call ? originalLoadProducts() : null;
+}

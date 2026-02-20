@@ -100,14 +100,21 @@
             </select>
           </div>
           <div class="view-controls">
+            <button class="view-toggle" data-view="small" title="Small grid">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                <rect x="2" y="2" width="5" height="5"/><rect x="9.5" y="2" width="5" height="5"/><rect x="17" y="2" width="5" height="5"/>
+                <rect x="2" y="9.5" width="5" height="5"/><rect x="9.5" y="9.5" width="5" height="5"/><rect x="17" y="9.5" width="5" height="5"/>
+                <rect x="2" y="17" width="5" height="5"/><rect x="9.5" y="17" width="5" height="5"/><rect x="17" y="17" width="5" height="5"/>
+              </svg>
+            </button>
             <button class="view-toggle active" data-view="grid" title="Grid view">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
                 <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/>
               </svg>
             </button>
-            <button class="view-toggle" data-view="list" title="List view">
+            <button class="view-toggle" data-view="large" title="Large grid">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                <line x1="8" y1="6" x2="21" y2="6" stroke="currentColor" stroke-width="2"/><line x1="8" y1="12" x2="21" y2="12" stroke="currentColor" stroke-width="2"/><line x1="8" y1="18" x2="21" y2="18" stroke="currentColor" stroke-width="2"/><circle cx="3.5" cy="6" r="1.5" fill="currentColor"/><circle cx="3.5" cy="12" r="1.5" fill="currentColor"/><circle cx="3.5" cy="18" r="1.5" fill="currentColor"/>
+                <rect x="2" y="2" width="20" height="9"/><rect x="2" y="13" width="20" height="9"/>
               </svg>
             </button>
           </div>
@@ -176,6 +183,11 @@
         <button class="primary" id="checkoutButton">Checkout</button>
       </div>
     </aside>
+
+    <!-- Instagram Videos Carousel -->
+    <section class="instagram-carousel" id="instagramCarousel">
+      <div class="instagram-track" id="instagramTrack"></div>
+    </section>
 
     <!-- WhatsApp Floating Button -->
     <a href="https://wa.me/918438217212?text=Hi%20Kouprey%2C%20I%20have%20a%20question" 

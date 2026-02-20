@@ -191,26 +191,9 @@ function renderProduct(product) {
     <div class="media-strip">
       <h3>Product videos</h3>
       <div class="video-grid">
-        ${videos.map((video) => `<video controls src="${video}"></video>`).join('')}
+        ${videos.map((video) => `<video controls playsinline preload="metadata" src="${video}"></video>`).join('')}
       </div>
     </div>` : ''}
-    <div class="reviews">
-      <h3>Customer reviews</h3>
-      <div class="review-list">
-        <div class="review">
-          <strong>Refined and breathable</strong>
-          <p>"The cut is perfect and the fabric feels luxurious."</p>
-        </div>
-        <div class="review">
-          <strong>Great for layering</strong>
-          <p>"Looks polished with very little styling effort."</p>
-        </div>
-        <div class="review">
-          <strong>Everyday favorite</strong>
-          <p>"Comfortable enough for daily wear but still elevated."</p>
-        </div>
-      </div>
-    </div>
   `;
 
   const addToBagButton = document.getElementById('addToBag');
