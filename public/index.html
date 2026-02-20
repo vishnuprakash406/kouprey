@@ -18,7 +18,9 @@
     <header class="site-header">
       <div class="header-left">
         <div class="logo">
-          <img class="logo-img" src="/assets/logo.png" alt="Kouprey logo" />
+          <a class="logo-link" href="/">
+            <img class="logo-img" src="/assets/logo.png" alt="Kouprey logo" />
+          </a>
         </div>
         <p class="header-tagline">Kouprey — Elegance in Every Thread.</p>
       </div>
@@ -78,10 +80,36 @@
     </aside>
 
     <main>
+      <!-- Hero Banner Section -->
+      <section class="hero-banner-section" id="heroSection">
+        <div class="hero-banner" id="heroBanner" style="background-image: url('https://images.unsplash.com/photo-1491553895911-0055eca6402d?w=1200&q=80');">
+          <div class="hero-overlay"></div>
+          <div class="hero-content">
+            <h1 id="heroBannerTitle">New Collections</h1>
+            <p id="heroBannerSubtitle">Discover Elegance in Every Thread</p>
+            <button class="btn-hero" data-scroll="#new">Explore Now</button>
+          </div>
+        </div>
+      </section>
+
       <section class="section" id="new" data-section="new">
         <div class="section-header">
-          <h2>New in</h2>
-          <p id="newSubtitle">Fresh arrivals curated for the Kouprey season.</p>
+          <div>
+            <h2>New in</h2>
+            <p id="newSubtitle">Fresh arrivals curated for the Kouprey season.</p>
+          </div>
+          <div class="view-controls">
+            <button class="view-toggle active" data-view="grid" title="Grid view">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/>
+              </svg>
+            </button>
+            <button class="view-toggle" data-view="list" title="List view">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                <line x1="8" y1="6" x2="21" y2="6" stroke="currentColor" stroke-width="2"/><line x1="8" y1="12" x2="21" y2="12" stroke="currentColor" stroke-width="2"/><line x1="8" y1="18" x2="21" y2="18" stroke="currentColor" stroke-width="2"/><circle cx="3.5" cy="6" r="1.5" fill="currentColor"/><circle cx="3.5" cy="12" r="1.5" fill="currentColor"/><circle cx="3.5" cy="18" r="1.5" fill="currentColor"/>
+              </svg>
+            </button>
+          </div>
         </div>
         <div class="filters">
           <button class="chip active" data-filter="all">All</button>
@@ -92,7 +120,7 @@
         <div class="inventory-toolbar">
           <input id="productSearch" placeholder="Search by name, category, subcategory, or product code" />
         </div>
-        <div class="product-grid" id="productGrid"></div>
+        <div class="product-grid grid-view" id="productGrid"></div>
       </section>
 
       <section class="section alt" id="essentials" data-section="essentials">

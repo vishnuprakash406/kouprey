@@ -607,6 +607,89 @@ main {
 
 .section {
   margin-top: 60px;
+  padding: 0 6vw;
+}
+
+.hero-banner-section {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  position: relative;
+}
+
+.hero-banner {
+  height: 500px;
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  border-radius: 24px;
+  overflow: hidden;
+  margin: 30px 6vw 0;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.15);
+}
+
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  color: #fff;
+  max-width: 600px;
+  animation: fadeInUp 0.8s ease;
+}
+
+.hero-content h1 {
+  font-size: 48px;
+  font-weight: 700;
+  margin-bottom: 12px;
+  font-family: "Georgia", "Times New Roman", serif;
+  letter-spacing: -0.5px;
+}
+
+.hero-content p {
+  font-size: 18px;
+  margin-bottom: 24px;
+  opacity: 0.95;
+  line-height: 1.5;
+}
+
+.btn-hero {
+  padding: 16px 48px;
+  background: #fff;
+  color: var(--ink);
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+}
+
+.btn-hero:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.3);
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .section.alt {
@@ -620,6 +703,40 @@ main {
   align-items: flex-end;
   justify-content: space-between;
   gap: 16px;
+  margin-bottom: 24px;
+}
+
+.view-controls {
+  display: flex;
+  gap: 8px;
+  background: rgba(30, 27, 24, 0.08);
+  padding: 6px;
+  border-radius: 8px;
+}
+
+.view-toggle {
+  width: 40px;
+  height: 40px;
+  border: none;
+  background: transparent;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(30, 27, 24, 0.5);
+  transition: all 0.2s ease;
+}
+
+.view-toggle:hover {
+  background: rgba(30, 27, 24, 0.1);
+  color: var(--ink);
+}
+
+.view-toggle.active {
+  background: #fff;
+  color: var(--ink);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .section-header h2 {
@@ -671,6 +788,59 @@ main {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
   gap: 24px;
+  transition: all 0.3s ease;
+}
+
+.product-grid.list-view {
+  grid-template-columns: 1fr;
+}
+
+.product-grid.list-view .product-card {
+  display: grid;
+  grid-template-columns: 180px 1fr 150px;
+  gap: 24px;
+  padding: 20px;
+  border-radius: 12px;
+}
+
+.product-grid.list-view .product-card a {
+  order: 1;
+}
+
+.product-grid.list-view .product-card img {
+  min-height: 200px;
+  border-radius: 12px;
+}
+
+.product-grid.list-view .product-card h4 {
+  order: 2;
+  grid-column: 2 / 3;
+  margin: 0;
+  padding: 0;
+}
+
+.product-grid.list-view .product-code {
+  order: 3;
+  grid-column: 2 / 3;
+}
+
+.product-grid.list-view .product-meta {
+  order: 4;
+  grid-column: 2 / 3;
+}
+
+.product-grid.list-view .price {
+  order: 5;
+  grid-column: 2 / 3;
+}
+
+.product-grid.list-view .quick-add {
+  order: 6;
+  grid-column: 3 / 4;
+  grid-row: 1 / 5;
+  align-self: center;
+  width: 50px;
+  height: 50px;
 }
 
 .product-card {
@@ -2402,13 +2572,51 @@ main {
     padding: 0 5vw 12vw;
   }
 
+  .section {
+    padding: 0;
+  }
+
+  .hero-banner {
+    height: 300px;
+    margin: 20px 5vw 0;
+    border-radius: 16px;
+  }
+
+  .hero-content h1 {
+    font-size: 28px;
+  }
+
+  .hero-content p {
+    font-size: 14px;
+  }
+
+  .section-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .view-controls {
+    align-self: flex-start;
+  }
+
   .filters {
     gap: 8px;
+    padding: 0 5vw;
+  }
+
+  .inventory-toolbar {
+    padding: 0 5vw;
   }
 
   .product-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 14px;
+    padding: 0 5vw;
+  }
+
+  .product-grid.list-view {
+    grid-template-columns: 1fr;
   }
 
   .product-card {

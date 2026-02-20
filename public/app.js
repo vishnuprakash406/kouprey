@@ -16,6 +16,7 @@ const menuClose = document.getElementById('menuClose');
 const productMenu = document.getElementById('productMenu');
 const categoryList = document.getElementById('categoryList');
 const subcategoryList = document.getElementById('subcategoryList');
+const viewToggles = document.querySelectorAll('.view-toggle');
 
 const filters = document.querySelectorAll('[data-filter]');
 const scrollButtons = document.querySelectorAll('[data-scroll]');
@@ -30,6 +31,7 @@ let products = [];
 let activeSubcategory = '';
 let categoryMap = {};
 let activeMenuCategory = '';
+let currentView = 'grid';
 
 function formatPrice(value) {
   return `₹${Number(value).toFixed(2)}`;
@@ -385,6 +387,16 @@ filters.forEach((filter) => {
 productSearch.addEventListener('input', (event) => {
   searchQuery = event.target.value;
   renderProducts();
+});
+
+viewToggles.forEach((toggle) => {
+  toggle.addEventListener('click', () => {
+    viewToggles.forEach(t => t.classList.remove('active'));
+    toggle.classList.add('active');
+    currentView = toggle.dataset.view;
+    productGrid.classList.remove('grid-view', 'list-view');
+    productGrid.classList.add(currentView === 'list' ? 'list-view' : 'grid-view');
+  });
 });
 
 scrollButtons.forEach((button) => {
