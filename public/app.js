@@ -8,7 +8,9 @@ const bagCount = document.getElementById('bagCount');
 const bagTotal = document.getElementById('bagTotal');
 const bagEmpty = document.getElementById('bagEmpty');
 const checkoutButton = document.getElementById('checkoutButton');
-const mobileNav = document.getElementById('mobileNav');
+const headerMenuButton = document.getElementById('headerMenuButton');
+const headerMenuPanel = document.getElementById('headerMenuPanel');
+const headerCartButton = document.getElementById('headerCartButton');
 const menuButton = document.getElementById('menuButton');
 const menuClose = document.getElementById('menuClose');
 const productMenu = document.getElementById('productMenu');
@@ -21,6 +23,7 @@ const productSearch = document.getElementById('productSearch');
 
 const bagState = [];
 const CART_KEY = 'kouprey_cart';
+const WISHLIST_KEY = 'kouprey_wishlist';
 let activeFilter = 'all';
 let searchQuery = '';
 let products = [];
@@ -97,6 +100,7 @@ async function loadProducts() {
 }
 
 function renderProducts() {
+  const wishlist = loadWishlist();
   const filtered = products.filter((product) => {
     const matchesCategory = activeFilter === 'all' || product.category === activeFilter;
     const matchesSubcategory = !activeSubcategory || product.subcategory === activeSubcategory;
@@ -113,6 +117,7 @@ function renderProducts() {
   productGrid.innerHTML = '';
 
   filtered.forEach((product) => {
+    const isWishlisted = wishlist.has(product.id);
     const card = document.createElement('div');
     card.className = 'product-card';
     card.innerHTML = `
@@ -130,9 +135,28 @@ function renderProducts() {
         ${discountPercent(product) > 0 ? `<del>${formatPrice(product.price)}</del>` : ''}
         ${discountPercent(product) > 0 ? `<span class="discount-tag">${discountPercent(product)}% off</span>` : ''}
       </div>
+      <div class="card-actions">
+        <button class="ghost wishlist-button${isWishlisted ? ' active' : ''}" data-action="wishlist" data-id="${product.id}">
+          ${isWishlisted ? 'Wishlisted' : 'Wishlist'}
+        </button>
+        <button class="primary" data-action="add-to-cart" data-id="${product.id}">Add to cart</button>
+      </div>
     `;
     productGrid.appendChild(card);
   });
+}
+
+function loadWishlist() {
+  try {
+    const stored = JSON.parse(localStorage.getItem(WISHLIST_KEY)) || [];
+    return new Set(stored);
+  } catch {
+    return new Set();
+  }
+}
+
+function saveWishlist(set) {
+  localStorage.setItem(WISHLIST_KEY, JSON.stringify(Array.from(set)));
 }
 
 function buildCategoryMap() {
@@ -302,7 +326,29 @@ function renderBag() {
 
 productGrid.addEventListener('click', (event) => {
   const button = event.target.closest('button');
-  if (button) return;
+  if (!button) return;
+  const action = button.dataset.action;
+  const id = button.dataset.id;
+  if (!action || !id) return;
+
+  if (action === 'add-to-cart') {
+    addToBag(id);
+    return;
+  }
+
+  if (action === 'wishlist') {
+    const wishlist = loadWishlist();
+    if (wishlist.has(id)) {
+      wishlist.delete(id);
+      button.classList.remove('active');
+      button.textContent = 'Wishlist';
+    } else {
+      wishlist.add(id);
+      button.classList.add('active');
+      button.textContent = 'Wishlisted';
+    }
+    saveWishlist(wishlist);
+  }
 });
 
 bagItems.addEventListener('click', (event) => {
@@ -368,11 +414,18 @@ checkoutButton.addEventListener('click', () => {
   window.location.href = '/checkout';
 });
 
-if (mobileNav) {
-  mobileNav.addEventListener('change', (event) => {
-    const value = event.target.value;
-    if (!value) return;
-    window.location.href = value;
+if (headerMenuButton && headerMenuPanel) {
+  headerMenuButton.addEventListener('click', () => {
+    const isOpen = headerMenuPanel.classList.toggle('open');
+    headerMenuButton.setAttribute('aria-expanded', String(isOpen));
+    headerMenuPanel.setAttribute('aria-hidden', String(!isOpen));
+  });
+}
+
+if (headerCartButton) {
+  headerCartButton.addEventListener('click', () => {
+    bag.classList.add('open');
+    bagButton.setAttribute('aria-expanded', 'true');
   });
 }
 
@@ -411,6 +464,16 @@ document.addEventListener('click', (event) => {
     if (!clickInsideBag && bag.classList.contains('open')) {
       bag.classList.remove('open');
       bagButton.setAttribute('aria-expanded', 'false');
+    }
+  }
+
+  if (headerMenuPanel && headerMenuButton) {
+    const clickInsideHeaderMenu =
+      headerMenuPanel.contains(event.target) || headerMenuButton.contains(event.target);
+    if (!clickInsideHeaderMenu && headerMenuPanel.classList.contains('open')) {
+      headerMenuPanel.classList.remove('open');
+      headerMenuPanel.setAttribute('aria-hidden', 'true');
+      headerMenuButton.setAttribute('aria-expanded', 'false');
     }
   }
 });

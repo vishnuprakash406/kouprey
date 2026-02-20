@@ -12,6 +12,7 @@ const checkoutButton = document.getElementById('checkoutButton');
 
 const bagState = [];
 const CART_KEY = 'kouprey_cart';
+const WISHLIST_KEY = 'kouprey_wishlist';
 
 function formatPrice(value) {
   return `₹${Number(value).toFixed(2)}`;
@@ -167,9 +168,13 @@ function renderProduct(product) {
           ${discountPercent(product) > 0 ? `<del>${formatPrice(product.price)}</del>` : ''}
           ${discountPercent(product) > 0 ? `<span class="discount-tag">${discountPercent(product)}% off</span>` : ''}
         </div>
-        <button class="primary" id="addToBag" ${
-          product.availability === 'out_of_stock' ? 'disabled' : ''
-        }>Add to bag</button>
+        <div class="detail-actions">
+          <button class="primary" id="addToBag" ${
+            product.availability === 'out_of_stock' ? 'disabled' : ''
+          }>Add to cart</button>
+          <button class="ghost" id="goToCart" type="button">Go to cart</button>
+          <button class="ghost" id="toggleWishlist" type="button">Wishlist</button>
+        </div>
       </div>
     </div>
     ${videos.length ? `
@@ -199,6 +204,13 @@ function renderProduct(product) {
   `;
 
   const addToBagButton = document.getElementById('addToBag');
+  const goToCartButton = document.getElementById('goToCart');
+  const toggleWishlistButton = document.getElementById('toggleWishlist');
+  const wishlist = loadWishlist();
+  if (toggleWishlistButton) {
+    toggleWishlistButton.textContent = wishlist.has(product.id) ? 'Wishlisted' : 'Wishlist';
+    toggleWishlistButton.classList.toggle('active', wishlist.has(product.id));
+  }
   addToBagButton?.addEventListener('click', () => {
     const size = document.getElementById('detailSize')?.value || product.sizes[0];
     const qty = Math.max(1, Number(document.getElementById('detailQty')?.value || 1));
@@ -220,6 +232,23 @@ function renderProduct(product) {
     renderBag();
   });
 
+  goToCartButton?.addEventListener('click', () => {
+    bag.classList.add('open');
+    bagButton.setAttribute('aria-expanded', 'true');
+  });
+
+  toggleWishlistButton?.addEventListener('click', () => {
+    const updated = loadWishlist();
+    if (updated.has(product.id)) {
+      updated.delete(product.id);
+    } else {
+      updated.add(product.id);
+    }
+    saveWishlist(updated);
+    toggleWishlistButton.textContent = updated.has(product.id) ? 'Wishlisted' : 'Wishlist';
+    toggleWishlistButton.classList.toggle('active', updated.has(product.id));
+  });
+
   const thumbs = document.getElementById('galleryThumbs');
   const mainImage = document.getElementById('galleryMain');
   thumbs?.addEventListener('click', (event) => {
@@ -232,9 +261,11 @@ function renderProduct(product) {
 }
 
 function renderSuggestions(items) {
+  const wishlist = loadWishlist();
   suggestionGrid.innerHTML = '';
 
   items.forEach((product) => {
+    const isWishlisted = wishlist.has(product.id);
     const card = document.createElement('div');
     card.className = 'product-card';
     card.innerHTML = `
@@ -252,11 +283,27 @@ function renderSuggestions(items) {
       </div>
       <div class="card-actions">
         <a class="ghost" href="/product?id=${product.id}">View</a>
-        <button class="primary" data-id="${product.id}">Add to bag</button>
+        <button class="ghost wishlist-button${isWishlisted ? ' active' : ''}" data-action="wishlist" data-id="${product.id}">
+          ${isWishlisted ? 'Wishlisted' : 'Wishlist'}
+        </button>
+        <button class="primary" data-action="add-to-cart" data-id="${product.id}">Add to cart</button>
       </div>
     `;
     suggestionGrid.appendChild(card);
   });
+}
+
+function loadWishlist() {
+  try {
+    const stored = JSON.parse(localStorage.getItem(WISHLIST_KEY)) || [];
+    return new Set(stored);
+  } catch {
+    return new Set();
+  }
+}
+
+function saveWishlist(set) {
+  localStorage.setItem(WISHLIST_KEY, JSON.stringify(Array.from(set)));
 }
 
 function similarItems(allProducts, product) {
@@ -315,9 +362,29 @@ async function init() {
     suggestionGrid.addEventListener('click', (event) => {
       const button = event.target.closest('button');
       if (!button) return;
+      const action = button.dataset.action;
       const productId = button.dataset.id;
-      const selected = suggestions.find((item) => item.id === productId);
-      if (selected) addToBag(selected);
+      if (!action || !productId) return;
+
+      if (action === 'add-to-cart') {
+        const selected = suggestions.find((item) => item.id === productId);
+        if (selected) addToBag(selected);
+        return;
+      }
+
+      if (action === 'wishlist') {
+        const wishlist = loadWishlist();
+        if (wishlist.has(productId)) {
+          wishlist.delete(productId);
+          button.classList.remove('active');
+          button.textContent = 'Wishlist';
+        } else {
+          wishlist.add(productId);
+          button.classList.add('active');
+          button.textContent = 'Wishlisted';
+        }
+        saveWishlist(wishlist);
+      }
     });
   } catch (error) {
     productDetail.innerHTML = '<p>Unable to load product.</p>';

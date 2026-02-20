@@ -220,13 +220,72 @@ button {
   animation: tagline-fade 6s ease-in-out infinite;
 }
 
-.nav-select {
+.header-menu {
+  position: relative;
   display: none;
-  padding: 10px 12px;
+}
+
+.header-menu-button {
+  width: 42px;
+  height: 42px;
   border-radius: 12px;
   border: 1px solid rgba(30, 27, 24, 0.2);
-  background: rgba(255, 255, 255, 0.8);
-  font-weight: 600;
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(8px);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.kebab,
+.kebab::before,
+.kebab::after {
+  display: block;
+  width: 4px;
+  height: 4px;
+  border-radius: 999px;
+  background: var(--ink);
+  content: '';
+}
+
+.kebab {
+  position: relative;
+}
+
+.kebab::before {
+  position: absolute;
+  transform: translateY(-7px);
+}
+
+.kebab::after {
+  position: absolute;
+  transform: translateY(7px);
+}
+
+.header-menu-panel {
+  position: absolute;
+  right: 0;
+  top: 52px;
+  background: rgba(255, 250, 242, 0.92);
+  border: 1px solid rgba(30, 27, 24, 0.1);
+  border-radius: 16px;
+  padding: 12px;
+  display: none;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 180px;
+  box-shadow: var(--shadow);
+  z-index: 50;
+}
+
+.header-menu-panel.open {
+  display: flex;
+}
+
+.header-menu-panel a,
+.header-menu-panel button {
+  text-align: left;
 }
 
 .header-actions {
@@ -752,6 +811,25 @@ main {
   justify-content: space-between;
   align-items: center;
   gap: 8px;
+}
+
+.card-actions .wishlist-button {
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(30, 27, 24, 0.15);
+  color: var(--ink);
+}
+
+.card-actions .wishlist-button.active,
+.detail-actions .ghost.active {
+  background: var(--accent);
+  color: #fffaf2;
+  border-color: transparent;
+}
+
+.detail-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
 }
 
 .card-actions button {
@@ -1863,9 +1941,12 @@ main {
     display: none;
   }
 
-  .nav-select {
+  .header-actions {
+    display: none;
+  }
+
+  .header-menu {
     display: block;
-    width: 100%;
   }
 
   .header-actions {
