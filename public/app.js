@@ -186,7 +186,8 @@ function renderCategoryMenu() {
     button.type = 'button';
     button.className = `menu-item${activeFilter === category ? ' active' : ''}`;
     button.textContent = category;
-    button.addEventListener('click', () => {
+    button.addEventListener('click', (event) => {
+      event.stopPropagation();
       activeMenuCategory = category;
       activeFilter = category;
       activeSubcategory = '';
@@ -217,7 +218,8 @@ function renderSubcategoryMenu(category) {
     button.type = 'button';
     button.className = `menu-item${activeSubcategory === sub ? ' active' : ''}`;
     button.textContent = sub;
-    button.addEventListener('click', () => {
+    button.addEventListener('click', (event) => {
+      event.stopPropagation();
       activeMenuCategory = category;
       activeFilter = category;
       activeSubcategory = sub;
@@ -383,7 +385,11 @@ if (menuClose && productMenu && menuButton) {
 
 document.addEventListener('click', (event) => {
   if (productMenu && menuButton) {
-    const clickInsideMenu = productMenu.contains(event.target) || menuButton.contains(event.target);
+    const clickInsideMenu =
+      productMenu.contains(event.target) ||
+      menuButton.contains(event.target) ||
+      event.target.closest('#productMenu') ||
+      event.target.closest('.menu-item');
     if (!clickInsideMenu && productMenu.classList.contains('open')) {
       productMenu.classList.remove('open');
       productMenu.setAttribute('aria-hidden', 'true');
