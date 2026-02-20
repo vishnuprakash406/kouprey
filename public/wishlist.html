@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Wishlist — Kouprey</title>
+    <link rel="icon" href="/assets/logo.png" />
+    <link rel="stylesheet" href="/styles.css" />
+    <script src="/theme.js"></script>
+  </head>
+  <body>
+    <!-- Loading Spinner -->
+    <div id="pageLoader" class="page-loader">
+      <div class="loader-spinner"></div>
+      <p class="loader-text">Kouprey</p>
+    </div>
+
+    <header class="site-header">
+      <div class="header-left">
+        <div class="logo">
+          <a class="logo-link" href="/">
+            <img class="logo-img" src="/assets/logo.png" alt="Kouprey logo" />
+          </a>
+        </div>
+        <p class="header-tagline">Kouprey — Elegance in Every Thread.</p>
+      </div>
+      <nav class="nav">
+        <a href="/#new">New</a>
+        <a href="/#essentials">Essentials</a>
+        <a href="/#sale">Sale offers</a>
+        <a href="/track">Orders</a>
+        <a href="/returns">Returns</a>
+      </nav>
+      <div class="header-actions">
+        <a class="ghost active" href="/wishlist">Wishlist</a>
+        <button class="bag-button" id="bagButton" aria-expanded="false">
+          Cart <span id="bagCount">0</span>
+        </button>
+      </div>
+      <div class="header-menu">
+        <button class="header-menu-button" id="headerMenuButton" aria-expanded="false" aria-controls="headerMenuPanel">
+          <span class="kebab"></span>
+          <span class="sr-only">Open menu</span>
+        </button>
+        <div class="header-menu-panel" id="headerMenuPanel" aria-hidden="true">
+          <a href="/#new">New</a>
+          <a href="/#essentials">Essentials</a>
+          <a href="/#sale">Sale offers</a>
+          <a href="/track">Orders</a>
+          <a href="/returns">Returns</a>
+          <a href="/wishlist" class="active">Wishlist</a>
+          <button class="primary" id="headerCartButton" type="button">Cart</button>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section class="section">
+        <div class="section-header">
+          <h2>Your Wishlist</h2>
+          <p id="wishlistSubtitle">Items you've saved for later</p>
+        </div>
+        <div class="product-grid" id="wishlistGrid"></div>
+        <div id="emptyWishlist" class="empty-state" style="display: none;">
+          <h3>Your wishlist is empty</h3>
+          <p>Save items you love to view them later</p>
+          <a href="/" class="primary">Continue shopping</a>
+        </div>
+      </section>
+    </main>
+
+    <aside class="bag" id="bag">
+      <div class="bag-header">
+        <h3>Your bag</h3>
+        <button class="ghost" id="closeBag">Close</button>
+      </div>
+      <p class="bag-empty hidden" id="bagEmpty">Your bag is empty.</p>
+      <div class="bag-items" id="bagItems"></div>
+      <div class="bag-footer">
+        <div class="bag-total">
+          <span>Total</span>
+          <strong id="bagTotal">₹0.00</strong>
+        </div>
+        <button class="primary" id="checkoutButton">Checkout</button>
+      </div>
+    </aside>
+
+    <footer class="site-footer">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a id="footerLink" href="https://theaiq.net/" target="_blank" rel="noopener">
+            <span id="footerText">Website provided by AIQ</span>
+          </a>
+          <p id="footerNote" data-brand-text>Premium retail experience tailored for Kouprey.</p>
+        </div>
+        <div class="footer-contact">
+          <h4>Contact</h4>
+          <p id="footerAddress" data-brand-text>Kouprey Studio, 23 City Walk, Chennai</p>
+          <p id="footerPhone">+91 8438217212</p>
+          <p id="footerEmail">support@kouprey.com</p>
+          <p id="footerWhatsApp">WhatsApp: 8438217212</p>
+          <p id="footerHours">Mon-Sat, 10:00-19:00</p>
+        </div>
+      </div>
+    </footer>
+
+    <script src="/settings.js"></script>
+    <script src="/wishlist.js"></script>
+  </body>
+</html>

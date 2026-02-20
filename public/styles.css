@@ -306,7 +306,7 @@ button {
 }
 
 .logo img {
-  height: 48px;
+  height: 68px;
   width: auto;
   display: block;
   animation: heartbeat 2.6s ease-in-out infinite;
@@ -627,6 +627,26 @@ main {
   font-size: clamp(26px, 3vw, 40px);
 }
 
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 20px;
+  text-align: center;
+  gap: 16px;
+}
+
+.empty-state h3 {
+  font-size: 24px;
+  color: rgba(30, 27, 24, 0.7);
+}
+
+.empty-state p {
+  color: rgba(30, 27, 24, 0.5);
+  margin-bottom: 12px;
+}
+
 .filters {
   margin: 20px 0 26px;
   display: flex;
@@ -677,9 +697,10 @@ main {
 
 .product-detail img {
   width: 100%;
-  height: 360px;
-  object-fit: cover;
+  height: 420px;
+  object-fit: contain;
   border-radius: 20px;
+  background: #f9f9f9;
 }
 
 .gallery {
@@ -690,9 +711,10 @@ main {
 
 .gallery-main {
   width: 100%;
-  height: 360px;
-  object-fit: cover;
+  height: 420px;
+  object-fit: contain;
   border-radius: 20px;
+  background: #f9f9f9;
 }
 
 .gallery-thumbs {
