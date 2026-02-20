@@ -258,6 +258,33 @@ function renderProduct(product) {
     thumbs.querySelectorAll('.thumb').forEach((thumb) => thumb.classList.remove('active'));
     button.classList.add('active');
   });
+
+  // Image zoom modal
+  const imageModal = document.getElementById('imageModal');
+  const modalImage = document.getElementById('modalImage');
+  const closeImageModal = document.getElementById('closeImageModal');
+
+  mainImage?.addEventListener('click', () => {
+    if (imageModal && modalImage) {
+      modalImage.src = mainImage.src;
+      imageModal.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+  });
+
+  closeImageModal?.addEventListener('click', () => {
+    if (imageModal) {
+      imageModal.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+  });
+
+  imageModal?.addEventListener('click', (event) => {
+    if (event.target === imageModal || event.target.classList.contains('image-modal-overlay')) {
+      imageModal.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+  });
 }
 
 function renderSuggestions(items) {

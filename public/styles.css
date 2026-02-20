@@ -1054,6 +1054,80 @@ main {
   display: none;
 }
 
+.image-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.image-modal.open {
+  display: flex;
+}
+
+.image-modal-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.92);
+  backdrop-filter: blur(4px);
+}
+
+.image-modal-content {
+  position: relative;
+  z-index: 2;
+  max-width: 90vw;
+  max-height: 90vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.image-modal-content img {
+  max-width: 100%;
+  max-height: 90vh;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  border-radius: 8px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+}
+
+.image-modal-close {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  z-index: 3;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.image-modal-close:hover {
+  background: rgba(255, 255, 255, 0.25);
+  transform: scale(1.1);
+}
+
+.gallery-main {
+  cursor: zoom-in;
+  transition: opacity 0.2s ease;
+}
+
+.gallery-main:hover {
+  opacity: 0.9;
+}
+
 @keyframes lift {
   from {
     opacity: 0;
@@ -1958,6 +2032,7 @@ main {
     flex-wrap: wrap;
     gap: 12px;
     padding: 16px 5vw;
+    position: relative;
   }
 
   .header-left {
@@ -1980,6 +2055,9 @@ main {
 
   .header-menu {
     display: block;
+    position: absolute;
+    top: 16px;
+    right: 5vw;
   }
 
   .header-actions {
