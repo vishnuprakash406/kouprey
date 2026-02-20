@@ -21,6 +21,8 @@ const viewToggles = document.querySelectorAll('.view-toggle');
 const filters = document.querySelectorAll('[data-filter]');
 const scrollButtons = document.querySelectorAll('[data-scroll]');
 const productSearch = document.getElementById('productSearch');
+const sortSelect = document.getElementById('sortSelect');
+let currentSort = 'featured';
 
 const bagState = [];
 const CART_KEY = 'kouprey_cart';
@@ -101,6 +103,27 @@ async function loadProducts() {
   }
 }
 
+function sortProducts(list) {
+  switch (currentSort) {
+    case 'alpha-asc':
+      return [...list].sort((a, b) => a.name.localeCompare(b.name));
+    case 'alpha-desc':
+      return [...list].sort((a, b) => b.name.localeCompare(a.name));
+    case 'price-asc':
+      return [...list].sort((a, b) => effectivePrice(a) - effectivePrice(b));
+    case 'price-desc':
+      return [...list].sort((a, b) => effectivePrice(b) - effectivePrice(a));
+    case 'date-asc':
+      return [...list].sort((a, b) => new Date(a.updated_at) - new Date(b.updated_at));
+    case 'date-desc':
+      return [...list].sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at));
+    case 'best-selling':
+      return [...list].sort((a, b) => (b.review_count || 0) - (a.review_count || 0));
+    default:
+      return list; // featured or unrecognized: original order
+  }
+}
+
 function renderProducts() {
   const wishlist = loadWishlist();
   const filtered = products.filter((product) => {
@@ -118,7 +141,8 @@ function renderProducts() {
 
   productGrid.innerHTML = '';
 
-  filtered.forEach((product) => {
+  const sorted = sortProducts(filtered);
+  sorted.forEach((product) => {
     const isWishlisted = wishlist.has(product.id);
     const card = document.createElement('div');
     card.className = 'product-card';
@@ -394,6 +418,13 @@ productSearch.addEventListener('input', (event) => {
   searchQuery = event.target.value;
   renderProducts();
 });
+
+if (sortSelect) {
+  sortSelect.addEventListener('change', (event) => {
+    currentSort = event.target.value;
+    renderProducts();
+  });
+}
 
 viewToggles.forEach((toggle) => {
   toggle.addEventListener('click', () => {
