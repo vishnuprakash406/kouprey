@@ -212,6 +212,12 @@ button {
   gap: 12px;
 }
 
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
 .sr-only {
   position: absolute;
   width: 1px;
@@ -283,7 +289,7 @@ button {
 
 .menu-panel {
   position: fixed;
-  top: 90px;
+  top: 130px;
   left: 6vw;
   right: 6vw;
   max-width: 920px;
@@ -354,6 +360,20 @@ button {
   display: flex;
   gap: 8px;
   align-items: center;
+}
+
+.menu-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 6vw 0;
+}
+
+.menu-label {
+  font-size: 13px;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  color: rgba(30, 27, 24, 0.6);
 }
 
 main {
@@ -1767,9 +1787,19 @@ main {
     gap: 12px;
   }
 
+  .header-actions {
+    width: 100%;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
   .bag-button {
     width: 100%;
     justify-content: center;
+  }
+
+  .menu-bar {
+    padding: 8px 5vw 0;
   }
 
   .hero {
@@ -1785,7 +1815,7 @@ main {
   .menu-panel {
     left: 4vw;
     right: 4vw;
-    top: 76px;
+    top: 120px;
   }
 }
 

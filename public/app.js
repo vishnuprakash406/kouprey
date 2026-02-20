@@ -25,6 +25,7 @@ let searchQuery = '';
 let products = [];
 let activeSubcategory = '';
 let categoryMap = {};
+let activeMenuCategory = '';
 
 function formatPrice(value) {
   return `₹${Number(value).toFixed(2)}`;
@@ -162,22 +163,42 @@ function renderCategoryMenu() {
     return;
   }
 
-  categoryKeys.forEach((category) => {
+  if (activeMenuCategory) {
+    const backButton = document.createElement('button');
+    backButton.type = 'button';
+    backButton.className = 'menu-item';
+    backButton.textContent = 'All categories';
+    backButton.addEventListener('click', () => {
+      activeMenuCategory = '';
+      activeFilter = 'all';
+      activeSubcategory = '';
+      syncFilterChips();
+      renderCategoryMenu();
+      renderProducts();
+    });
+    categoryList.appendChild(backButton);
+  }
+
+  const list = activeMenuCategory ? [activeMenuCategory] : categoryKeys;
+
+  list.forEach((category) => {
     const button = document.createElement('button');
     button.type = 'button';
     button.className = `menu-item${activeFilter === category ? ' active' : ''}`;
     button.textContent = category;
     button.addEventListener('click', () => {
+      activeMenuCategory = category;
       activeFilter = category;
       activeSubcategory = '';
       syncFilterChips();
+      renderCategoryMenu();
       renderProducts();
       renderSubcategoryMenu(category);
     });
     categoryList.appendChild(button);
   });
 
-  const initialCategory = activeFilter !== 'all' ? activeFilter : categoryKeys[0];
+  const initialCategory = activeMenuCategory || (activeFilter !== 'all' ? activeFilter : categoryKeys[0]);
   renderSubcategoryMenu(initialCategory);
 }
 
@@ -197,9 +218,11 @@ function renderSubcategoryMenu(category) {
     button.className = `menu-item${activeSubcategory === sub ? ' active' : ''}`;
     button.textContent = sub;
     button.addEventListener('click', () => {
+      activeMenuCategory = category;
       activeFilter = category;
       activeSubcategory = sub;
       syncFilterChips();
+      renderCategoryMenu();
       renderProducts();
     });
     subcategoryList.appendChild(button);
@@ -308,6 +331,8 @@ filters.forEach((filter) => {
     filter.classList.add('active');
     activeFilter = filter.dataset.filter;
     activeSubcategory = '';
+    activeMenuCategory = '';
+    renderCategoryMenu();
     renderProducts();
   });
 });
