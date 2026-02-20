@@ -33,7 +33,9 @@ export async function onRequest(context) {
       if (udf1Raw) {
         try {
           const normalized = decodeURIComponent(String(udf1Raw).replace(/ /g, '+'));
-          const decoded = decodeBase64(normalized);
+          const base64 = normalized.replace(/-/g, '+').replace(/_/g, '/');
+          const padded = base64.padEnd(Math.ceil(base64.length / 4) * 4, '=');
+          const decoded = decodeBase64(padded);
           orderData = decoded ? JSON.parse(decoded) : null;
         } catch {
           orderData = null;
