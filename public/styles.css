@@ -787,7 +787,7 @@ main {
 .product-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 10px;
+  gap: 6px;
   transition: all 0.3s ease;
 }
 
@@ -870,7 +870,7 @@ main {
 .product-image-wrapper {
   position: relative;
   width: 100%;
-  border-radius: 16px;
+  border-radius: 0;
   overflow: hidden;
 }
 
@@ -924,7 +924,7 @@ main {
   width: 100%;
   aspect-ratio: 3 / 4;
   object-fit: cover;
-  border-radius: 16px;
+  border-radius: 0;
   display: block;
 }
 
@@ -937,7 +937,7 @@ main {
   flex-direction: column;
   justify-content: flex-end;
   padding: 12px;
-  border-radius: 16px;
+  border-radius: 0;
   opacity: 0;
   transition: opacity 0.3s ease;
   color: #fff;

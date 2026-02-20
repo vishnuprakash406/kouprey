@@ -22,11 +22,15 @@ const metricProducts = document.getElementById('metricProducts');
 const metricStock = document.getElementById('metricStock');
 const metricDiscounts = document.getElementById('metricDiscounts');
 const metricPending = document.getElementById('metricPending');
+const ordersSearch = document.getElementById('ordersSearch');
+const ordersFilter = document.getElementById('ordersFilter');
 
 let products = [];
 let inventoryQuery = '';
 let inventoryCategory = 'all';
 let orders = [];
+let ordersQuery = '';
+let ordersStatusFilter = 'all';
 const storeToken = localStorage.getItem('kouprey_store_token') || '';
 
 function formatPrice(value) {
@@ -147,8 +151,18 @@ function formatDate(value) {
 }
 
 function renderOrders() {
+  const filtered = orders.filter((order) => {
+    const matchesStatus = ordersStatusFilter === 'all' || order.status === ordersStatusFilter;
+    const query = ordersQuery.toLowerCase();
+    const matchesQuery =
+      !query ||
+      order.id.toLowerCase().includes(query) ||
+      (order.customer_name || '').toLowerCase().includes(query);
+    return matchesStatus && matchesQuery;
+  });
+
   ordersBody.innerHTML = '';
-  orders.forEach((order) => {
+  filtered.forEach((order) => {
     const row = document.createElement('div');
     row.className = 'orders-row';
     row.innerHTML = `
@@ -228,6 +242,7 @@ async function openOrder(id) {
             <option value="packed" ${order.status === 'packed' ? 'selected' : ''}>Packed</option>
             <option value="shipped" ${order.status === 'shipped' ? 'selected' : ''}>Shipped</option>
             <option value="delivered" ${order.status === 'delivered' ? 'selected' : ''}>Delivered</option>
+            <option value="canceled" ${order.status === 'canceled' ? 'selected' : ''}>Canceled</option>
           </select>
         </div>
         <div class="drawer-field">
@@ -493,6 +508,16 @@ inventorySearch.addEventListener('input', (event) => {
 inventoryFilter.addEventListener('change', (event) => {
   inventoryCategory = event.target.value;
   renderProducts();
+});
+
+ordersSearch.addEventListener('input', (event) => {
+  ordersQuery = event.target.value;
+  renderOrders();
+});
+
+ordersFilter.addEventListener('change', (event) => {
+  ordersStatusFilter = event.target.value;
+  renderOrders();
 });
 
 ordersBody.addEventListener('click', (event) => {
