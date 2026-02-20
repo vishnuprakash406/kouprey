@@ -893,6 +893,13 @@ main {
   cursor: pointer;
 }
 
+.sort-label {
+  font-size: 10px;
+  color: rgba(30,27,24,0.5);
+  text-transform: uppercase;
+  margin-right: 6px;
+}
+
 .sort-controls select:focus {
   outline: none;
   border-color: var(--accent);
@@ -919,6 +926,11 @@ main {
   opacity: 0;
   transition: opacity 0.3s ease;
   color: #fff;
+  pointer-events: none; /* allow clicks through overlay */
+}
+
+.product-overlay .quick-add {
+  pointer-events: auto; /* quick-add button still clickable */
 }
 
 .product-image-wrapper:hover .product-overlay {
