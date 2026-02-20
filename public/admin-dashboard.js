@@ -45,13 +45,6 @@ const settingsStatus = document.getElementById('settingsStatus');
 const heroEyebrowInput = document.getElementById('heroEyebrowInput');
 const heroTitleInput = document.getElementById('heroTitleInput');
 const heroCopyInput = document.getElementById('heroCopyInput');
-const heroTagInput = document.getElementById('heroTagInput');
-const heroCardTitleInput = document.getElementById('heroCardTitleInput');
-const heroCardCopyInput = document.getElementById('heroCardCopyInput');
-const stat1ValueInput = document.getElementById('stat1ValueInput');
-const stat1LabelInput = document.getElementById('stat1LabelInput');
-const stat2ValueInput = document.getElementById('stat2ValueInput');
-const stat2LabelInput = document.getElementById('stat2LabelInput');
 const newSubtitleInput = document.getElementById('newSubtitleInput');
 const essentialsSubtitleInput = document.getElementById('essentialsSubtitleInput');
 const essential1TitleInput = document.getElementById('essential1TitleInput');
@@ -66,7 +59,6 @@ const saleBannerCopyInput = document.getElementById('saleBannerCopyInput');
 const showEssentials = document.getElementById('showEssentials');
 const showSale = document.getElementById('showSale');
 const showNew = document.getElementById('showNew');
-const showHeroCard = document.getElementById('showHeroCard');
 const showEssential1 = document.getElementById('showEssential1');
 const showEssential2 = document.getElementById('showEssential2');
 const showEssential3 = document.getElementById('showEssential3');
@@ -500,13 +492,6 @@ function loadHomeSettings() {
     heroEyebrowInput.value = saved.heroEyebrow || heroEyebrowInput.value;
     heroTitleInput.value = saved.heroTitle || heroTitleInput.value;
     heroCopyInput.value = saved.heroCopy || heroCopyInput.value;
-    heroTagInput.value = saved.heroTag || heroTagInput.value;
-    heroCardTitleInput.value = saved.heroCardTitle || heroCardTitleInput.value;
-    heroCardCopyInput.value = saved.heroCardCopy || heroCardCopyInput.value;
-    stat1ValueInput.value = saved.stat1Value || stat1ValueInput.value;
-    stat1LabelInput.value = saved.stat1Label || stat1LabelInput.value;
-    stat2ValueInput.value = saved.stat2Value || stat2ValueInput.value;
-    stat2LabelInput.value = saved.stat2Label || stat2LabelInput.value;
     newSubtitleInput.value = saved.newSubtitle || newSubtitleInput.value;
     essentialsSubtitleInput.value = saved.essentialsSubtitle || essentialsSubtitleInput.value;
     essential1TitleInput.value = saved.essential1Title || essential1TitleInput.value;
@@ -775,13 +760,6 @@ saveHome.addEventListener('click', async () => {
     heroEyebrow: heroEyebrowInput.value.trim(),
     heroTitle: heroTitleInput.value.trim(),
     heroCopy: heroCopyInput.value.trim(),
-    heroTag: heroTagInput.value.trim(),
-    heroCardTitle: heroCardTitleInput.value.trim(),
-    heroCardCopy: heroCardCopyInput.value.trim(),
-    stat1Value: stat1ValueInput.value.trim(),
-    stat1Label: stat1LabelInput.value.trim(),
-    stat2Value: stat2ValueInput.value.trim(),
-    stat2Label: stat2LabelInput.value.trim(),
     newSubtitle: newSubtitleInput.value.trim(),
     essentialsSubtitle: essentialsSubtitleInput.value.trim(),
     essential1Title: essential1TitleInput.value.trim(),
@@ -799,7 +777,6 @@ saveHome.addEventListener('click', async () => {
       sale: !showSale.checked,
     },
     hiddenItems: {
-      heroCard: !showHeroCard.checked,
       essential1: !showEssential1.checked,
       essential2: !showEssential2.checked,
       essential3: !showEssential3.checked,

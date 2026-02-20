@@ -134,13 +134,6 @@
     setText('heroEyebrow', home.heroEyebrow);
     setText('heroTitle', home.heroTitle);
     setText('heroCopy', home.heroCopy);
-    setText('heroTag', home.heroTag);
-    setText('heroCardTitle', home.heroCardTitle);
-    setText('heroCardCopy', home.heroCardCopy);
-    setText('stat1Value', home.stat1Value);
-    setText('stat1Label', home.stat1Label);
-    setText('stat2Value', home.stat2Value);
-    setText('stat2Label', home.stat2Label);
     setText('newSubtitle', home.newSubtitle);
     setText('essentialsSubtitle', home.essentialsSubtitle);
     setText('essential1Title', home.essential1Title);
