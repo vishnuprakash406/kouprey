@@ -8,6 +8,7 @@ const bagCount = document.getElementById('bagCount');
 const bagTotal = document.getElementById('bagTotal');
 const bagEmpty = document.getElementById('bagEmpty');
 const checkoutButton = document.getElementById('checkoutButton');
+const mobileNav = document.getElementById('mobileNav');
 const menuButton = document.getElementById('menuButton');
 const menuClose = document.getElementById('menuClose');
 const productMenu = document.getElementById('productMenu');
@@ -366,6 +367,14 @@ closeBag.addEventListener('click', () => {
 checkoutButton.addEventListener('click', () => {
   window.location.href = '/checkout';
 });
+
+if (mobileNav) {
+  mobileNav.addEventListener('change', (event) => {
+    const value = event.target.value;
+    if (!value) return;
+    window.location.href = value;
+  });
+}
 
 if (menuButton && productMenu) {
   menuButton.addEventListener('click', () => {

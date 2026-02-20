@@ -212,6 +212,23 @@ button {
   gap: 12px;
 }
 
+.header-tagline {
+  font-size: 13px;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  color: rgba(30, 27, 24, 0.65);
+  animation: tagline-fade 6s ease-in-out infinite;
+}
+
+.nav-select {
+  display: none;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(30, 27, 24, 0.2);
+  background: rgba(255, 255, 255, 0.8);
+  font-weight: 600;
+}
+
 .header-actions {
   display: flex;
   align-items: center;
@@ -357,6 +374,17 @@ button {
 
 .menu-item:hover {
   transform: translateY(-1px);
+}
+
+@keyframes tagline-fade {
+  0%, 100% {
+    opacity: 0.5;
+    transform: translateY(0);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(-2px);
+  }
 }
 
 @keyframes heartbeat {
@@ -1821,11 +1849,23 @@ main {
     padding: 16px 5vw;
   }
 
-  .nav {
+  .header-left {
     width: 100%;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 12px;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .header-tagline {
+    font-size: 11px;
+  }
+
+  .nav {
+    display: none;
+  }
+
+  .nav-select {
+    display: block;
+    width: 100%;
   }
 
   .header-actions {
