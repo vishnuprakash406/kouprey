@@ -372,6 +372,76 @@ function loadTheme() {
   }
 }
 
+async function loadSettingsFromAPI() {
+  try {
+    const response = await fetch('/api/settings');
+    if (response.ok) {
+      const serverSettings = await response.json();
+      
+      // Update localStorage cache
+      if (serverSettings.theme) {
+        localStorage.setItem(THEME_KEY, JSON.stringify(serverSettings.theme));
+        if (serverSettings.theme.colors) {
+          themeA.value = serverSettings.theme.colors[0] || themeA.value;
+          themeB.value = serverSettings.theme.colors[1] || themeB.value;
+          themeC.value = serverSettings.theme.colors[2] || themeC.value;
+        }
+      }
+      
+      if (serverSettings.settings) {
+        localStorage.setItem(SETTINGS_KEY, JSON.stringify(serverSettings.settings));
+        const saved = serverSettings.settings;
+        logoUrl.value = saved.logoUrl || logoUrl.value;
+        paymentGateway.value = saved.paymentGateway || paymentGateway.value;
+        paymentCurrency.value = saved.paymentCurrency || paymentCurrency.value;
+        stripePublishableKey.value = saved.stripePublishableKey || stripePublishableKey.value;
+        stripeSecretKey.value = saved.stripeSecretKey || stripeSecretKey.value;
+        paypalClientId.value = saved.paypalClientId || paypalClientId.value;
+        razorpayKeyId.value = saved.razorpayKeyId || razorpayKeyId.value;
+        payuKey.value = saved.payuKey || payuKey.value;
+        payuSalt.value = saved.payuSalt || payuSalt.value;
+        hashKey.value = saved.payuKey || hashKey.value;
+        hashSalt.value = saved.payuSalt || hashSalt.value;
+        if (!hashProductInfo.value) {
+          hashProductInfo.value = `${saved.brandName || 'Kouprey'} Order`;
+        }
+        returnDays.value = saved.returnDays || returnDays.value;
+        returnWhatsAppInput.value = saved.returnWhatsApp || returnWhatsAppInput.value;
+        returnPolicyInput.value = saved.returnPolicyText || returnPolicyInput.value;
+        returnConditionInput.value = saved.returnConditionText || returnConditionInput.value;
+        showReturnCondition.checked = saved.showReturnCondition !== false;
+        brandNameInput.value = saved.brandName || brandNameInput.value;
+        footerTextInput.value = saved.footerText || footerTextInput.value;
+        footerUrlInput.value = saved.footerUrl || footerUrlInput.value;
+        footerAddressInput.value = saved.footerAddress || footerAddressInput.value;
+        footerPhoneInput.value = saved.footerPhone || footerPhoneInput.value;
+        footerEmailInput.value = saved.footerEmail || footerEmailInput.value;
+        footerWhatsAppInput.value = saved.footerWhatsApp || footerWhatsAppInput.value;
+        footerHoursInput.value = saved.footerHours || footerHoursInput.value;
+        footerInstagramInput.value = saved.footerInstagram || footerInstagramInput.value;
+        footerFacebookInput.value = saved.footerFacebook || footerFacebookInput.value;
+        storeEmailUsername.value = saved.storeEmailUsername || storeEmailUsername.value;
+        storeEmailPassword.value = saved.storeEmailPassword || storeEmailPassword.value;
+        footerNoteInput.value = saved.footerNote || footerNoteInput.value;
+        headerImageUrl.value = saved.headerImageUrl || headerImageUrl.value;
+        heroImageUrl.value = saved.heroImageUrl || heroImageUrl.value;
+      }
+      
+      if (serverSettings.home) {
+        localStorage.setItem(HOME_KEY, JSON.stringify(serverSettings.home));
+      }
+      
+      if (serverSettings.colors) {
+        localStorage.setItem(COLOR_KEY, JSON.stringify(serverSettings.colors));
+      }
+    }
+  } catch (error) {
+    // Fallback to loading from localStorage
+    loadTheme();
+    loadSettings();
+  }
+}
+
 function loadSettings() {
   try {
     const saved = JSON.parse(localStorage.getItem(SETTINGS_KEY));
@@ -467,16 +537,21 @@ function loadColorSettings() {
   }
 }
 
-applyTheme.addEventListener('click', () => {
+applyTheme.addEventListener('click', async () => {
   const theme = { colors: [themeA.value, themeB.value, themeC.value] };
-  localStorage.setItem(THEME_KEY, JSON.stringify(theme));
-  document.documentElement.style.setProperty('--theme-a', themeA.value);
-  document.documentElement.style.setProperty('--theme-b', themeB.value);
-  document.documentElement.style.setProperty('--theme-c', themeC.value);
-  themeStatus.textContent = 'Theme updated.';
+  const saved = await saveSettingsToAPI({ theme });
+  if (saved) {
+    localStorage.setItem(THEME_KEY, JSON.stringify(theme));
+    document.documentElement.style.setProperty('--bg-a', theme.colors[0]);
+    document.documentElement.style.setProperty('--bg-b', theme.colors[1]);
+    document.documentElement.style.setProperty('--bg-c', theme.colors[2]);
+    themeStatus.textContent = 'Theme applied for all users.';
+  } else {
+    themeStatus.textContent = 'Failed to save theme.';
+  }
 });
 
-saveSettings.addEventListener('click', () => {
+saveSettings.addEventListener('click', async () => {
   const settings = {
     logoUrl: logoUrl.value.trim(),
     paymentGateway: paymentGateway.value,
@@ -508,8 +583,13 @@ saveSettings.addEventListener('click', () => {
     headerImageUrl: headerImageUrl.value.trim(),
     heroImageUrl: heroImageUrl.value.trim(),
   };
-  localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
-  settingsStatus.textContent = 'Settings saved.';
+  const saved = await saveSettingsToAPI({ settings });
+  if (saved) {
+    localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+    settingsStatus.textContent = 'Settings saved for all users.';
+  } else {
+    settingsStatus.textContent = 'Failed to save settings.';
+  }
 });
 
 savePayment.addEventListener('click', async () => {
@@ -890,10 +970,9 @@ if (!masterToken) {
         loadUsers(),
         loadAuditLogs(),
         loadMasters(),
-        loadTables()
+        loadTables(),
+        loadSettingsFromAPI()
       ]);
-      loadTheme();
-      loadSettings();
       loadHomeSettings();
       loadColorSettings();
     } finally {
