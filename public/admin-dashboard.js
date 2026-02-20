@@ -150,6 +150,18 @@ function formatUptime(seconds) {
   return parts.join(' ');
 }
 
+function showLoader() {
+  if (pageLoader) {
+    pageLoader.style.display = 'flex';
+  }
+}
+
+function hideLoader() {
+  if (pageLoader) {
+    pageLoader.style.display = 'none';
+  }
+}
+
 async function apiFetch(url, options = {}) {
   const headers = {
     'Content-Type': 'application/json',
