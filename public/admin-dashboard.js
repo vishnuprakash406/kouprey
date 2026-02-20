@@ -374,7 +374,15 @@ function loadTheme() {
 
 async function loadSettingsFromAPI() {
   try {
-    const response = await fetch('/api/settings');
+    // Add timeout to prevent hanging
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout
+    
+    const response = await fetch('/api/settings', {
+      signal: controller.signal
+    });
+    clearTimeout(timeoutId);
+    
     if (response.ok) {
       const serverSettings = await response.json();
       
@@ -966,13 +974,21 @@ if (!masterToken) {
   showLoader();
   async function initDashboard() {
     try {
+      // Load critical data first
       await Promise.all([
         loadUsers(),
         loadAuditLogs(),
         loadMasters(),
-        loadTables(),
-        loadSettingsFromAPI()
+        loadTables()
       ]);
+      
+      // Load settings in background (non-blocking)
+      loadSettingsFromAPI().catch(() => {
+        // Fallback to localStorage on error
+        loadTheme();
+        loadSettings();
+      });
+      
       loadHomeSettings();
       loadColorSettings();
     } finally {
