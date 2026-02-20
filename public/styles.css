@@ -421,6 +421,19 @@ main {
   border-radius: 28px;
 }
 
+.hero-intro {
+  padding: 60px 0 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  background:
+    linear-gradient(rgba(255, 255, 255, 0.75), rgba(255, 255, 255, 0.75)),
+    var(--hero-image, none);
+  background-size: cover;
+  background-position: center;
+  border-radius: 28px;
+}
+
 .eyebrow {
   text-transform: uppercase;
   letter-spacing: 3px;
@@ -1829,7 +1842,8 @@ main {
     padding: 8px 5vw 0;
   }
 
-  .hero {
+  .hero,
+  .hero-intro {
     padding: 32px 0 24px;
     border-radius: 20px;
   }
