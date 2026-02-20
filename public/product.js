@@ -125,55 +125,65 @@ function renderProduct(product) {
   const videos = product.videos || [];
   productDetail.innerHTML = `
     <div class="product-detail">
-      <div class="gallery">
-        <img class="gallery-main" id="galleryMain" src="${images[0]}" alt="${product.name}" />
-        <div class="gallery-thumbs" id="galleryThumbs">
-          ${images
-            .map(
-              (img, index) =>
-                `<button class="thumb ${index === 0 ? 'active' : ''}" data-src="${img}">
-                   <img src="${img}" alt="${product.name} view ${index + 1}" />
-                 </button>`
-            )
-            .join('')}
-        </div>
+      <div class="gallery-thumbs-vertical" id="galleryThumbs">
+        ${images
+          .map(
+            (img, index) =>
+              `<button class="thumb-vertical ${index === 0 ? 'active' : ''}" data-src="${img}">
+                 <img src="${img}" alt="${product.name} view ${index + 1}" />
+               </button>`
+          )
+          .join('')}
       </div>
-      <div>
-        <p class="eyebrow">${product.category.toUpperCase()}${product.subcategory ? ` · ${product.subcategory}` : ''}</p>
-        <h1>${product.name}</h1>
-        <p>${product.description}</p>
-        <div class="product-meta">
-          <span class="badge">${availabilityLabel(product.availability)}</span>
-          <span>Sizes: ${product.sizes.join(', ')}</span>
-          ${product.color ? `<span>Color: ${product.color}</span>` : ''}
+      <div class="gallery-main-wrapper">
+        <img class="gallery-main" id="galleryMain" src="${images[0]}" alt="${product.name}" />
+      </div>
+      <div class="product-info">
+        <div class="product-info-header">
+          ${product.availability === 'in_stock' ? '<span class="availability-badge">In Stock</span>' : ''}
+          <h1 class="product-title">${product.name}</h1>
+          <p class="product-category">${product.category.toUpperCase()}${product.subcategory ? ` · ${product.subcategory}` : ''}</p>
         </div>
-        <div class="size-qty">
-          <label>
-            Size
-            <select id="detailSize">
-              ${product.sizes.map((size) => `<option value="${size}">${size}</option>`).join('')}
-            </select>
-          </label>
-          <label>
-            Quantity
-            <input id="detailQty" type="number" min="1" value="1" />
-          </label>
+        
+        <div class="product-price-section">
+          <div class="price-display">
+            <span class="current-price">${formatPrice(effectivePrice(product))}</span>
+            ${discountPercent(product) > 0 ? `<span class="original-price">${formatPrice(product.price)}</span>` : ''}
+          </div>
+          ${discountPercent(product) > 0 ? `<span class="discount-badge">${discountPercent(product)}% OFF</span>` : ''}
         </div>
-        <div class="rating">
-          <span>${starRating(product.rating || 0)}</span>
-          <small>${product.rating ? product.rating.toFixed(1) : '0.0'} (${product.review_count || 0} reviews)</small>
+
+        <p class="product-description">${product.description}</p>
+        
+        <div class="size-selector-section">
+          <label class="section-label">Size:</label>
+          <div class="size-options" id="sizeOptions">
+            ${product.sizes.map((size, idx) => `
+              <button class="size-option ${idx === 0 ? 'active' : ''}" data-size="${size}">${size}</button>
+            `).join('')}
+          </div>
         </div>
-        <div class="price">
-          <strong>${formatPrice(effectivePrice(product))}</strong>
-          ${discountPercent(product) > 0 ? `<del>${formatPrice(product.price)}</del>` : ''}
-          ${discountPercent(product) > 0 ? `<span class="discount-tag">${discountPercent(product)}% off</span>` : ''}
+        
+        <div class="quantity-selector-section">
+          <label class="section-label">Quantity:</label>
+          <div class="quantity-controls">
+            <button class="qty-btn" id="qtyMinus" type="button">−</button>
+            <input type="number" id="detailQty" value="1" min="1" readonly />
+            <button class="qty-btn" id="qtyPlus" type="button">+</button>
+          </div>
         </div>
-        <div class="detail-actions">
-          <button class="primary" id="addToBag" ${
+
+        <div class="action-buttons">
+          <button class="btn-add-to-cart" id="addToBag" ${
             product.availability === 'out_of_stock' ? 'disabled' : ''
-          }>Add to cart</button>
-          <button class="ghost" id="goToCart" type="button">Go to cart</button>
-          <button class="ghost" id="toggleWishlist" type="button">Wishlist</button>
+          }>
+            ADD TO CART
+          </button>
+          <button class="btn-wishlist" id="toggleWishlist" type="button">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+            </svg>
+          </button>
         </div>
       </div>
     </div>
@@ -204,17 +214,57 @@ function renderProduct(product) {
   `;
 
   const addToBagButton = document.getElementById('addToBag');
-  const goToCartButton = document.getElementById('goToCart');
   const toggleWishlistButton = document.getElementById('toggleWishlist');
+  const qtyInput = document.getElementById('detailQty');
+  const qtyPlus = document.getElementById('qtyPlus');
+  const qtyMinus = document.getElementById('qtyMinus');
+  const sizeOptions = document.querySelectorAll('.size-option');
+  
+  let selectedSize = product.sizes[0];
+  
+  // Size selection
+  sizeOptions.forEach(btn => {
+    btn.addEventListener('click', () => {
+      sizeOptions.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      selectedSize = btn.dataset.size;
+    });
+  });
+  
+  // Quantity controls
+  qtyPlus?.addEventListener('click', () => {
+    qtyInput.value = parseInt(qtyInput.value) + 1;
+  });
+  
+  qtyMinus?.addEventListener('click', () => {
+    const currentValue = parseInt(qtyInput.value);
+    if (currentValue > 1) {
+      qtyInput.value = currentValue - 1;
+    }
+  });
+  
+  // Wishlist toggle
   const wishlist = loadWishlist();
   if (toggleWishlistButton) {
-    toggleWishlistButton.textContent = wishlist.has(product.id) ? 'Wishlisted' : 'Wishlist';
     toggleWishlistButton.classList.toggle('active', wishlist.has(product.id));
   }
+  
+  toggleWishlistButton?.addEventListener('click', () => {
+    const updated = loadWishlist();
+    if (updated.has(product.id)) {
+      updated.delete(product.id);
+      toggleWishlistButton.classList.remove('active');
+    } else {
+      updated.add(product.id);
+      toggleWishlistButton.classList.add('active');
+    }
+    saveWishlist(updated);
+  });
+  
+  // Add to cart
   addToBagButton?.addEventListener('click', () => {
-    const size = document.getElementById('detailSize')?.value || product.sizes[0];
-    const qty = Math.max(1, Number(document.getElementById('detailQty')?.value || 1));
-    const existing = bagState.find((item) => item.id === product.id && item.size === size);
+    const qty = Math.max(1, Number(qtyInput?.value || 1));
+    const existing = bagState.find((item) => item.id === product.id && item.size === selectedSize);
     if (existing) {
       existing.qty += qty;
     } else {
@@ -225,28 +275,13 @@ function renderProduct(product) {
         originalPrice: Number(product.price),
         discountPercent: discountPercent(product),
         image: product.image,
-        size,
+        size: selectedSize,
         qty,
       });
     }
     renderBag();
-  });
-
-  goToCartButton?.addEventListener('click', () => {
     bag.classList.add('open');
     bagButton.setAttribute('aria-expanded', 'true');
-  });
-
-  toggleWishlistButton?.addEventListener('click', () => {
-    const updated = loadWishlist();
-    if (updated.has(product.id)) {
-      updated.delete(product.id);
-    } else {
-      updated.add(product.id);
-    }
-    saveWishlist(updated);
-    toggleWishlistButton.textContent = updated.has(product.id) ? 'Wishlisted' : 'Wishlist';
-    toggleWishlistButton.classList.toggle('active', updated.has(product.id));
   });
 
   const thumbs = document.getElementById('galleryThumbs');
