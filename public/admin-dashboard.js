@@ -770,7 +770,7 @@ generateHash.addEventListener('click', async () => {
   hashOutput.value = await sha512(hashString);
 });
 
-saveHome.addEventListener('click', () => {
+saveHome.addEventListener('click', async () => {
   const home = {
     heroEyebrow: heroEyebrowInput.value.trim(),
     heroTitle: heroTitleInput.value.trim(),
