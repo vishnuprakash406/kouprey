@@ -3,6 +3,7 @@
 /staff-login/dashboard /store-dashboard.html 200
 /master-login /master-login.html 200
 /master-login/admin /admin-dashboard.html 200
+/admin-dashboard /admin-dashboard.html 200
 /checkout /checkout.html 200
 /track /track.html 200
 /returns /returns.html 200
