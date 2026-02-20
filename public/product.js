@@ -359,6 +359,15 @@ closeBag.addEventListener('click', () => {
   bagButton.setAttribute('aria-expanded', 'false');
 });
 
+document.addEventListener('click', (event) => {
+  if (!bag || !bagButton) return;
+  const clickInsideBag = bag.contains(event.target) || bagButton.contains(event.target);
+  if (!clickInsideBag && bag.classList.contains('open')) {
+    bag.classList.remove('open');
+    bagButton.setAttribute('aria-expanded', 'false');
+  }
+});
+
 checkoutButton.addEventListener('click', () => {
   window.location.href = '/checkout';
 });

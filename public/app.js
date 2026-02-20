@@ -381,6 +381,25 @@ if (menuClose && productMenu && menuButton) {
   });
 }
 
+document.addEventListener('click', (event) => {
+  if (productMenu && menuButton) {
+    const clickInsideMenu = productMenu.contains(event.target) || menuButton.contains(event.target);
+    if (!clickInsideMenu && productMenu.classList.contains('open')) {
+      productMenu.classList.remove('open');
+      productMenu.setAttribute('aria-hidden', 'true');
+      menuButton.setAttribute('aria-expanded', 'false');
+    }
+  }
+
+  if (bag && bagButton) {
+    const clickInsideBag = bag.contains(event.target) || bagButton.contains(event.target);
+    if (!clickInsideBag && bag.classList.contains('open')) {
+      bag.classList.remove('open');
+      bagButton.setAttribute('aria-expanded', 'false');
+    }
+  }
+});
+
 function loadCart() {
   try {
     const stored = JSON.parse(localStorage.getItem(CART_KEY)) || [];

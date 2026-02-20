@@ -233,6 +233,8 @@ button {
   height: 48px;
   width: auto;
   display: block;
+  animation: heartbeat 2.6s ease-in-out infinite;
+  transform-origin: center;
 }
 
 .logo-text {
@@ -300,11 +302,16 @@ button {
   box-shadow: var(--shadow);
   border: 1px solid rgba(30, 27, 24, 0.08);
   display: none;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 0.2s ease, transform 0.2s ease;
   z-index: 40;
 }
 
 .menu-panel.open {
   display: block;
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .menu-header {
@@ -344,6 +351,26 @@ button {
   cursor: pointer;
   text-align: left;
   font-weight: 600;
+  transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease;
+}
+
+.menu-item:hover {
+  transform: translateY(-1px);
+}
+
+@keyframes heartbeat {
+  0%, 100% {
+    transform: scale(1);
+  }
+  20% {
+    transform: scale(1.04);
+  }
+  40% {
+    transform: scale(0.98);
+  }
+  60% {
+    transform: scale(1.03);
+  }
 }
 
 .menu-item.active {
