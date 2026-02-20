@@ -1,4 +1,4 @@
-# Specific route rewrites (must be BEFORE catch-all)
+# Specific route rewrites (NO catch-all to avoid loops)
 /master-login/admin /admin-dashboard.html 200
 /staff-login/dashboard /store-dashboard.html 200
 /master-login /master-login.html 200
@@ -7,6 +7,3 @@
 /checkout /checkout.html 200
 /track /track.html 200
 /returns /returns.html 200
-
-# Catch-all for SPA (LAST)
-/* /index.html 200
