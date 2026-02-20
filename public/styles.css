@@ -1632,3 +1632,81 @@ main {
 .whatsapp-float {
   animation: whatsapp-pulse 2s infinite;
 }
+
+@media (max-width: 720px) {
+  .site-header {
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 16px 5vw;
+  }
+
+  .nav {
+    width: 100%;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+  }
+
+  .bag-button {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .hero {
+    padding: 32px 0 24px;
+    border-radius: 20px;
+  }
+
+  .section-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 600px) {
+  main {
+    padding: 0 5vw 12vw;
+  }
+
+  .filters {
+    gap: 8px;
+  }
+
+  .product-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+  }
+
+  .product-card {
+    padding: 12px;
+    border-radius: 16px;
+  }
+
+  .product-card img {
+    height: 150px;
+    border-radius: 12px;
+  }
+
+  .product-card h4 {
+    font-size: 15px;
+  }
+
+  .card-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .card-actions button {
+    width: 100%;
+  }
+}
+
+@media (max-width: 400px) {
+  .product-grid {
+    gap: 12px;
+  }
+
+  .product-card img {
+    height: 135px;
+  }
+}
