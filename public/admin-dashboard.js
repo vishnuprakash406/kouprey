@@ -373,7 +373,11 @@ async function loadSettingsFromAPI() {
     const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout
     
     const response = await fetch('/api/settings', {
-      signal: controller.signal
+      signal: controller.signal,
+      cache: 'no-store',
+      headers: {
+        'Cache-Control': 'no-cache'
+      }
     });
     clearTimeout(timeoutId);
     
@@ -435,6 +439,12 @@ async function loadSettingsFromAPI() {
       
       if (serverSettings.colors) {
         localStorage.setItem(COLOR_KEY, JSON.stringify(serverSettings.colors));
+        const colors = serverSettings.colors;
+        headerBgColor.value = colors.headerBgColor || headerBgColor.value;
+        essentialsBgColor.value = colors.essentialsBgColor || essentialsBgColor.value;
+        saleBgStart.value = colors.saleBgStart || saleBgStart.value;
+        saleBgEnd.value = colors.saleBgEnd || saleBgEnd.value;
+        saleTextColor.value = colors.saleTextColor || saleTextColor.value;
       }
     }
   } catch (error) {

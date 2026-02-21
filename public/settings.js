@@ -193,8 +193,13 @@
   // Load settings from API (server-side) with localStorage fallback
   async function loadSettings() {
     try {
-      // Fetch settings from API
-      const response = await fetch('/api/settings');
+      // Fetch settings from API with cache-busting
+      const response = await fetch('/api/settings', {
+        cache: 'no-store',
+        headers: {
+          'Cache-Control': 'no-cache'
+        }
+      });
       if (response.ok) {
         const serverSettings = await response.json();
         
