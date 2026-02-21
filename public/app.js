@@ -35,6 +35,10 @@ let categoryMap = {};
 let activeMenuCategory = '';
 let currentView = 'grid';
 
+// Pagination state
+let currentPage = 1;
+const itemsPerPage = 15;
+
 function formatPrice(value) {
   return `₹${Number(value).toFixed(2)}`;
 }
@@ -140,10 +144,20 @@ function renderProducts() {
     return matchesCategory && matchesSubcategory && matchesSearch;
   });
 
+  const sorted = sortProducts(filtered);
+  const totalItems = sorted.length;
+  
+  // Calculate pagination
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = Math.min(startIndex + itemsPerPage, totalItems);
+  const paginatedProducts = sorted.slice(startIndex, endIndex);
+  
+  // Update pagination UI
+  updatePagination(startIndex, endIndex, totalItems);
+
   productGrid.innerHTML = '';
 
-  const sorted = sortProducts(filtered);
-  sorted.forEach((product) => {
+  paginatedProducts.forEach((product) => {
     const isWishlisted = wishlist.has(product.id);
     const card = document.createElement('div');
     card.className = 'product-card';
@@ -177,6 +191,25 @@ function renderProducts() {
     `;
     productGrid.appendChild(card);
   });
+}
+
+function updatePagination(startIndex, endIndex, totalItems) {
+  const paginationInfo = document.getElementById('productPaginationInfo');
+  const prevBtn = document.getElementById('productPrevBtn');
+  const nextBtn = document.getElementById('productNextBtn');
+  
+  if (!paginationInfo || !prevBtn || !nextBtn) return;
+  
+  // Update info text
+  if (totalItems === 0) {
+    paginationInfo.textContent = '0 items';
+  } else {
+    paginationInfo.textContent = `${startIndex + 1} to ${endIndex} of ${totalItems}`;
+  }
+  
+  // Update button states
+  prevBtn.disabled = currentPage === 1;
+  nextBtn.disabled = endIndex >= totalItems;
 }
 
 function loadWishlist() {
@@ -230,6 +263,7 @@ function renderCategoryMenu() {
       activeMenuCategory = '';
       activeFilter = 'all';
       activeSubcategory = '';
+      currentPage = 1;
       syncFilterChips();
       renderCategoryMenu();
       renderProducts();
@@ -249,6 +283,7 @@ function renderCategoryMenu() {
       activeMenuCategory = category;
       activeFilter = category;
       activeSubcategory = '';
+      currentPage = 1;
       syncFilterChips();
       renderCategoryMenu();
       renderProducts();
@@ -281,6 +316,7 @@ function renderSubcategoryMenu(category) {
       activeMenuCategory = category;
       activeFilter = category;
       activeSubcategory = sub;
+      currentPage = 1;
       syncFilterChips();
       renderCategoryMenu();
       renderProducts();
@@ -418,6 +454,7 @@ filters.forEach((filter) => {
     activeFilter = filter.dataset.filter;
     activeSubcategory = '';
     activeMenuCategory = '';
+    currentPage = 1; // Reset pagination
     renderCategoryMenu();
     renderProducts();
   });
@@ -425,13 +462,37 @@ filters.forEach((filter) => {
 
 productSearch.addEventListener('input', (event) => {
   searchQuery = event.target.value;
+  currentPage = 1; // Reset pagination
   renderProducts();
 });
 
 if (sortSelect) {
   sortSelect.addEventListener('change', (event) => {
     currentSort = event.target.value;
+    currentPage = 1; // Reset pagination
     renderProducts();
+  });
+}
+
+// Pagination event listeners
+const productPrevBtn = document.getElementById('productPrevBtn');
+const productNextBtn = document.getElementById('productNextBtn');
+
+if (productPrevBtn) {
+  productPrevBtn.addEventListener('click', () => {
+    if (currentPage > 1) {
+      currentPage--;
+      renderProducts();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  });
+}
+
+if (productNextBtn) {
+  productNextBtn.addEventListener('click', () => {
+    currentPage++;
+    renderProducts();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   });
 }
 

@@ -137,6 +137,19 @@
           <input id="productSearch" placeholder="Search by name, category, subcategory, or product code" />
         </div>
         <div class="product-grid grid-view" id="productGrid"></div>
+        <div class="pagination" id="productPagination">
+          <button class="pagination-btn" id="productPrevBtn" disabled>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="15 18 9 12 15 6"></polyline>
+            </svg>
+          </button>
+          <span class="pagination-info" id="productPaginationInfo">1 to 15 of 0</span>
+          <button class="pagination-btn" id="productNextBtn" disabled>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+          </button>
+        </div>
       </section>
 
       <section class="section alt" id="essentials" data-section="essentials">

@@ -33,6 +33,11 @@ let ordersQuery = '';
 let ordersStatusFilter = 'all';
 const storeToken = localStorage.getItem('kouprey_store_token') || '';
 
+// Pagination state
+let inventoryPage = 1;
+let ordersPage = 1;
+const itemsPerPage = 15;
+
 function formatPrice(value) {
   return `₹${Number(value).toFixed(2)}`;
 }
@@ -105,9 +110,16 @@ function renderProducts() {
     return matchesCategory && matchesQuery;
   });
 
+  const totalItems = filtered.length;
+  const startIndex = (inventoryPage - 1) * itemsPerPage;
+  const endIndex = Math.min(startIndex + itemsPerPage, totalItems);
+  const paginatedProducts = filtered.slice(startIndex, endIndex);
+
+  updateInventoryPagination(startIndex, endIndex, totalItems);
+
   inventoryBody.innerHTML = '';
 
-  filtered.forEach((product) => {
+  paginatedProducts.forEach((product) => {
     const row = document.createElement('div');
     row.className = 'inventory-row';
     row.innerHTML = `
@@ -138,6 +150,23 @@ function renderProducts() {
   updateMetrics();
 }
 
+function updateInventoryPagination(startIndex, endIndex, totalItems) {
+  const paginationInfo = document.getElementById('inventoryPaginationInfo');
+  const prevBtn = document.getElementById('inventoryPrevBtn');
+  const nextBtn = document.getElementById('inventoryNextBtn');
+  
+  if (!paginationInfo || !prevBtn || !nextBtn) return;
+  
+  if (totalItems === 0) {
+    paginationInfo.textContent = '0 items';
+  } else {
+    paginationInfo.textContent = `${startIndex + 1} to ${endIndex} of ${totalItems}`;
+  }
+  
+  prevBtn.disabled = inventoryPage === 1;
+  nextBtn.disabled = endIndex >= totalItems;
+}
+
 function updateMetrics() {
   metricProducts.textContent = products.length;
   metricStock.textContent = products.reduce((sum, item) => sum + Number(item.stock || 0), 0);
@@ -161,8 +190,15 @@ function renderOrders() {
     return matchesStatus && matchesQuery;
   });
 
+  const totalItems = filtered.length;
+  const startIndex = (ordersPage - 1) * itemsPerPage;
+  const endIndex = Math.min(startIndex + itemsPerPage, totalItems);
+  const paginatedOrders = filtered.slice(startIndex, endIndex);
+
+  updateOrdersPagination(startIndex, endIndex, totalItems);
+
   ordersBody.innerHTML = '';
-  filtered.forEach((order) => {
+  paginatedOrders.forEach((order) => {
     const row = document.createElement('div');
     row.className = 'orders-row';
     row.innerHTML = `
@@ -184,6 +220,23 @@ function renderOrders() {
     `;
     ordersBody.appendChild(row);
   });
+}
+
+function updateOrdersPagination(startIndex, endIndex, totalItems) {
+  const paginationInfo = document.getElementById('ordersPaginationInfo');
+  const prevBtn = document.getElementById('ordersPrevBtn');
+  const nextBtn = document.getElementById('ordersNextBtn');
+  
+  if (!paginationInfo || !prevBtn || !nextBtn) return;
+  
+  if (totalItems === 0) {
+    paginationInfo.textContent = '0 items';
+  } else {
+    paginationInfo.textContent = `${startIndex + 1} to ${endIndex} of ${totalItems}`;
+  }
+  
+  prevBtn.disabled = ordersPage === 1;
+  nextBtn.disabled = endIndex >= totalItems;
 }
 
 async function loadOrders() {
@@ -504,23 +557,69 @@ if (!storeToken) {
 
 inventorySearch.addEventListener('input', (event) => {
   inventoryQuery = event.target.value;
+  inventoryPage = 1;
   renderProducts();
 });
 
 inventoryFilter.addEventListener('change', (event) => {
   inventoryCategory = event.target.value;
+  inventoryPage = 1;
   renderProducts();
 });
 
 ordersSearch.addEventListener('input', (event) => {
   ordersQuery = event.target.value;
+  ordersPage = 1;
   renderOrders();
 });
 
 ordersFilter.addEventListener('change', (event) => {
   ordersStatusFilter = event.target.value;
+  ordersPage = 1;
   renderOrders();
 });
+
+// Pagination event listeners
+const inventoryPrevBtn = document.getElementById('inventoryPrevBtn');
+const inventoryNextBtn = document.getElementById('inventoryNextBtn');
+const ordersPrevBtn = document.getElementById('ordersPrevBtn');
+const ordersNextBtn = document.getElementById('ordersNextBtn');
+
+if (inventoryPrevBtn) {
+  inventoryPrevBtn.addEventListener('click', () => {
+    if (inventoryPage > 1) {
+      inventoryPage--;
+      renderProducts();
+      document.getElementById('inventory')?.scrollIntoView({ behavior: 'smooth' });
+    }
+  });
+}
+
+if (inventoryNextBtn) {
+  inventoryNextBtn.addEventListener('click', () => {
+    inventoryPage++;
+    renderProducts();
+    document.getElementById('inventory')?.scrollIntoView({ behavior: 'smooth' });
+  });
+}
+
+if (ordersPrevBtn) {
+  ordersPrevBtn.addEventListener('click', () => {
+    if (ordersPage > 1) {
+      ordersPage--;
+      renderOrders();
+      document.getElementById('orders')?.scrollIntoView({ behavior: 'smooth' });
+    }
+  });
+}
+
+if (ordersNextBtn) {
+  ordersNextBtn.addEventListener('click', () => {
+    ordersPage++;
+    renderOrders();
+    document.getElementById('orders')?.scrollIntoView({ behavior: 'smooth' });
+  });
+}
 
 ordersBody.addEventListener('click', (event) => {
   const button = event.target.closest('button');
