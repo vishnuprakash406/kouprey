@@ -123,6 +123,7 @@ function renderBag() {
 function renderProduct(product) {
   const images = product.images && product.images.length ? product.images : [product.image];
   const videos = product.videos || [];
+  const instagramVideo = product.instagram_video || '';
   productDetail.innerHTML = `
     <div class="product-detail">
       <div class="gallery-thumbs-vertical" id="galleryThumbs">
@@ -184,6 +185,11 @@ function renderProduct(product) {
               <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
             </svg>
           </button>
+          ${instagramVideo ? `
+            <a class="btn-instagram" href="${instagramVideo}" target="_blank" rel="noopener">
+              Instagram Reel
+            </a>
+          ` : ''}
         </div>
       </div>
     </div>

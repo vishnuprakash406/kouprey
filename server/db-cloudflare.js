@@ -183,6 +183,10 @@ async function init(env = null) {
       message TEXT,
       created_at TEXT
     )`,
+    `CREATE TABLE IF NOT EXISTS app_settings (
+      key TEXT PRIMARY KEY,
+      value TEXT NOT NULL
+    )`,
   ];
 
   for (const sql of tables) {

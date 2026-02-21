@@ -170,6 +170,19 @@ button {
   z-index: 10;
 }
 
+.dashboard-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.publish-block {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+
 .dashboard-brand {
   display: flex;
   flex-direction: column;
@@ -716,22 +729,27 @@ main {
   display: flex;
   gap: 8px;
   background: rgba(30, 27, 24, 0.08);
-  padding: 6px;
+  padding: 4px;
   border-radius: 8px;
 }
 
 .view-toggle {
-  width: 40px;
-  height: 40px;
+  width: 24px;
+  height: 24px;
   border: none;
   background: transparent;
-  border-radius: 6px;
+  border-radius: 4px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   color: rgba(30, 27, 24, 0.5);
   transition: all 0.2s ease;
+}
+
+.view-toggle svg {
+  width: 14px;
+  height: 14px;
 }
 
 .view-toggle:hover {
@@ -1384,6 +1402,28 @@ main {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.btn-instagram {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px 20px;
+  border-radius: 6px;
+  background: #fff;
+  border: 2px solid rgba(30, 27, 24, 0.2);
+  color: var(--ink);
+  font-size: 14px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  transition: all 0.25s ease;
+}
+
+.btn-instagram:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: rgba(211, 79, 47, 0.05);
 }
 
 .btn-wishlist:hover {

@@ -108,6 +108,57 @@ function authRoles(roles) {
   };
 }
 
+async function loadSettingsSnapshot() {
+  const rows = await all('SELECT key, value FROM app_settings');
+  const result = {};
+  rows.forEach((row) => {
+    try {
+      result[row.key] = JSON.parse(row.value);
+    } catch {
+      result[row.key] = null;
+    }
+  });
+  return result;
+}
+
+async function saveSettingValue(key, value) {
+  const payload = JSON.stringify(value ?? null);
+  await run(
+    `INSERT INTO app_settings (key, value)
+     VALUES (?, ?)
+     ON CONFLICT(key) DO UPDATE SET value = excluded.value`,
+    [key, payload]
+  );
+}
+
+app.get('/api/settings', async (req, res) => {
+  try {
+    const snapshot = await loadSettingsSnapshot();
+    res.json(snapshot);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to load settings' });
+  }
+});
+
+app.put('/api/settings', authRole('master'), async (req, res) => {
+  const payload = req.body || {};
+  const keys = ['settings', 'theme', 'home', 'colors'];
+  const updates = keys.filter((key) => Object.prototype.hasOwnProperty.call(payload, key));
+
+  if (!updates.length) {
+    return res.status(400).json({ error: 'No settings provided' });
+  }
+
+  try {
+    for (const key of updates) {
+      await saveSettingValue(key, payload[key]);
+    }
+    res.json({ success: true });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to save settings' });
+  }
+});
+
 app.get('/api/products', async (req, res) => {
   try {
     const rows = await all('SELECT * FROM products ORDER BY updated_at DESC');

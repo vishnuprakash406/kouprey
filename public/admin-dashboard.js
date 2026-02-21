@@ -87,6 +87,8 @@ const masterEmailInput = document.getElementById('masterEmail');
 const masterPasswordInput = document.getElementById('masterPassword');
 const masterStatus = document.getElementById('masterStatus');
 const masterList = document.getElementById('masterList');
+const publishChanges = document.getElementById('publishChanges');
+const publishStatus = document.getElementById('publishStatus');
 const hashKey = document.getElementById('hashKey');
 const hashSalt = document.getElementById('hashSalt');
 const hashTxnId = document.getElementById('hashTxnId');
@@ -529,6 +531,139 @@ function loadColorSettings() {
     // ignore
   }
 }
+
+function buildThemePayload() {
+  return { colors: [themeA.value, themeB.value, themeC.value] };
+}
+
+function buildSettingsPayload() {
+  return {
+    logoUrl: logoUrl.value.trim(),
+    paymentGateway: paymentGateway.value,
+    stripePublishableKey: stripePublishableKey.value.trim(),
+    stripeSecretKey: stripeSecretKey.value.trim(),
+    paypalClientId: paypalClientId.value.trim(),
+    razorpayKeyId: razorpayKeyId.value.trim(),
+    payuKey: payuKey.value.trim(),
+    payuSalt: payuSalt.value.trim(),
+    paymentCurrency: paymentCurrency.value,
+    returnDays: returnDays.value,
+    returnWhatsApp: returnWhatsAppInput.value.trim(),
+    returnPolicyText: returnPolicyInput.value.trim(),
+    returnConditionText: returnConditionInput.value.trim(),
+    showReturnCondition: showReturnCondition.checked,
+    brandName: brandNameInput.value.trim(),
+    footerText: footerTextInput.value.trim(),
+    footerUrl: footerUrlInput.value.trim(),
+    footerAddress: footerAddressInput.value.trim(),
+    footerPhone: footerPhoneInput.value.trim(),
+    footerEmail: footerEmailInput.value.trim(),
+    footerWhatsApp: footerWhatsAppInput.value.trim(),
+    footerHours: footerHoursInput.value.trim(),
+    footerInstagram: footerInstagramInput.value.trim(),
+    footerFacebook: footerFacebookInput.value.trim(),
+    storeEmailUsername: storeEmailUsername.value.trim(),
+    storeEmailPassword: storeEmailPassword.value.trim(),
+    footerNote: footerNoteInput.value.trim(),
+    headerImageUrl: headerImageUrl.value.trim(),
+    heroImageUrl: heroImageUrl.value.trim(),
+  };
+}
+
+function buildHomePayload() {
+  return {
+    heroEyebrow: heroEyebrowInput.value.trim(),
+    heroTitle: heroTitleInput.value.trim(),
+    heroCopy: heroCopyInput.value.trim(),
+    newSubtitle: newSubtitleInput.value.trim(),
+    essentialsSubtitle: essentialsSubtitleInput.value.trim(),
+    essential1Title: essential1TitleInput.value.trim(),
+    essential1Copy: essential1CopyInput.value.trim(),
+    essential2Title: essential2TitleInput.value.trim(),
+    essential2Copy: essential2CopyInput.value.trim(),
+    essential3Title: essential3TitleInput.value.trim(),
+    essential3Copy: essential3CopyInput.value.trim(),
+    saleSubtitle: saleSubtitleInput.value.trim(),
+    saleBannerTitle: saleBannerTitleInput.value.trim(),
+    saleBannerCopy: saleBannerCopyInput.value.trim(),
+    hiddenSections: {
+      new: !showNew.checked,
+      essentials: !showEssentials.checked,
+      sale: !showSale.checked,
+    },
+    hiddenItems: {
+      essential1: !showEssential1.checked,
+      essential2: !showEssential2.checked,
+      essential3: !showEssential3.checked,
+      saleBanner: !showSaleBanner.checked,
+    },
+  };
+}
+
+function buildColorPayload() {
+  return {
+    headerBgColor: headerBgColor.value,
+    essentialsBgColor: essentialsBgColor.value,
+    saleBgStart: saleBgStart.value,
+    saleBgEnd: saleBgEnd.value,
+    saleTextColor: saleTextColor.value,
+  };
+}
+
+function applyThemeVariables(theme) {
+  if (theme && theme.colors && theme.colors.length >= 3) {
+    document.documentElement.style.setProperty('--bg-a', theme.colors[0]);
+    document.documentElement.style.setProperty('--bg-b', theme.colors[1]);
+    document.documentElement.style.setProperty('--bg-c', theme.colors[2]);
+  }
+}
+
+function applyColorVariables(colors) {
+  if (!colors) return;
+  if (colors.headerBgColor) {
+    document.documentElement.style.setProperty('--header-bg', colors.headerBgColor);
+  }
+  if (colors.essentialsBgColor) {
+    document.documentElement.style.setProperty('--essentials-bg', colors.essentialsBgColor);
+  }
+  if (colors.saleBgStart && colors.saleBgEnd) {
+    document.documentElement.style.setProperty(
+      '--sale-bg',
+      `linear-gradient(120deg, ${colors.saleBgStart}, ${colors.saleBgEnd})`
+    );
+  }
+  if (colors.saleTextColor) {
+    document.documentElement.style.setProperty('--sale-text', colors.saleTextColor);
+  }
+}
+
+async function publishAllChanges() {
+  if (!publishChanges) return;
+  publishStatus.textContent = 'Publishing...';
+  publishChanges.disabled = true;
+
+  const theme = buildThemePayload();
+  const settings = buildSettingsPayload();
+  const home = buildHomePayload();
+  const colors = buildColorPayload();
+
+  const saved = await saveSettingsToAPI({ theme, settings, home, colors });
+  if (saved) {
+    localStorage.setItem(THEME_KEY, JSON.stringify(theme));
+    localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+    localStorage.setItem(HOME_KEY, JSON.stringify(home));
+    localStorage.setItem(COLOR_KEY, JSON.stringify(colors));
+    applyThemeVariables(theme);
+    applyColorVariables(colors);
+    publishStatus.textContent = 'Published.';
+  } else {
+    publishStatus.textContent = 'Publish failed.';
+  }
+
+  publishChanges.disabled = false;
+}
+
+publishChanges?.addEventListener('click', publishAllChanges);
 
 applyTheme.addEventListener('click', async () => {
   const theme = { colors: [themeA.value, themeB.value, themeC.value] };

@@ -145,6 +145,13 @@ async function init() {
     )`
   );
 
+  await run(
+    `CREATE TABLE IF NOT EXISTS app_settings (
+      key TEXT PRIMARY KEY,
+      value TEXT NOT NULL
+    )`
+  );
+
   const columns = await all('PRAGMA table_info(products)');
   const columnNames = columns.map((col) => col.name);
   const addColumn = async (name, definition) => {
