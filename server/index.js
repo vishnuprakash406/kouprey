@@ -133,6 +133,11 @@ async function saveSettingValue(key, value) {
 
 app.get('/api/settings', async (req, res) => {
   try {
+    // Prevent browser caching of settings
+    res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+    res.setHeader('Pragma', 'no-cache');
+    res.setHeader('Expires', '0');
+    
     const snapshot = await loadSettingsSnapshot();
     res.json(snapshot);
   } catch (error) {

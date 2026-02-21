@@ -200,14 +200,18 @@
         
         // Check if cache version has changed
         const storedVersion = localStorage.getItem(CACHE_VERSION_KEY);
-        const newVersion = serverSettings.cacheVersion;
-        if (storedVersion && storedVersion !== newVersion.toString()) {
+        const newVersion = serverSettings.cacheVersion || Date.now();
+        
+        if (storedVersion && newVersion && storedVersion !== newVersion.toString()) {
           console.log('Cache version updated, clearing stale data');
           localStorage.removeItem(SETTINGS_KEY);
           localStorage.removeItem(HOME_KEY);
           localStorage.removeItem(COLOR_KEY);
         }
-        localStorage.setItem(CACHE_VERSION_KEY, newVersion.toString());
+        
+        if (newVersion) {
+          localStorage.setItem(CACHE_VERSION_KEY, newVersion.toString());
+        }
         
         // Apply settings from server
         if (serverSettings.settings) {
@@ -235,7 +239,8 @@
         // Fallback to localStorage if API fails
         throw new Error('API unavailable');
       }
-    } catch {
+    } catch (error) {
+      console.error('Error loading settings from API:', error);
       // Fallback to localStorage
       try {
         const saved = JSON.parse(localStorage.getItem(SETTINGS_KEY));
