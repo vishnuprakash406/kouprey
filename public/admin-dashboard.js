@@ -647,20 +647,42 @@ async function publishAllChanges() {
   const home = buildHomePayload();
   const colors = buildColorPayload();
 
-  const saved = await saveSettingsToAPI({ theme, settings, home, colors });
-  if (saved) {
+  try {
+    const response = await apiFetch('/api/settings', {
+      method: 'PUT',
+      headers: { Authorization: `Bearer ${masterToken}` },
+      body: JSON.stringify({ theme, settings, home, colors }),
+    });
+
+    // Update localStorage with new values
     localStorage.setItem(THEME_KEY, JSON.stringify(theme));
     localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
     localStorage.setItem(HOME_KEY, JSON.stringify(home));
     localStorage.setItem(COLOR_KEY, JSON.stringify(colors));
+    localStorage.setItem('kouprey_cache_version', response.cacheVersion.toString());
+
+    // Apply changes immediately on this client
     applyThemeVariables(theme);
     applyColorVariables(colors);
-    publishStatus.textContent = 'Published.';
-  } else {
+
+    // Signal other tabs/windows to reload
+    reloadSettingsGlobally(response.cacheVersion);
+
+    publishStatus.textContent = 'Published to all devices.';
+  } catch (error) {
+    console.error('Publish error:', error);
     publishStatus.textContent = 'Publish failed.';
   }
 
   publishChanges.disabled = false;
+}
+
+function reloadSettingsGlobally(cacheVersion) {
+  // Signal other tabs/windows to reload settings
+  localStorage.setItem('kouprey_publish_event', JSON.stringify({
+    timestamp: Date.now(),
+    cacheVersion: cacheVersion
+  }));
 }
 
 publishChanges?.addEventListener('click', publishAllChanges);

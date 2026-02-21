@@ -135,7 +135,13 @@
       </div>
     </footer>
 
-    <script src="/settings.js"></script>
+    <script>
+      // Load settings.js with cache-busting
+      const scriptEl = document.createElement('script');
+      const cacheVersion = localStorage.getItem('kouprey_cache_version') || Date.now();
+      scriptEl.src = `/settings.js?v=${cacheVersion}`;
+      document.head.appendChild(scriptEl);
+    </script>
     <script src="/health.js"></script>
   </body>
 </html>

@@ -2,6 +2,16 @@
   const SETTINGS_KEY = 'kouprey_settings';
   const HOME_KEY = 'kouprey_home';
   const COLOR_KEY = 'kouprey_colors';
+  const CACHE_VERSION_KEY = 'kouprey_cache_version';
+
+  // Listen for publish events from other tabs or same tab
+  window.addEventListener('storage', (event) => {
+    if (event.key === 'kouprey_publish_event') {
+      // Settings were published, reload to get fresh version
+      console.log('Settings published, reloading...');
+      setTimeout(() => location.reload(), 500);
+    }
+  });
 
   function applySettings(settings) {
     if (!settings) return;
@@ -187,6 +197,17 @@
       const response = await fetch('/api/settings');
       if (response.ok) {
         const serverSettings = await response.json();
+        
+        // Check if cache version has changed
+        const storedVersion = localStorage.getItem(CACHE_VERSION_KEY);
+        const newVersion = serverSettings.cacheVersion;
+        if (storedVersion && storedVersion !== newVersion.toString()) {
+          console.log('Cache version updated, clearing stale data');
+          localStorage.removeItem(SETTINGS_KEY);
+          localStorage.removeItem(HOME_KEY);
+          localStorage.removeItem(COLOR_KEY);
+        }
+        localStorage.setItem(CACHE_VERSION_KEY, newVersion.toString());
         
         // Apply settings from server
         if (serverSettings.settings) {

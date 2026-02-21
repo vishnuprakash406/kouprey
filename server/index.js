@@ -153,7 +153,10 @@ app.put('/api/settings', authRole('master'), async (req, res) => {
     for (const key of updates) {
       await saveSettingValue(key, payload[key]);
     }
-    res.json({ success: true });
+    // Save cache version to bust browser cache
+    const cacheVersion = Date.now();
+    await saveSettingValue('cacheVersion', cacheVersion);
+    res.json({ success: true, cacheVersion });
   } catch (error) {
     res.status(500).json({ error: 'Failed to save settings' });
   }
