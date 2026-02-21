@@ -796,16 +796,27 @@ main {
 }
 
 .chip {
-  border: 1px solid rgba(30, 27, 24, 0.2);
+  border: 1px solid rgba(30, 27, 24, 0.15);
   padding: 8px 16px;
   border-radius: 999px;
-  background: rgba(255, 246, 234, 0.6);
+  background: rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   font-size: 14px;
+  transition: all 0.2s ease;
+}
+
+.chip:hover {
+  background: rgba(255, 255, 255, 0.5);
+  border-color: rgba(30, 27, 24, 0.25);
 }
 
 .chip.active {
-  background: var(--ink);
+  background: rgba(30, 27, 24, 0.85);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   color: #fff;
+  border-color: rgba(30, 27, 24, 0.9);
 }
 
 .product-grid {
