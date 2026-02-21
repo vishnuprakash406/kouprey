@@ -543,6 +543,70 @@ loadCart();
 loadProducts();
 renderBag();
 
+// Cart/Bag toggle functionality
+const mobileCartButton = document.getElementById('mobileCartButton');
+const mobileBagCount = document.getElementById('mobileBagCount');
+
+function updateMobileBagCount() {
+  if (mobileBagCount) {
+    const count = bagState.reduce((sum, item) => sum + item.qty, 0);
+    mobileBagCount.textContent = count;
+  }
+}
+
+if (bagButton) {
+  bagButton.addEventListener('click', () => {
+    bag.classList.add('open');
+    bagButton.setAttribute('aria-expanded', 'true');
+  });
+}
+
+if (mobileCartButton) {
+  mobileCartButton.addEventListener('click', () => {
+    bag.classList.add('open');
+    mobileCartButton.setAttribute('aria-expanded', 'true');
+  });
+}
+
+if (closeBag) {
+  closeBag.addEventListener('click', () => {
+    bag.classList.remove('open');
+    if (bagButton) bagButton.setAttribute('aria-expanded', 'false');
+    if (mobileCartButton) mobileCartButton.setAttribute('aria-expanded', 'false');
+  });
+}
+
+if (headerCartButton) {
+  headerCartButton.addEventListener('click', () => {
+    bag.classList.add('open');
+  });
+}
+
+document.addEventListener('click', (event) => {
+  if (!bag || (!bagButton && !mobileCartButton)) return;
+  const clickInsideBag = bag.contains(event.target) || 
+                          (bagButton && bagButton.contains(event.target)) ||
+                          (mobileCartButton && mobileCartButton.contains(event.target));
+  if (!clickInsideBag && bag.classList.contains('open')) {
+    bag.classList.remove('open');
+    if (bagButton) bagButton.setAttribute('aria-expanded', 'false');
+    if (mobileCartButton) mobileCartButton.setAttribute('aria-expanded', 'false');
+  }
+});
+
+if (checkoutButton) {
+  checkoutButton.addEventListener('click', () => {
+    window.location.href = '/checkout';
+  });
+}
+
+// Update mobile bag count when renderBag is called
+const originalRenderBag = renderBag;
+renderBag = function() {
+  originalRenderBag();
+  updateMobileBagCount();
+};
+
 // Instagram Video Carousel
 const instagramTrack = document.getElementById('instagramTrack');
 

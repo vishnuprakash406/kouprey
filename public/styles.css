@@ -488,6 +488,45 @@ button {
   display: flex;
   gap: 8px;
   align-items: center;
+  font-weight: 500;
+}
+
+.bag-button svg {
+  flex-shrink: 0;
+}
+
+.mobile-cart-button {
+  display: none;
+  position: absolute;
+  top: 16px;
+  right: 60px;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--ink);
+  color: #fffaf2;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  cursor: pointer;
+  z-index: 25;
+}
+
+.mobile-bag-count {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  background: #e84118;
+  color: white;
+  border-radius: 999px;
+  min-width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 0 6px;
 }
 
 .menu-bar {
@@ -2806,22 +2845,15 @@ main {
     display: none;
   }
 
+  .mobile-cart-button {
+    display: flex;
+  }
+
   .header-menu {
     display: block;
     position: absolute;
     top: 16px;
     right: 5vw;
-  }
-
-  .header-actions {
-    width: 100%;
-    justify-content: center;
-    flex-wrap: wrap;
-  }
-
-  .bag-button {
-    width: 100%;
-    justify-content: center;
   }
 
   .menu-bar {

@@ -116,6 +116,13 @@ function renderBag() {
 
   bagCount.textContent = bagState.reduce((sum, item) => sum + item.qty, 0);
   bagTotal.textContent = formatPrice(total);
+  
+  // Update mobile cart count
+  const mobileBagCount = document.getElementById('mobileBagCount');
+  if (mobileBagCount) {
+    mobileBagCount.textContent = bagState.reduce((sum, item) => sum + item.qty, 0);
+  }
+  
   localStorage.setItem(CART_KEY, JSON.stringify(bagState));
   checkoutButton.disabled = bagState.length === 0;
 }
@@ -472,17 +479,29 @@ bagButton.addEventListener('click', () => {
   bagButton.setAttribute('aria-expanded', 'true');
 });
 
+const mobileCartButton = document.getElementById('mobileCartButton');
+if (mobileCartButton) {
+  mobileCartButton.addEventListener('click', () => {
+    bag.classList.add('open');
+    mobileCartButton.setAttribute('aria-expanded', 'true');
+  });
+}
+
 closeBag.addEventListener('click', () => {
   bag.classList.remove('open');
   bagButton.setAttribute('aria-expanded', 'false');
+  if (mobileCartButton) mobileCartButton.setAttribute('aria-expanded', 'false');
 });
 
 document.addEventListener('click', (event) => {
   if (!bag || !bagButton) return;
-  const clickInsideBag = bag.contains(event.target) || bagButton.contains(event.target);
+  const clickInsideBag = bag.contains(event.target) || 
+                          bagButton.contains(event.target) ||
+                          (mobileCartButton && mobileCartButton.contains(event.target));
   if (!clickInsideBag && bag.classList.contains('open')) {
     bag.classList.remove('open');
     bagButton.setAttribute('aria-expanded', 'false');
+    if (mobileCartButton) mobileCartButton.setAttribute('aria-expanded', 'false');
   }
 });
 
