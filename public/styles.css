@@ -18,13 +18,43 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(135deg, var(--theme-a) 0%, var(--theme-b) 50%, var(--theme-c) 100%);
+  background: radial-gradient(ellipse at center, #1a2332 0%, #0d1117 70%, #000000 100%);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   z-index: 9999;
   transition: opacity 0.4s ease, visibility 0.4s ease;
+  overflow: hidden;
+}
+
+.page-loader::before {
+  content: '';
+  position: absolute;
+  width: 200%;
+  height: 200%;
+  background-image: 
+    radial-gradient(2px 2px at 20% 30%, white, transparent),
+    radial-gradient(2px 2px at 60% 70%, white, transparent),
+    radial-gradient(1px 1px at 50% 50%, white, transparent),
+    radial-gradient(1px 1px at 80% 10%, white, transparent),
+    radial-gradient(2px 2px at 90% 60%, white, transparent),
+    radial-gradient(1px 1px at 33% 80%, white, transparent),
+    radial-gradient(1px 1px at 15% 90%, white, transparent);
+  background-size: 200% 200%;
+  background-position: 0 0, 40% 60%, 130% 270%, 70% 100%, 200% 50%, 60% 150%, 100% 200%;
+  animation: galaxyRotate 120s linear infinite;
+  opacity: 0.8;
+}
+
+.page-loader::after {
+  content: '';
+  position: absolute;
+  width: 150%;
+  height: 150%;
+  background: radial-gradient(circle, rgba(138, 43, 226, 0.15) 0%, transparent 50%),
+              radial-gradient(circle, rgba(75, 0, 130, 0.1) 20%, transparent 60%);
+  animation: galaxyPulse 8s ease-in-out infinite;
 }
 
 .page-loader.hidden {
@@ -36,20 +66,28 @@
 .loader-spinner {
   width: 60px;
   height: 60px;
-  border: 4px solid rgba(211, 79, 47, 0.2);
-  border-top: 4px solid var(--accent);
+  border: 4px solid rgba(138, 43, 226, 0.3);
+  border-top: 4px solid rgba(186, 85, 211, 0.8);
   border-radius: 50%;
   animation: spin 0.9s cubic-bezier(0.68, -0.55, 0.27, 1.55) infinite;
   margin-bottom: 20px;
+  position: relative;
+  z-index: 10;
+  box-shadow: 0 0 20px rgba(138, 43, 226, 0.5),
+              inset 0 0 10px rgba(186, 85, 211, 0.3);
 }
 
 .loader-text {
   font-size: 18px;
   font-weight: 600;
-  color: var(--ink);
+  color: #e0e0e0;
   letter-spacing: 2px;
   text-transform: uppercase;
   animation: pulse 1.5s ease-in-out infinite;
+  position: relative;
+  z-index: 10;
+  text-shadow: 0 0 10px rgba(186, 85, 211, 0.8),
+               0 0 20px rgba(138, 43, 226, 0.5);
 }
 
 @keyframes spin {
@@ -63,10 +101,30 @@
 
 @keyframes pulse {
   0%, 100% {
-    opacity: 0.6;
+    opacity: 0.7;
   }
   50% {
     opacity: 1;
+  }
+}
+
+@keyframes galaxyRotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes galaxyPulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.3;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 0.5;
   }
 }
 
