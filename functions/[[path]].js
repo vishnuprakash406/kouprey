@@ -22,7 +22,7 @@ export async function onRequest(context) {
     '/master-login/admin': 'admin-dashboard.html',
     '/staff-login/dashboard': 'store-dashboard.html',
     '/master-login': 'master-login.html',
-    '/staff-login': 'store.html',
+    '/staff-login': 'staff-login.html',
     '/product': 'product.html',
     '/checkout': 'checkout.html',
     '/track': 'track.html',
