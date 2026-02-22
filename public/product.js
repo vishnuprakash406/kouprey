@@ -47,6 +47,29 @@ function effectivePrice(product) {
   return Number(product.price) * (1 - pct / 100);
 }
 
+const isValidMediaUrl = (value) =>
+  typeof value === 'string' && /^(https?:|\/|data:image\/|blob:)/.test(value);
+
+const isValidVideoUrl = (value) =>
+  typeof value === 'string' && /^(https?:|\/|blob:)/.test(value);
+
+function getPrimaryImage(product) {
+  if (isValidMediaUrl(product.image)) return product.image;
+  if (Array.isArray(product.images) && product.images.length) {
+    const first = product.images.find((img) => isValidMediaUrl(img));
+    if (first) return first;
+  }
+  return '/assets/logo.png';
+}
+
+function buildImageList(product) {
+  const baseImage = getPrimaryImage(product);
+  const rawImages = Array.isArray(product.images) ? product.images : [];
+  const cleanedImages = rawImages.filter((img) => isValidMediaUrl(img));
+  const list = [baseImage, ...cleanedImages.filter((img) => img !== baseImage)];
+  return Array.from(new Set(list)).filter(Boolean);
+}
+
 async function apiFetch(url, options = {}) {
   const headers = {
     'Content-Type': 'application/json',
@@ -128,23 +151,7 @@ function renderBag() {
 }
 
 function renderProduct(product) {
-  const isValidMediaUrl = (value) =>
-    typeof value === 'string' && /^(https?:|\/|data:image\/|blob:)/.test(value);
-  const isValidVideoUrl = (value) =>
-    typeof value === 'string' && /^(https?:|\/|blob:)/.test(value);
-
-  const rawImages = Array.isArray(product.images) ? product.images : [];
-  const cleanedImages = rawImages.filter((img) => isValidMediaUrl(img));
-  const baseImage = isValidMediaUrl(product.image) ? product.image : '';
-  const fallbackImage = '/assets/logo.png';
-  const images = baseImage
-    ? [baseImage, ...cleanedImages.filter((img) => img !== baseImage)]
-    : cleanedImages.length
-      ? cleanedImages
-      : [fallbackImage];
-  const safeImages = Array.from(
-    new Set(images.map((img) => (isValidMediaUrl(img) ? img : baseImage || fallbackImage)))
-  );
+  const safeImages = buildImageList(product);
   const videos = Array.from(
     new Set((product.videos || []).filter((video) => isValidVideoUrl(video)))
   );
@@ -301,7 +308,7 @@ function renderProduct(product) {
   const thumbs = document.getElementById('galleryThumbs');
   const mainImage = document.getElementById('galleryMain');
 
-  const fallbackSrc = baseImage || '/assets/logo.png';
+  const fallbackSrc = getPrimaryImage(product);
   if (mainImage) {
     mainImage.addEventListener('error', () => {
       if (mainImage.src !== fallbackSrc) mainImage.src = fallbackSrc;
@@ -370,7 +377,7 @@ function renderSuggestions(items) {
     const card = document.createElement('div');
     card.className = 'product-card';
     card.innerHTML = `
-      <img src="${product.image}" alt="${product.name}" />
+      <img src="${getPrimaryImage(product)}" alt="${product.name}" />
       <h4>${product.name}</h4>
       <div class="product-meta">
         <span class="badge">${availabilityLabel(product.availability)}</span>
