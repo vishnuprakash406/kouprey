@@ -530,6 +530,10 @@ const imageUploadArea = document.getElementById('imageUploadArea');
 const reviewImage = document.getElementById('reviewImage');
 const imagePreview = document.getElementById('imagePreview');
 
+// Review pagination state
+let reviewCurrentPage = 1;
+const reviewsPerPage = 5;
+
 if (reviewStarsDisplay) {
   reviewStarsDisplay.addEventListener('click', (event) => {
     const btn = event.target.closest('.star-btn');
@@ -640,6 +644,7 @@ if (reviewStarsDisplay) {
           reviewForm.style.display = 'none';
           reviewPrompt.style.display = 'inline';
           cancelReview.style.display = 'none';
+          reviewCurrentPage = 1; // Reset to first page
           alert('Thank you for your review!');
           // Optionally reload reviews
           loadReviews();
@@ -687,21 +692,65 @@ async function loadReviews() {
     
     if (!Array.isArray(reviews) || reviews.length === 0) {
       reviewsList.innerHTML = '';
+      const paginationEl = document.getElementById('reviewsPagination');
+      if (paginationEl) paginationEl.classList.add('hidden');
       return;
     }
 
-    reviewsList.innerHTML = reviews.map(review => `
-      <div class="review-item">
-        <div class="review-meta">
-          <strong style="font-size: 12px;">${review.displayName}</strong>
-          <div style="font-size: 11px; color: #999; margin-top: 2px;">
-            ${'★'.repeat(review.rating).padEnd(5, '☆')} · ${new Date(review.timestamp).toLocaleDateString()}
+    // Calculate pagination
+    const totalPages = Math.ceil(reviews.length / reviewsPerPage);
+    const startIndex = (reviewCurrentPage - 1) * reviewsPerPage;
+    const endIndex = Math.min(startIndex + reviewsPerPage, reviews.length);
+    const paginatedReviews = reviews.slice(startIndex, endIndex);
+
+    // Render reviews with truncation
+    reviewsList.innerHTML = paginatedReviews.map((review, idx) => {
+      const pageIdx = startIndex + idx;
+      const isTruncated = review.content && review.content.length > 200;
+      return `
+        <div class="review-item">
+          <div class="review-meta">
+            <strong style="font-size: 12px;">${review.displayName}</strong>
+            <div style="font-size: 11px; color: #999; margin-top: 2px;">
+              ${'★'.repeat(review.rating).padEnd(5, '☆')} · ${new Date(review.timestamp).toLocaleDateString()}
+            </div>
           </div>
+          ${review.title ? `<h4 style="font-size: 12px; margin-top: 6px; margin-bottom: 4px;">${review.title}</h4>` : ''}
+          <div class="review-content" id="content-${pageIdx}">
+            ${review.content}
+          </div>
+          ${isTruncated ? `<button class="see-more-btn" data-idx="${pageIdx}">See more</button>` : ''}
         </div>
-        ${review.title ? `<h4 style="font-size: 12px; margin-top: 6px; margin-bottom: 4px;">${review.title}</h4>` : ''}
-        <p style="font-size: 11px; line-height: 1.5; color: #555;">${review.content}</p>
-      </div>
-    `).join('');
+      `;
+    }).join('');
+
+    // Add event listeners for "See more" buttons
+    document.querySelectorAll('.see-more-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        const idx = btn.dataset.idx;
+        const contentEl = document.getElementById(`content-${idx}`);
+        if (contentEl) {
+          contentEl.classList.toggle('expanded');
+          btn.textContent = contentEl.classList.contains('expanded') ? 'See less' : 'See more';
+        }
+      });
+    });
+
+    // Update pagination controls
+    const paginationEl = document.getElementById('reviewsPagination');
+    const paginationInfo = document.getElementById('reviewsPaginationInfo');
+    const prevBtn = document.getElementById('reviewsPrevBtn');
+    const nextBtn = document.getElementById('reviewsNextBtn');
+
+    if (paginationEl && totalPages > 1) {
+      paginationEl.classList.remove('hidden');
+      if (paginationInfo) paginationInfo.textContent = `Page ${reviewCurrentPage} of ${totalPages}`;
+      if (prevBtn) prevBtn.disabled = reviewCurrentPage === 1;
+      if (nextBtn) nextBtn.disabled = reviewCurrentPage === totalPages;
+    } else if (paginationEl) {
+      paginationEl.classList.add('hidden');
+    }
   } catch (error) {
     console.error('Error loading reviews:', error);
   }
@@ -710,3 +759,24 @@ async function loadReviews() {
 init();
 loadCart();
 loadReviews();
+// Review pagination event listeners
+const reviewsPrevBtn = document.getElementById('reviewsPrevBtn');
+const reviewsNextBtn = document.getElementById('reviewsNextBtn');
+
+if (reviewsPrevBtn) {
+  reviewsPrevBtn.addEventListener('click', () => {
+    if (reviewCurrentPage > 1) {
+      reviewCurrentPage--;
+      loadReviews();
+      document.getElementById('reviews')?.scrollIntoView({ behavior: 'smooth' });
+    }
+  });
+}
+
+if (reviewsNextBtn) {
+  reviewsNextBtn.addEventListener('click', () => {
+    reviewCurrentPage++;
+    loadReviews();
+    document.getElementById('reviews')?.scrollIntoView({ behavior: 'smooth' });
+  });
+}
