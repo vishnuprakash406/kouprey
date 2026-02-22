@@ -1584,7 +1584,7 @@ main {
 
 .gallery-main-wrapper {
   position: relative;
-  background: #fff;
+  background: transparent;
   border-radius: 12px;
   overflow: hidden;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
@@ -1595,7 +1595,7 @@ main {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  background: #fafafa;
+  background: transparent;
   cursor: zoom-in;
   transition: opacity 0.2s ease;
 }
