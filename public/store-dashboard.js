@@ -15,6 +15,7 @@ const emailAccessBtn = document.getElementById('emailAccessBtn');
 const emailStatus = document.getElementById('emailStatus');
 const mediaUpload = document.getElementById('mediaUpload');
 const uploadStatus = document.getElementById('uploadStatus');
+const uploadPreview = document.getElementById('uploadPreview');
 const stockInput = document.getElementById('stock');
 const availabilitySelect = document.getElementById('availability');
 
@@ -363,6 +364,7 @@ function populateForm(product) {
   studioForm.videos.value = (product.videos || []).join(',');
   studioForm.instagram_video.value = product.instagram_video || '';
   studioForm.description.value = product.description;
+  renderUploadPreview((product.images || []).filter(Boolean));
 }
 
 function resetForm() {
@@ -492,6 +494,53 @@ emailAccessBtn.addEventListener('click', () => {
   }
 });
 
+function mergeCsvValue(input, items) {
+  const existing = input.value
+    ? input.value.split(',').map((value) => value.trim()).filter(Boolean)
+    : [];
+  const combined = [...existing, ...items].filter(Boolean);
+  input.value = combined.join(',');
+  return combined;
+}
+
+function renderUploadPreview(images) {
+  if (!uploadPreview) return;
+  uploadPreview.innerHTML = images
+    .map(
+      (src) => `
+        <button type="button" class="upload-thumb" data-src="${src}">
+          <img src="${src}" alt="Uploaded preview" />
+        </button>
+      `
+    )
+    .join('');
+
+  const buttons = Array.from(uploadPreview.querySelectorAll('.upload-thumb'));
+  const selectPrimary = (btn) => {
+    buttons.forEach((item) => item.classList.remove('active'));
+    btn.classList.add('active');
+    studioForm.image.value = btn.dataset.src;
+  };
+
+  buttons.forEach((btn) => {
+    btn.addEventListener('click', () => selectPrimary(btn));
+  });
+
+  if (studioForm.image.value) {
+    const active = buttons.find((btn) => btn.dataset.src === studioForm.image.value);
+    if (active) selectPrimary(active);
+  }
+}
+
+function readFileAsDataUrl(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = () => reject(new Error('Unable to read file'));
+    reader.readAsDataURL(file);
+  });
+}
+
 mediaUpload.addEventListener('change', async (event) => {
   if (!storeToken) return;
   const files = Array.from(event.target.files || []);
@@ -501,6 +550,7 @@ mediaUpload.addEventListener('change', async (event) => {
   const formData = new FormData();
   files.forEach((file) => formData.append('files', file));
 
+  let images = [];
   try {
     const response = await fetch('/api/uploads', {
       method: 'POST',
@@ -509,28 +559,33 @@ mediaUpload.addEventListener('change', async (event) => {
     });
     if (!response.ok) throw new Error('Upload failed');
     const payload = await response.json();
-    const images = [];
-    const videos = [];
 
-    payload.files.forEach((file) => {
-      if (file.type.startsWith('image/')) images.push(file.url);
-      if (file.type.startsWith('video/')) videos.push(file.url);
-    });
-
-    if (images.length) {
-      const existing = studioForm.images.value ? studioForm.images.value.split(',') : [];
-      studioForm.images.value = [...existing, ...images].join(',');
-      if (!studioForm.image.value) studioForm.image.value = images[0];
-    }
-
-    if (videos.length) {
-      const existing = studioForm.videos.value ? studioForm.videos.value.split(',') : [];
-      studioForm.videos.value = [...existing, ...videos].join(',');
-    }
-
-    uploadStatus.textContent = `Uploaded ${images.length + videos.length} file(s).`;
+    images = payload.files
+      .filter((file) => file.type.startsWith('image/'))
+      .map((file) => file.url)
+      .filter(Boolean);
   } catch (error) {
-    uploadStatus.textContent = 'Upload failed. Try again.';
+    const imageFiles = files.filter((file) => file.type.startsWith('image/'));
+    if (!imageFiles.length) {
+      uploadStatus.textContent = 'Only image uploads are supported here.';
+      return;
+    }
+
+    try {
+      images = (await Promise.all(imageFiles.map((file) => readFileAsDataUrl(file)))).filter(Boolean);
+    } catch {
+      uploadStatus.textContent = 'Upload failed. Try again.';
+      return;
+    }
+  }
+
+  if (images.length) {
+    const combined = mergeCsvValue(studioForm.images, images);
+    if (!studioForm.image.value) studioForm.image.value = images[0];
+    renderUploadPreview(combined);
+    uploadStatus.textContent = `Uploaded ${images.length} image(s).`;
+  } else {
+    uploadStatus.textContent = 'No images uploaded.';
   }
 });
 

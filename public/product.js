@@ -128,7 +128,14 @@ function renderBag() {
 }
 
 function renderProduct(product) {
-  const images = product.images && product.images.length ? product.images : [product.image];
+  const rawImages = Array.isArray(product.images) ? product.images : [];
+  const cleanedImages = rawImages.filter(Boolean);
+  const baseImage = product.image || '';
+  const images = cleanedImages.length
+    ? cleanedImages
+    : baseImage
+      ? [baseImage]
+      : ['/assets/logo.png'];
   const videos = product.videos || [];
   const instagramVideo = product.instagram_video || '';
   productDetail.innerHTML = `

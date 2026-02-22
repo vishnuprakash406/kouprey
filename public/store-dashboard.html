@@ -132,10 +132,11 @@
               <small class="hint">Paste Instagram reel/video URL for home page carousel.</small>
             </div>
             <div class="full">
-              <label for="mediaUpload">Upload photos/videos</label>
-              <input id="mediaUpload" type="file" name="files" accept="image/*,video/*" multiple />
-              <small class="hint">Files are stored locally in public/uploads (requires multer).</small>
+              <label for="mediaUpload">Upload product photos</label>
+              <input id="mediaUpload" type="file" name="files" accept="image/*" multiple />
+              <small class="hint">First image becomes the primary photo. Click a thumbnail to change it.</small>
               <div id="uploadStatus" class="hint"></div>
+              <div id="uploadPreview" class="upload-preview"></div>
             </div>
             <div class="full">
               <label for="description">Short description</label>
