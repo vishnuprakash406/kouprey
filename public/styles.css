@@ -3419,7 +3419,7 @@ main {
     height: auto;
     aspect-ratio: 3 / 4;
     object-fit: cover;
-    border-radius: 12px;
+    border-radius: 0;
   }
 
   .product-card h4 {
@@ -3767,6 +3767,6 @@ main {
     height: auto;
     aspect-ratio: 3 / 4;
     object-fit: cover;
-    border-radius: 10px;
+    border-radius: 0;
   }
 }
