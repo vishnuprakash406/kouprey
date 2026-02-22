@@ -67,6 +67,13 @@ const isValidMediaUrl = (value) => {
 const isValidVideoUrl = (value) =>
   typeof value === 'string' && /^(https?:|\/|blob:)/.test(value);
 
+const getYouTubeEmbedUrl = (value) => {
+  if (typeof value !== 'string') return '';
+  const cleaned = normalizeMediaUrl(value);
+  const match = cleaned.match(/(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([\w-]{11})/i);
+  return match ? `https://www.youtube.com/embed/${match[1]}?rel=0&modestbranding=1` : '';
+};
+
 function getPrimaryImage(product) {
   if (isValidMediaUrl(product.image)) return normalizeMediaUrl(product.image);
   if (Array.isArray(product.images) && product.images.length) {
@@ -168,7 +175,13 @@ function renderProduct(product) {
   const safeImages = buildImageList(product);
   const videos = Array.from(
     new Set((product.videos || []).filter((video) => isValidVideoUrl(video)))
-  );
+  )
+    .map((video) => {
+      const yt = getYouTubeEmbedUrl(video);
+      if (yt) return { type: 'youtube', url: yt };
+      return { type: 'file', url: normalizeMediaUrl(video) };
+    })
+    .filter((entry) => entry?.url);
   const instagramVideo = product.instagram_video || '';
   productDetail.innerHTML = `
     <div class="product-detail">
@@ -243,7 +256,13 @@ function renderProduct(product) {
     <div class="media-strip">
       <h3>Product videos</h3>
       <div class="video-grid">
-        ${videos.map((video) => `<video controls playsinline preload="metadata" src="${video}"></video>`).join('')}
+        ${videos
+          .map((video) =>
+            video.type === 'youtube'
+              ? `<div class="video-embed"><iframe src="${video.url}" title="${product.name} video" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe></div>`
+              : `<video controls playsinline preload="metadata" src="${video.url}"></video>`
+          )
+          .join('')}
       </div>
     </div>` : ''}
   `;
