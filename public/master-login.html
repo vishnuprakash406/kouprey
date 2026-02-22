@@ -21,7 +21,10 @@
         <div class="auth-block">
           <h4>Master login</h4>
           <input id="masterEmail" placeholder="master@kouprey.com" />
-          <input id="masterPassword" type="password" placeholder="Master password" />
+          <div class="password-field">
+            <input id="masterPassword" type="password" placeholder="Master password" />
+            <button type="button" class="ghost mini password-toggle" id="toggleMasterPassword">Show</button>
+          </div>
           <button class="primary" id="masterLogin">Login</button>
           <small id="masterStatus">Not logged in</small>
         </div>

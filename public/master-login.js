@@ -2,6 +2,7 @@ const masterEmail = document.getElementById('masterEmail');
 const masterPassword = document.getElementById('masterPassword');
 const masterLogin = document.getElementById('masterLogin');
 const masterStatus = document.getElementById('masterStatus');
+const toggleMasterPassword = document.getElementById('toggleMasterPassword');
 
 async function apiFetch(url, options = {}) {
   const headers = {
@@ -36,3 +37,11 @@ masterLogin.addEventListener('click', async () => {
     setStatus(error.message, false);
   }
 });
+
+if (toggleMasterPassword && masterPassword) {
+  toggleMasterPassword.addEventListener('click', () => {
+    const hidden = masterPassword.type === 'password';
+    masterPassword.type = hidden ? 'text' : 'password';
+    toggleMasterPassword.textContent = hidden ? 'Hide' : 'Show';
+  });
+}
