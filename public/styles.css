@@ -2164,6 +2164,10 @@ main {
   background: rgba(30, 27, 24, 0.03);
 }
 
+.password-toggle .eye-icon svg {
+  display: block;
+}
+
 .auth-block small {
   color: rgba(30, 27, 24, 0.6);
 }
