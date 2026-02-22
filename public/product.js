@@ -47,17 +47,31 @@ function effectivePrice(product) {
   return Number(product.price) * (1 - pct / 100);
 }
 
-const isValidMediaUrl = (value) =>
-  typeof value === 'string' && /^(https?:|\/|data:image\/|blob:)/.test(value);
+const isLikelyDataUrlWithPayload = (value) => {
+  if (typeof value !== 'string') return false;
+  if (!value.startsWith('data:image/')) return false;
+  const parts = value.split(',');
+  return parts.length > 1 && parts[1].trim().length > 10;
+};
+
+const normalizeMediaUrl = (value) =>
+  typeof value === 'string' ? value.trim().replace(/^"|"$/g, '') : '';
+
+const isValidMediaUrl = (value) => {
+  const cleaned = normalizeMediaUrl(value);
+  if (!cleaned) return false;
+  if (cleaned.startsWith('data:image/')) return isLikelyDataUrlWithPayload(cleaned);
+  return /^(https?:|\/|blob:)/.test(cleaned);
+};
 
 const isValidVideoUrl = (value) =>
   typeof value === 'string' && /^(https?:|\/|blob:)/.test(value);
 
 function getPrimaryImage(product) {
-  if (isValidMediaUrl(product.image)) return product.image;
+  if (isValidMediaUrl(product.image)) return normalizeMediaUrl(product.image);
   if (Array.isArray(product.images) && product.images.length) {
     const first = product.images.find((img) => isValidMediaUrl(img));
-    if (first) return first;
+    if (first) return normalizeMediaUrl(first);
   }
   return '/assets/logo.png';
 }
@@ -65,7 +79,7 @@ function getPrimaryImage(product) {
 function buildImageList(product) {
   const baseImage = getPrimaryImage(product);
   const rawImages = Array.isArray(product.images) ? product.images : [];
-  const cleanedImages = rawImages.filter((img) => isValidMediaUrl(img));
+  const cleanedImages = rawImages.filter((img) => isValidMediaUrl(img)).map((img) => normalizeMediaUrl(img));
   const list = [baseImage, ...cleanedImages.filter((img) => img !== baseImage)];
   return Array.from(new Set(list)).filter(Boolean);
 }
@@ -313,6 +327,11 @@ function renderProduct(product) {
     mainImage.addEventListener('error', () => {
       if (mainImage.src !== fallbackSrc) mainImage.src = fallbackSrc;
     });
+    mainImage.addEventListener('load', () => {
+      if (mainImage.naturalWidth === 0 && mainImage.src !== fallbackSrc) {
+        mainImage.src = fallbackSrc;
+      }
+    });
   }
 
   if (thumbs) {
@@ -322,6 +341,11 @@ function renderProduct(product) {
         img.closest('.thumb-vertical')?.classList.add('thumb-fallback');
       });
       img.addEventListener('load', () => {
+        if (img.naturalWidth === 0 && img.src !== fallbackSrc) {
+          img.src = fallbackSrc;
+          img.closest('.thumb-vertical')?.classList.add('thumb-fallback');
+          return;
+        }
         img.closest('.thumb-vertical')?.classList.remove('thumb-fallback');
       });
     });
