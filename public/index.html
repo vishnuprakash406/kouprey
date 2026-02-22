@@ -17,6 +17,11 @@
 
     <header class="site-header">
       <div class="header-left">
+        <button class="hamburger-menu-button" id="hamburgerMenuButton" aria-label="Open categories">
+          <span class="hamburger-line"></span>
+          <span class="hamburger-line"></span>
+          <span class="hamburger-line"></span>
+        </button>
         <div class="logo">
           <a class="logo-link" href="/">
             <img class="logo-img" src="/assets/logo.png" alt="Kouprey logo" />
@@ -65,6 +70,18 @@
         </div>
       </div>
     </header>
+
+    <!-- Category Sidebar -->
+    <div class="category-sidebar" id="categorySidebar">
+      <div class="category-sidebar-header">
+        <h3>Categories</h3>
+        <button class="category-close-btn" id="categorySidebarClose" aria-label="Close">×</button>
+      </div>
+      <div class="category-sidebar-content" id="categorySidebarContent">
+        <div class="category-loader">Loading categories...</div>
+      </div>
+    </div>
+    <div class="category-overlay" id="categoryOverlay"></div>
 
     <div class="menu-bar">
       <button class="menu-button" id="menuButton" aria-expanded="false" aria-controls="productMenu">

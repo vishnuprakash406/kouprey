@@ -680,3 +680,140 @@ const originalLoadProducts = loadProducts;
 async function loadProductsWithInstagram() {
   await originalLoadProducts.call ? originalLoadProducts() : null;
 }
+
+// Category Sidebar Functionality
+const hamburgerMenuButton = document.getElementById('hamburgerMenuButton');
+const categorySidebar = document.getElementById('categorySidebar');
+const categoryOverlay = document.getElementById('categoryOverlay');
+const categorySidebarClose = document.getElementById('categorySidebarClose');
+const categorySidebarContent = document.getElementById('categorySidebarContent');
+
+// Open category sidebar
+if (hamburgerMenuButton) {
+  hamburgerMenuButton.addEventListener('click', () => {
+    categorySidebar.classList.add('active');
+    categoryOverlay.classList.add('active');
+    document.body.style.overflow = 'hidden';
+    loadCategorySidebar();
+  });
+}
+
+// Close category sidebar
+function closeCategorySidebar() {
+  categorySidebar.classList.remove('active');
+  categoryOverlay.classList.remove('active');
+  document.body.style.overflow = '';
+}
+
+if (categorySidebarClose) {
+  categorySidebarClose.addEventListener('click', closeCategorySidebar);
+}
+
+if (categoryOverlay) {
+  categoryOverlay.addEventListener('click', closeCategorySidebar);
+}
+
+// Load categories and subcategories
+async function loadCategorySidebar() {
+  if (!categorySidebarContent) return;
+
+  try {
+    const response = await fetch('/api/products');
+    const products = await response.json();
+
+    // Build category map with subcategories
+    const categoryMap = {};
+    products.forEach(product => {
+      const category = product.category || 'Uncategorized';
+      const subcategory = product.subcategory || null;
+
+      if (!categoryMap[category]) {
+        categoryMap[category] = new Set();
+      }
+      if (subcategory) {
+        categoryMap[category].add(subcategory);
+      }
+    });
+
+    // Render categories
+    const html = Object.keys(categoryMap).sort().map(category => {
+      const subcategories = Array.from(categoryMap[category]).sort();
+      const hasSubcategories = subcategories.length > 0;
+
+      return `
+        <div class="category-group">
+          <div class="category-item" data-category="${category}">
+            <span class="category-name">${category}</span>
+            ${hasSubcategories ? '<span class="category-arrow">›</span>' : ''}
+          </div>
+          ${hasSubcategories ? `
+            <div class="subcategory-list" data-category="${category}">
+              ${subcategories.map(sub => `
+                <div class="subcategory-item" data-category="${category}" data-subcategory="${sub}">
+                  ${sub}
+                </div>
+              `).join('')}
+            </div>
+          ` : ''}
+        </div>
+      `;
+    }).join('');
+
+    categorySidebarContent.innerHTML = html;
+
+    // Add event listeners
+    document.querySelectorAll('.category-item').forEach(item => {
+      item.addEventListener('click', function() {
+        const category = this.getAttribute('data-category');
+        const subcategoryList = document.querySelector(`.subcategory-list[data-category="${category}"]`);
+        
+        // Toggle active state
+        this.classList.toggle('active');
+        
+        if (subcategoryList) {
+          subcategoryList.classList.toggle('active');
+        } else {
+          // No subcategories, navigate directly
+          window.location.href = `/#category-${category.toLowerCase().replace(/\s+/g, '-')}`;
+          closeCategorySidebar();
+          filterByCategory(category);
+        }
+      });
+    });
+
+    document.querySelectorAll('.subcategory-item').forEach(item => {
+      item.addEventListener('click', function() {
+        const category = this.getAttribute('data-category');
+        const subcategory = this.getAttribute('data-subcategory');
+        
+        window.location.href = `/#${category.toLowerCase().replace(/\s+/g, '-')}-${subcategory.toLowerCase().replace(/\s+/g, '-')}`;
+        closeCategorySidebar();
+        filterBySubcategory(category, subcategory);
+      });
+    });
+
+  } catch (error) {
+    console.error('Error loading categories:', error);
+    categorySidebarContent.innerHTML = '<div class="category-loader">Error loading categories</div>';
+  }
+}
+
+// Filter by category
+function filterByCategory(category) {
+  activeFilter = 'all';
+  activeSubcategory = '';
+  
+  const filtered = products.filter(p => p.category === category);
+  currentPage = 1;
+  renderProducts(filtered);
+}
+
+// Filter by subcategory
+function filterBySubcategory(category, subcategory) {
+  activeFilter = 'all';
+  activeSubcategory = subcategory;
+  
+  const filtered = products.filter(p => p.category === category && p.subcategory === subcategory);
+  currentPage = 1;
+  renderProducts(filtered);
+}
