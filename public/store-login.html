@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kouprey Store Login</title>
+    <link rel="icon" href="/assets/logo.png" />
+    <link rel="stylesheet" href="/styles.css" />
+    <script src="/theme.js"></script>
+  </head>
+  <body>
+    <main class="store-login">
+      <div class="store-card">
+        <div class="logo">
+          <a class="logo-link" href="/">
+            <img class="logo-img" src="/assets/logo.png" alt="Kouprey logo" />
+          </a>
+        </div>
+        <h1>Store access</h1>
+        <p>Store login unlocks the studio. Master login creates store accounts.</p>
+        <div class="auth-block">
+          <h4>Store login</h4>
+          <input id="storeEmail" placeholder="store@kouprey.com" />
+          <div class="password-field">
+            <input id="storePassword" type="password" placeholder="Store password" />
+            <button type="button" class="ghost mini password-toggle" id="toggleStorePassword" aria-label="Toggle password visibility">
+              <span class="eye-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"></path>
+                  <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+              </span>
+            </button>
+          </div>
+          <button class="primary" id="storeLogin">Login as store</button>
+          <small id="storeStatus">Not logged in</small>
+        </div>
+        <a class="ghost" href="/">Back to store</a>
+      </div>
+    </main>
+    <script>
+      const scriptEl = document.createElement('script');
+      const cacheVersion = localStorage.getItem('kouprey_cache_version') || Date.now();
+      scriptEl.src = `/settings.js?v=${cacheVersion}`;
+      document.head.appendChild(scriptEl);
+    </script>
+    <script src="/store-login.js"></script>
+  </body>
+</html>
