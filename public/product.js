@@ -136,11 +136,15 @@ function renderProduct(product) {
   const rawImages = Array.isArray(product.images) ? product.images : [];
   const cleanedImages = rawImages.filter((img) => isValidMediaUrl(img));
   const baseImage = isValidMediaUrl(product.image) ? product.image : '';
+  const fallbackImage = '/assets/logo.png';
   const images = baseImage
     ? [baseImage, ...cleanedImages.filter((img) => img !== baseImage)]
     : cleanedImages.length
       ? cleanedImages
-      : ['/assets/logo.png'];
+      : [fallbackImage];
+  const safeImages = Array.from(
+    new Set(images.map((img) => (isValidMediaUrl(img) ? img : baseImage || fallbackImage)))
+  );
   const videos = Array.from(
     new Set((product.videos || []).filter((video) => isValidVideoUrl(video)))
   );
@@ -148,7 +152,7 @@ function renderProduct(product) {
   productDetail.innerHTML = `
     <div class="product-detail">
       <div class="gallery-thumbs-vertical" id="galleryThumbs">
-        ${images
+        ${safeImages
           .map(
             (img, index) =>
               `<button class="thumb-vertical ${index === 0 ? 'active' : ''}" data-src="${img}">
@@ -158,7 +162,7 @@ function renderProduct(product) {
           .join('')}
       </div>
       <div class="gallery-main-wrapper">
-        <img class="gallery-main" id="galleryMain" src="${images[0]}" alt="${product.name}" />
+        <img class="gallery-main" id="galleryMain" src="${safeImages[0]}" alt="${product.name}" />
       </div>
       <div class="product-info">
         <div class="product-info-header">
@@ -297,7 +301,7 @@ function renderProduct(product) {
   const thumbs = document.getElementById('galleryThumbs');
   const mainImage = document.getElementById('galleryMain');
 
-  const fallbackSrc = '/assets/logo.png';
+  const fallbackSrc = baseImage || '/assets/logo.png';
   if (mainImage) {
     mainImage.addEventListener('error', () => {
       if (mainImage.src !== fallbackSrc) mainImage.src = fallbackSrc;
