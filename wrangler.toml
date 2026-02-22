@@ -10,6 +10,7 @@ bucket = "./public"
 [vars]
 PORT = "8787"
 NODE_ENV = "production"
+R2_PUBLIC_URL = "https://pub-89b5e27379404ae880af465e3773471f.r2.dev"
 
 # Cloudflare D1 Database
 [[d1_databases]]

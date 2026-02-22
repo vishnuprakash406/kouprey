@@ -365,7 +365,8 @@ function populateForm(product) {
   studioForm.videos.value = (product.videos || []).join(',');
   studioForm.instagram_video.value = product.instagram_video || '';
   studioForm.description.value = product.description;
-  renderUploadPreview((product.images || []).filter(Boolean));
+  const previewImages = [product.image, ...(product.images || [])].filter(Boolean);
+  renderUploadPreview(previewImages);
 }
 
 function resetForm() {
