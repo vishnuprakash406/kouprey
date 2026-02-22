@@ -289,6 +289,21 @@ function renderProduct(product) {
 
   const thumbs = document.getElementById('galleryThumbs');
   const mainImage = document.getElementById('galleryMain');
+
+  const fallbackSrc = '/assets/logo.png';
+  if (mainImage) {
+    mainImage.addEventListener('error', () => {
+      if (mainImage.src !== fallbackSrc) mainImage.src = fallbackSrc;
+    });
+  }
+
+  if (thumbs) {
+    thumbs.querySelectorAll('img').forEach((img) => {
+      img.addEventListener('error', () => {
+        if (img.src !== fallbackSrc) img.src = fallbackSrc;
+      });
+    });
+  }
   thumbs?.addEventListener('click', (event) => {
     const button = event.target.closest('button');
     if (!button) return;

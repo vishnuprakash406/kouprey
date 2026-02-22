@@ -3432,10 +3432,12 @@ main {
 
   .gallery-main-wrapper {
     order: 1;
+    max-height: 60vh;
   }
 
   .gallery-main {
     height: 100%;
+    max-height: 60vh;
   }
 
   .product-info {
