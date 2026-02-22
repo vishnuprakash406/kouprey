@@ -1059,8 +1059,8 @@ main {
 }
 
 .view-toggle {
-  width: 24px;
-  height: 24px;
+  width: 48px;
+  height: 48px;
   border: none;
   background: transparent;
   border-radius: 4px;
@@ -1073,8 +1073,8 @@ main {
 }
 
 .view-toggle svg {
-  width: 14px;
-  height: 14px;
+  width: 20px;
+  height: 20px;
 }
 
 .view-toggle:hover {
@@ -3151,6 +3151,7 @@ main {
     flex-wrap: wrap;
     gap: 0;
     padding: 12px 5vw;
+    margin: 0;
     position: relative;
   }
 
@@ -3217,6 +3218,8 @@ main {
   .header-menu-button {
     width: 40px;
     height: 40px;
+    border: none;
+    background: transparent;
   }
 
   .menu-bar {
