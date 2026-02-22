@@ -608,35 +608,8 @@ if (reviewStarsDisplay) {
       };
 
       try {
-        // Try API first, fall back to localStorage if API fails
-        let success = false;
-        try {
-          const response = await fetch('/api/reviews', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(formData),
-          });
-          
-          if (response.ok) {
-            success = true;
-          } else {
-            // API returned error (404, 500, etc.) - use localStorage fallback
-            console.log('API error (status ' + response.status + '), using localStorage fallback');
-            const REVIEWS_STORAGE_KEY = `kouprey_reviews_${productId}`;
-            const existing = JSON.parse(localStorage.getItem(REVIEWS_STORAGE_KEY) || '[]');
-            existing.push(formData);
-            localStorage.setItem(REVIEWS_STORAGE_KEY, JSON.stringify(existing));
-            success = true;
-          }
-        } catch (apiError) {
-          // Network error or other fetch error - use localStorage fallback
-          console.log('API unavailable (network error), using localStorage fallback');
-          const REVIEWS_STORAGE_KEY = `kouprey_reviews_${productId}`;
-          const existing = JSON.parse(localStorage.getItem(REVIEWS_STORAGE_KEY) || '[]');
-          existing.push(formData);
-          localStorage.setItem(REVIEWS_STORAGE_KEY, JSON.stringify(existing));
-          success = true;
-        }
+        // Use cloud submission (Firebase > API > localStorage)
+        const success = await submitReviewToCloud(productId, formData);
 
         if (success) {
           reviewFormElement.reset();
@@ -646,7 +619,7 @@ if (reviewStarsDisplay) {
           cancelReview.style.display = 'none';
           reviewCurrentPage = 1; // Reset to first page
           alert('Thank you for your review!');
-          // Optionally reload reviews
+          // Reload reviews from cloud
           loadReviews();
         } else {
           alert('Error submitting review. Please try again.');
@@ -664,31 +637,8 @@ async function loadReviews() {
   if (!productId || !reviewsList) return;
 
   try {
-    let reviews = [];
-    
-    // Try API first
-    try {
-      const response = await fetch(`/api/reviews?productId=${productId}`);
-      if (response.ok) {
-        reviews = await response.json();
-      } else {
-        // API returned error (404, 500, etc.) - use localStorage
-        console.log('API error (status ' + response.status + '), loading from localStorage');
-        const REVIEWS_STORAGE_KEY = `kouprey_reviews_${productId}`;
-        const stored = localStorage.getItem(REVIEWS_STORAGE_KEY);
-        if (stored) {
-          reviews = JSON.parse(stored);
-        }
-      }
-    } catch (apiError) {
-      // API not available, fall back to localStorage
-      console.log('API unavailable (network error), loading from localStorage');
-      const REVIEWS_STORAGE_KEY = `kouprey_reviews_${productId}`;
-      const stored = localStorage.getItem(REVIEWS_STORAGE_KEY);
-      if (stored) {
-        reviews = JSON.parse(stored);
-      }
-    }
+    // Load reviews from cloud (Firebase > API > localStorage)
+    const reviews = await loadReviewsFromCloud(productId);
     
     if (!Array.isArray(reviews) || reviews.length === 0) {
       reviewsList.innerHTML = '';
