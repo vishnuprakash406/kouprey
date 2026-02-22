@@ -3415,7 +3415,10 @@ main {
   }
 
   .product-card img {
-    height: 150px;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 3 / 4;
+    object-fit: cover;
     border-radius: 12px;
   }
 
@@ -3760,8 +3763,10 @@ main {
   }
 
   .product-card img {
-    aspect-ratio: 3 / 4;
+    width: 100%;
     height: auto;
-    border-radius: 0;
+    aspect-ratio: 3 / 4;
+    object-fit: cover;
+    border-radius: 10px;
   }
 }
