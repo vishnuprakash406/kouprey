@@ -604,13 +604,26 @@ if (reviewStarsDisplay) {
       };
 
       try {
-        const response = await fetch('/api/reviews', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(formData),
-        });
+        // Try API first, fall back to localStorage if API fails
+        let success = false;
+        try {
+          const response = await fetch('/api/reviews', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(formData),
+          });
+          success = response.ok;
+        } catch (apiError) {
+          // API not available, use localStorage fallback
+          console.log('API unavailable, using localStorage fallback');
+          const REVIEWS_STORAGE_KEY = `kouprey_reviews_${productId}`;
+          const existing = JSON.parse(localStorage.getItem(REVIEWS_STORAGE_KEY) || '[]');
+          existing.push(formData);
+          localStorage.setItem(REVIEWS_STORAGE_KEY, JSON.stringify(existing));
+          success = true;
+        }
 
-        if (response.ok) {
+        if (success) {
           reviewFormElement.reset();
           ratingValue.value = '0';
           reviewForm.style.display = 'none';
@@ -635,8 +648,23 @@ async function loadReviews() {
   if (!productId || !reviewsList) return;
 
   try {
-    const response = await fetch(`/api/reviews?productId=${productId}`);
-    const reviews = await response.json();
+    let reviews = [];
+    
+    // Try API first
+    try {
+      const response = await fetch(`/api/reviews?productId=${productId}`);
+      if (response.ok) {
+        reviews = await response.json();
+      }
+    } catch (apiError) {
+      // API not available, fall back to localStorage
+      console.log('API unavailable, loading from localStorage');
+      const REVIEWS_STORAGE_KEY = `kouprey_reviews_${productId}`;
+      const stored = localStorage.getItem(REVIEWS_STORAGE_KEY);
+      if (stored) {
+        reviews = JSON.parse(stored);
+      }
+    }
     
     if (!Array.isArray(reviews) || reviews.length === 0) {
       reviewsList.innerHTML = '';

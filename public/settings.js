@@ -2,6 +2,7 @@
   const SETTINGS_KEY = 'kouprey_settings';
   const HOME_KEY = 'kouprey_home';
   const COLOR_KEY = 'kouprey_colors';
+  const THEME_KEY = 'kouprey_theme';
   const CACHE_VERSION_KEY = 'kouprey_cache_version';
 
   // Listen for publish events from other tabs or same tab
