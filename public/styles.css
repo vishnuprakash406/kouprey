@@ -1557,7 +1557,7 @@ main {
   border: 2px solid transparent;
   border-radius: 8px;
   padding: 0;
-  background: #fff url('/assets/logo.png') center/28px auto no-repeat;
+  background: transparent;
   overflow: hidden;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -1579,7 +1579,7 @@ main {
 }
 
 .thumb-vertical.thumb-fallback {
-  background-color: #fff;
+  background: #fff url('/assets/logo.png') center/28px auto no-repeat;
 }
 
 .gallery-main-wrapper {

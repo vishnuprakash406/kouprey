@@ -136,10 +136,10 @@ function renderProduct(product) {
   const rawImages = Array.isArray(product.images) ? product.images : [];
   const cleanedImages = rawImages.filter((img) => isValidMediaUrl(img));
   const baseImage = isValidMediaUrl(product.image) ? product.image : '';
-  const images = cleanedImages.length
-    ? cleanedImages
-    : baseImage
-      ? [baseImage]
+  const images = baseImage
+    ? [baseImage, ...cleanedImages.filter((img) => img !== baseImage)]
+    : cleanedImages.length
+      ? cleanedImages
       : ['/assets/logo.png'];
   const videos = Array.from(
     new Set((product.videos || []).filter((video) => isValidVideoUrl(video)))
@@ -309,6 +309,9 @@ function renderProduct(product) {
       img.addEventListener('error', () => {
         if (img.src !== fallbackSrc) img.src = fallbackSrc;
         img.closest('.thumb-vertical')?.classList.add('thumb-fallback');
+      });
+      img.addEventListener('load', () => {
+        img.closest('.thumb-vertical')?.classList.remove('thumb-fallback');
       });
     });
   }
