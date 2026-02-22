@@ -612,10 +612,21 @@ if (reviewStarsDisplay) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(formData),
           });
-          success = response.ok;
+          
+          if (response.ok) {
+            success = true;
+          } else {
+            // API returned error (404, 500, etc.) - use localStorage fallback
+            console.log('API error (status ' + response.status + '), using localStorage fallback');
+            const REVIEWS_STORAGE_KEY = `kouprey_reviews_${productId}`;
+            const existing = JSON.parse(localStorage.getItem(REVIEWS_STORAGE_KEY) || '[]');
+            existing.push(formData);
+            localStorage.setItem(REVIEWS_STORAGE_KEY, JSON.stringify(existing));
+            success = true;
+          }
         } catch (apiError) {
-          // API not available, use localStorage fallback
-          console.log('API unavailable, using localStorage fallback');
+          // Network error or other fetch error - use localStorage fallback
+          console.log('API unavailable (network error), using localStorage fallback');
           const REVIEWS_STORAGE_KEY = `kouprey_reviews_${productId}`;
           const existing = JSON.parse(localStorage.getItem(REVIEWS_STORAGE_KEY) || '[]');
           existing.push(formData);
@@ -655,10 +666,18 @@ async function loadReviews() {
       const response = await fetch(`/api/reviews?productId=${productId}`);
       if (response.ok) {
         reviews = await response.json();
+      } else {
+        // API returned error (404, 500, etc.) - use localStorage
+        console.log('API error (status ' + response.status + '), loading from localStorage');
+        const REVIEWS_STORAGE_KEY = `kouprey_reviews_${productId}`;
+        const stored = localStorage.getItem(REVIEWS_STORAGE_KEY);
+        if (stored) {
+          reviews = JSON.parse(stored);
+        }
       }
     } catch (apiError) {
       // API not available, fall back to localStorage
-      console.log('API unavailable, loading from localStorage');
+      console.log('API unavailable (network error), loading from localStorage');
       const REVIEWS_STORAGE_KEY = `kouprey_reviews_${productId}`;
       const stored = localStorage.getItem(REVIEWS_STORAGE_KEY);
       if (stored) {
