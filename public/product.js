@@ -306,6 +306,7 @@ function renderProduct(product) {
     thumbs.querySelectorAll('img').forEach((img) => {
       img.addEventListener('error', () => {
         if (img.src !== fallbackSrc) img.src = fallbackSrc;
+        img.closest('.thumb-vertical')?.classList.add('thumb-fallback');
       });
     });
   }
