@@ -837,7 +837,7 @@ if (upload) {
 }
 
 app.get('/staff-login', (req, res) => {
-  res.sendFile(path.join(__dirname, '..', 'public', 'store.html'));
+  res.sendFile(path.join(__dirname, '..', 'public', 'staff-login.html'));
 });
 
 app.get('/staff-login/dashboard', (req, res) => {

@@ -186,9 +186,25 @@ app.post('/api/staff/login', async (req, res) => {
   }
 });
 
-// SPA routes
+// SPA/static routes
 app.get('/product', (req, res) => {
   res.sendFile(path.join(__dirname, '..', 'public', 'product.html'));
+});
+
+app.get('/staff-login', (req, res) => {
+  res.sendFile(path.join(__dirname, '..', 'public', 'staff-login.html'));
+});
+
+app.get('/staff-login/dashboard', (req, res) => {
+  res.sendFile(path.join(__dirname, '..', 'public', 'store-dashboard.html'));
+});
+
+app.get('/master-login', (req, res) => {
+  res.sendFile(path.join(__dirname, '..', 'public', 'master-login.html'));
+});
+
+app.get('/master-login/admin', (req, res) => {
+  res.sendFile(path.join(__dirname, '..', 'public', 'admin-dashboard.html'));
 });
 
 app.get('*', (req, res) => {
