@@ -518,6 +518,148 @@ function loadCart() {
   }
 }
 
+// Review Form Functionality
+const reviewStarsDisplay = document.getElementById('reviewStarsDisplay');
+const reviewPrompt = document.getElementById('reviewPrompt');
+const cancelReview = document.getElementById('cancelReview');
+const reviewForm = document.getElementById('reviewForm');
+const reviewsList = document.getElementById('reviewsList');
+const ratingSelectorForm = document.getElementById('ratingSelectorForm');
+const ratingValue = document.getElementById('ratingValue');
+const imageUploadArea = document.getElementById('imageUploadArea');
+const reviewImage = document.getElementById('reviewImage');
+const imagePreview = document.getElementById('imagePreview');
+
+if (reviewStarsDisplay) {
+  reviewStarsDisplay.addEventListener('click', (event) => {
+    const btn = event.target.closest('.star-btn');
+    if (!btn) return;
+    reviewForm.style.display = 'flex';
+    reviewPrompt.style.display = 'none';
+    cancelReview.style.display = 'inline-block';
+  });
+
+  cancelReview.addEventListener('click', () => {
+    reviewForm.style.display = 'none';
+    reviewPrompt.style.display = 'inline';
+    cancelReview.style.display = 'none';
+    reviewForm.reset();
+    ratingValue.value = '0';
+    document.querySelectorAll('.star-select').forEach(s => s.classList.remove('active'));
+  });
+
+  if (ratingSelectorForm) {
+    ratingSelectorForm.addEventListener('click', (event) => {
+      event.preventDefault();
+      const btn = event.target.closest('.star-select');
+      if (!btn) return;
+      const rating = btn.dataset.rating;
+      ratingValue.value = rating;
+      document.querySelectorAll('.star-select').forEach((s, idx) => {
+        s.classList.toggle('active', idx < rating);
+      });
+    });
+  }
+
+  if (imageUploadArea) {
+    imageUploadArea.addEventListener('click', () => reviewImage.click());
+    imageUploadArea.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      imageUploadArea.style.background = 'rgba(30, 27, 24, 0.05)';
+    });
+    imageUploadArea.addEventListener('dragleave', () => {
+      imageUploadArea.style.background = '';
+    });
+    imageUploadArea.addEventListener('drop', (e) => {
+      e.preventDefault();
+      imageUploadArea.style.background = '';
+      const files = e.dataTransfer.files;
+      if (files.length) reviewImage.files = files;
+    });
+  }
+
+  if (reviewImage) {
+    reviewImage.addEventListener('change', (event) => {
+      const file = event.target.files?.[0];
+      if (file) {
+        imagePreview.textContent = `✓ ${file.name}`;
+        imagePreview.style.color = '#666';
+      }
+    });
+  }
+
+  const reviewFormElement = document.getElementById('reviewForm');
+  if (reviewFormElement) {
+    reviewFormElement.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const productId = new URLSearchParams(window.location.search).get('id');
+      const formData = {
+        productId,
+        displayName: document.getElementById('displayName')?.value,
+        email: document.getElementById('emailAddress')?.value,
+        rating: parseInt(ratingValue.value),
+        title: document.getElementById('reviewTitle')?.value,
+        content: document.getElementById('reviewContent')?.value,
+        timestamp: new Date().toISOString(),
+      };
+
+      try {
+        const response = await fetch('/api/reviews', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(formData),
+        });
+
+        if (response.ok) {
+          reviewFormElement.reset();
+          ratingValue.value = '0';
+          reviewForm.style.display = 'none';
+          reviewPrompt.style.display = 'inline';
+          cancelReview.style.display = 'none';
+          alert('Thank you for your review!');
+          // Optionally reload reviews
+          loadReviews();
+        } else {
+          alert('Error submitting review. Please try again.');
+        }
+      } catch (error) {
+        console.error('Review submission error:', error);
+        alert('Error submitting review. Please try again.');
+      }
+    });
+  }
+}
+
+async function loadReviews() {
+  const productId = new URLSearchParams(window.location.search).get('id');
+  if (!productId || !reviewsList) return;
+
+  try {
+    const response = await fetch(`/api/reviews?productId=${productId}`);
+    const reviews = await response.json();
+    
+    if (!Array.isArray(reviews) || reviews.length === 0) {
+      reviewsList.innerHTML = '';
+      return;
+    }
+
+    reviewsList.innerHTML = reviews.map(review => `
+      <div class="review-item">
+        <div class="review-meta">
+          <strong style="font-size: 12px;">${review.displayName}</strong>
+          <div style="font-size: 11px; color: #999; margin-top: 2px;">
+            ${'★'.repeat(review.rating).padEnd(5, '☆')} · ${new Date(review.timestamp).toLocaleDateString()}
+          </div>
+        </div>
+        ${review.title ? `<h4 style="font-size: 12px; margin-top: 6px; margin-bottom: 4px;">${review.title}</h4>` : ''}
+        <p style="font-size: 11px; line-height: 1.5; color: #555;">${review.content}</p>
+      </div>
+    `).join('');
+  } catch (error) {
+    console.error('Error loading reviews:', error);
+  }
+}
+
 init();
 loadCart();
-renderBag();
+loadReviews();

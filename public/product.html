@@ -50,6 +50,75 @@
 
     <main>
       <section class="section" id="productDetail"></section>
+      <section class="section alt" id="reviews">
+        <div class="section-header">
+          <h2>Customer Reviews</h2>
+        </div>
+        <div class="reviews-container">
+          <div class="reviews-list" id="reviewsList"></div>
+          <div class="review-form-wrapper">
+            <div class="review-header">
+              <div class="review-stars" id="reviewStarsDisplay">
+                <button class="star-btn" data-rating="1">★</button>
+                <button class="star-btn" data-rating="2">★</button>
+                <button class="star-btn" data-rating="3">★</button>
+                <button class="star-btn" data-rating="4">★</button>
+                <button class="star-btn" data-rating="5">★</button>
+              </div>
+              <span class="review-prompt" id="reviewPrompt">Be the first to write a review</span>
+              <button class="ghost mini" id="cancelReview">Cancel review</button>
+            </div>
+            <form class="review-form" id="reviewForm" style="display: none;">
+              <div class="form-group">
+                <label for="displayName">Display name (displayed publicly like John Smith)</label>
+                <div class="display-name-wrapper">
+                  <input type="text" id="displayName" name="displayName" placeholder="Display name" required />
+                  <select id="displayNameDropdown">
+                    <option value="anonymous">Anonymous</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="emailAddress">Email address</label>
+                <input type="email" id="emailAddress" name="emailAddress" placeholder="Your email address" required />
+              </div>
+              <div class="form-group">
+                <label>Rating</label>
+                <div class="rating-selector" id="ratingSelectorForm">
+                  <button type="button" class="star-select" data-rating="1">★</button>
+                  <button type="button" class="star-select" data-rating="2">★</button>
+                  <button type="button" class="star-select" data-rating="3">★</button>
+                  <button type="button" class="star-select" data-rating="4">★</button>
+                  <button type="button" class="star-select" data-rating="5">★</button>
+                </div>
+                <input type="hidden" id="ratingValue" name="rating" value="0" />
+              </div>
+              <div class="form-group">
+                <label for="reviewTitle">Review Title</label>
+                <input type="text" id="reviewTitle" name="reviewTitle" placeholder="Give your review a title" />
+              </div>
+              <div class="form-group">
+                <label for="reviewContent">Review content</label>
+                <textarea id="reviewContent" name="reviewContent" placeholder="Start writing here..." rows="6"></textarea>
+              </div>
+              <div class="form-group">
+                <label>Picture/Video (optional)</label>
+                <div class="image-upload-area" id="imageUploadArea">
+                  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                    <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                    <polyline points="21 15 16 10 5 21"></polyline>
+                  </svg>
+                  <input type="file" id="reviewImage" name="reviewImage" accept="image/*,video/*" style="display: none;" />
+                </div>
+                <small id="imagePreview"></small>
+              </div>
+              <small class="privacy-notice">How we use your data: We'll only contact you about the review you left, and only if necessary. By submitting your review, you agree to Judge.me's terms, privacy and content policies.</small>
+              <button class="primary" type="submit">SUBMIT REVIEW</button>
+            </form>
+          </div>
+        </div>
+      </section>
       <section class="section alt" id="suggestions">
         <div class="section-header">
           <h2>You may also like</h2>

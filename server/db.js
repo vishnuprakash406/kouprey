@@ -152,6 +152,21 @@ async function init() {
     )`
   );
 
+  await run(
+    `CREATE TABLE IF NOT EXISTS reviews (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      productId TEXT NOT NULL,
+      displayName TEXT NOT NULL,
+      email TEXT,
+      rating INTEGER NOT NULL,
+      title TEXT,
+      content TEXT NOT NULL,
+      timestamp TEXT NOT NULL,
+      created_at TEXT NOT NULL,
+      FOREIGN KEY(productId) REFERENCES products(id)
+    )`
+  );
+
   const columns = await all('PRAGMA table_info(products)');
   const columnNames = columns.map((col) => col.name);
   const addColumn = async (name, definition) => {

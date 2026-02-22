@@ -371,6 +371,50 @@ app.delete('/api/products/:id', authRole('store'), async (req, res) => {
   }
 });
 
+// Review endpoints
+app.post('/api/reviews', async (req, res) => {
+  try {
+    const { productId, displayName, email, rating, title, content } = req.body;
+    
+    if (!productId || !displayName || !email || !rating || !content) {
+      return res.status(400).json({ error: 'Missing required fields' });
+    }
+
+    const timestamp = new Date().toISOString();
+    await run(
+      `INSERT INTO reviews (productId, displayName, email, rating, title, content, timestamp, created_at)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+      [productId, displayName, email, rating, title || '', content, timestamp, timestamp]
+    );
+
+    res.json({ success: true, message: 'Review submitted successfully' });
+  } catch (error) {
+    console.error('Review submission error:', error);
+    res.status(500).json({ error: 'Failed to submit review' });
+  }
+});
+
+app.get('/api/reviews', async (req, res) => {
+  try {
+    const productId = req.query.productId;
+    if (!productId) {
+      return res.status(400).json({ error: 'Product ID required' });
+    }
+
+    const reviews = await all(
+      `SELECT displayName, rating, title, content, timestamp FROM reviews 
+       WHERE productId = ? AND email IS NOT NULL
+       ORDER BY timestamp DESC LIMIT 50`,
+      [productId]
+    );
+
+    res.json(reviews || []);
+  } catch (error) {
+    console.error('Review retrieval error:', error);
+    res.status(500).json({ error: 'Failed to load reviews' });
+  }
+});
+
 app.post('/api/master/login', async (req, res) => {
   const { email, password } = req.body;
   if (!email || !password) {
