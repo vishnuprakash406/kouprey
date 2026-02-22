@@ -1855,14 +1855,6 @@ main {
   fill: #fff;
 }
 
-.product-detail img {
-  width: 100%;
-  height: 420px;
-  object-fit: contain;
-  border-radius: 20px;
-  background: #f9f9f9;
-}
-
 .gallery {
   display: flex;
   flex-direction: column;
