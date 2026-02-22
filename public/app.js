@@ -157,6 +157,15 @@ function renderProducts() {
 
   productGrid.innerHTML = '';
 
+  const getProductImage = (product) => {
+    if (product.image) return product.image;
+    if (Array.isArray(product.images) && product.images.length) {
+      const first = product.images.find((img) => Boolean(img));
+      if (first) return first;
+    }
+    return '/assets/logo.png';
+  };
+
   paginatedProducts.forEach((product) => {
     const isWishlisted = wishlist.has(product.id);
     const card = document.createElement('div');
@@ -164,7 +173,7 @@ function renderProducts() {
     card.innerHTML = `
       <div class="product-image-wrapper">
         <a class="product-link" href="/product?id=${product.id}">
-          <img src="${product.image}" alt="${product.name}" />
+          <img src="${getProductImage(product)}" alt="${product.name}" />
         </a>
         <div class="product-overlay">
           <div class="overlay-content">

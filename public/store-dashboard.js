@@ -13,7 +13,8 @@ const resetFormButton = document.getElementById('resetForm');
 const logoutButton = document.getElementById('logout');
 const emailAccessBtn = document.getElementById('emailAccessBtn');
 const emailStatus = document.getElementById('emailStatus');
-const mediaUpload = document.getElementById('mediaUpload');
+const primaryUpload = document.getElementById('primaryUpload');
+const galleryUpload = document.getElementById('galleryUpload');
 const uploadStatus = document.getElementById('uploadStatus');
 const uploadPreview = document.getElementById('uploadPreview');
 const stockInput = document.getElementById('stock');
@@ -541,16 +542,13 @@ function readFileAsDataUrl(file) {
   });
 }
 
-mediaUpload.addEventListener('change', async (event) => {
-  if (!storeToken) return;
-  const files = Array.from(event.target.files || []);
-  if (files.length === 0) return;
+async function uploadImages(files) {
+  const imageFiles = files.filter((file) => file.type.startsWith('image/'));
+  if (!imageFiles.length) return [];
 
-  uploadStatus.textContent = 'Uploading...';
   const formData = new FormData();
-  files.forEach((file) => formData.append('files', file));
+  imageFiles.forEach((file) => formData.append('files', file));
 
-  let images = [];
   try {
     const response = await fetch('/api/uploads', {
       method: 'POST',
@@ -559,35 +557,73 @@ mediaUpload.addEventListener('change', async (event) => {
     });
     if (!response.ok) throw new Error('Upload failed');
     const payload = await response.json();
-
-    images = payload.files
+    return payload.files
       .filter((file) => file.type.startsWith('image/'))
       .map((file) => file.url)
       .filter(Boolean);
   } catch (error) {
-    const imageFiles = files.filter((file) => file.type.startsWith('image/'));
-    if (!imageFiles.length) {
-      uploadStatus.textContent = 'Only image uploads are supported here.';
-      return;
-    }
-
     try {
-      images = (await Promise.all(imageFiles.map((file) => readFileAsDataUrl(file)))).filter(Boolean);
+      return (await Promise.all(imageFiles.map((file) => readFileAsDataUrl(file)))).filter(Boolean);
     } catch {
-      uploadStatus.textContent = 'Upload failed. Try again.';
-      return;
+      return [];
     }
   }
+}
 
-  if (images.length) {
-    const combined = mergeCsvValue(studioForm.images, images);
-    if (!studioForm.image.value) studioForm.image.value = images[0];
-    renderUploadPreview(combined);
-    uploadStatus.textContent = `Uploaded ${images.length} image(s).`;
-  } else {
-    uploadStatus.textContent = 'No images uploaded.';
+function applyUploadedImages(images, { setPrimary }) {
+  if (!images.length) return;
+
+  let combined = mergeCsvValue(studioForm.images, images);
+  if (setPrimary) {
+    studioForm.image.value = images[0];
+  } else if (!studioForm.image.value) {
+    studioForm.image.value = images[0];
   }
-});
+
+  if (studioForm.image.value) {
+    const primary = studioForm.image.value;
+    combined = [primary, ...combined.filter((item) => item !== primary)];
+    studioForm.images.value = combined.join(',');
+  }
+
+  renderUploadPreview(combined);
+}
+
+if (primaryUpload) {
+  primaryUpload.addEventListener('change', async (event) => {
+    if (!storeToken) return;
+    const files = Array.from(event.target.files || []);
+    if (files.length === 0) return;
+
+    uploadStatus.textContent = 'Uploading primary photo...';
+    const images = await uploadImages(files);
+
+    if (images.length) {
+      applyUploadedImages(images, { setPrimary: true });
+      uploadStatus.textContent = 'Primary photo uploaded.';
+    } else {
+      uploadStatus.textContent = 'No images uploaded.';
+    }
+  });
+}
+
+if (galleryUpload) {
+  galleryUpload.addEventListener('change', async (event) => {
+    if (!storeToken) return;
+    const files = Array.from(event.target.files || []);
+    if (files.length === 0) return;
+
+    uploadStatus.textContent = 'Uploading gallery photos...';
+    const images = await uploadImages(files);
+
+    if (images.length) {
+      applyUploadedImages(images, { setPrimary: false });
+      uploadStatus.textContent = `Uploaded ${images.length} gallery photo(s).`;
+    } else {
+      uploadStatus.textContent = 'No images uploaded.';
+    }
+  });
+}
 
 function autoSetAvailability() {
   const value = Number(stockInput.value);
