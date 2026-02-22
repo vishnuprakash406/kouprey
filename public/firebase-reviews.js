@@ -132,4 +132,8 @@ window.setFirebaseConfig = function(config) {
   alert('Firebase config saved. Please refresh the page.');
 };
 
+// Expose functions to global scope
+window.submitReviewToCloud = submitReviewToCloud;
+window.loadReviewsFromCloud = loadReviewsFromCloud;
+
 console.log('Firebase Reviews module loaded. To configure Firebase, run in console: setFirebaseConfig({apiKey: "...", authDomain: "...", ...})');

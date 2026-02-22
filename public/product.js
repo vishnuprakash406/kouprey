@@ -708,7 +708,14 @@ async function loadReviews() {
 
 init();
 loadCart();
-loadReviews();
+
+// Wait for firebase-reviews.js to load before calling loadReviews
+if (typeof loadReviewsFromCloud !== 'undefined') {
+  loadReviews();
+} else {
+  setTimeout(() => loadReviews(), 100);
+}
+
 // Review pagination event listeners
 const reviewsPrevBtn = document.getElementById('reviewsPrevBtn');
 const reviewsNextBtn = document.getElementById('reviewsNextBtn');
