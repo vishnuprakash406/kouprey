@@ -1059,8 +1059,8 @@ main {
 }
 
 .view-toggle {
-  width: 48px;
-  height: 48px;
+  width: 24px;
+  height: 24px;
   border: none;
   background: transparent;
   border-radius: 4px;
@@ -1073,8 +1073,8 @@ main {
 }
 
 .view-toggle svg {
-  width: 20px;
-  height: 20px;
+  width: 16px;
+  height: 16px;
 }
 
 .view-toggle:hover {
@@ -3150,7 +3150,7 @@ main {
   .site-header {
     flex-wrap: wrap;
     gap: 0;
-    padding: 12px 5vw;
+    padding: 12px 5vw 12px 0;
     margin: 0;
     position: relative;
   }
@@ -3162,6 +3162,7 @@ main {
     align-items: center;
     gap: 8px;
     padding-right: 120px;
+    padding-left: 12px;
   }
 
   .hamburger-menu-button {
@@ -3179,7 +3180,7 @@ main {
     margin-top: 8px;
     font-size: 10px;
     letter-spacing: 0.6px;
-    padding-left: 44px;
+    padding-left: 56px;
   }
 
   .logo-img {
