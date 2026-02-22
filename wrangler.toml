@@ -1,5 +1,6 @@
 name = "kouprey"
 compatibility_date = "2024-02-01"
+main = "src/index.ts"
 
 # Cloudflare Pages configuration
 [site]
@@ -16,8 +17,14 @@ binding = "DB"
 database_name = "kouprey-production"
 database_id = "4e2f5ed4-dffd-4d47-86a9-620f478ae7a2"
 
+# Routes for API endpoints
+[[routes]]
+pattern = "kouprey.pages.dev/api/*"
+zone_id = ""
+
 # Compatibility flags
 [env.production]
 routes = [
-  { pattern = "kouprey.workers.dev/*", zone_id = "" }
+  { pattern = "kouprey.pages.dev/api/*", zone_id = "" }
 ]
+

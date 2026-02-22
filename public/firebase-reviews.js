@@ -4,6 +4,11 @@
 // 2. Enable Realtime Database
 // 3. Copy your config below
 
+// API endpoint configuration - works with Cloudflare Workers or Node.js backend
+const API_BASE_URL = typeof window !== 'undefined' && window.location.hostname.includes('pages.dev') 
+  ? window.location.origin // Use relative path on production
+  : '/'; // Use relative path locally
+
 const FIREBASE_CONFIG = {
   apiKey: localStorage.getItem('firebase_apiKey') || 'YOUR_API_KEY',
   authDomain: localStorage.getItem('firebase_authDomain') || 'your-project.firebaseapp.com',
@@ -45,16 +50,16 @@ async function submitReviewToCloud(productId, reviewData) {
     }
   }
 
-  // Try API
+  // Try API (Cloudflare Workers or Node.js)
   try {
-    const response = await fetch('/api/reviews', {
+    const response = await fetch(`${API_BASE_URL}api/reviews`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(reviewData),
     });
     
     if (response.ok) {
-      console.log('Review saved via API');
+      console.log('Review saved via Cloudflare Workers API');
       return true;
     }
   } catch (apiError) {
@@ -94,12 +99,12 @@ async function loadReviewsFromCloud(productId) {
     }
   }
 
-  // Try API
+  // Try API (Cloudflare Workers or Node.js)
   try {
-    const response = await fetch(`/api/reviews?productId=${productId}`);
+    const response = await fetch(`${API_BASE_URL}api/reviews?productId=${productId}`);
     if (response.ok) {
       const reviews = await response.json();
-      console.log('Reviews loaded from API');
+      console.log('Reviews loaded from Cloudflare Workers API');
       return reviews || [];
     }
   } catch (apiError) {
