@@ -560,6 +560,31 @@ button {
   gap: 12px;
 }
 
+.wishlist-button {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  border: 1px solid rgba(30, 27, 24, 0.15);
+  background: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(8px);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: rgba(30, 27, 24, 0.8);
+}
+
+.wishlist-button:hover {
+  background: rgba(255, 255, 255, 0.7);
+  border-color: rgba(30, 27, 24, 0.25);
+  color: rgba(30, 27, 24, 1);
+}
+
+.wishlist-button svg {
+  stroke: currentColor;
+}
+
 .sr-only {
   position: absolute;
   width: 1px;
@@ -3123,21 +3148,37 @@ main {
 
 @media (max-width: 720px) {
   .site-header {
-    flex-wrap: nowrap;
-    gap: 12px;
-    padding: 16px 5vw;
+    flex-wrap: wrap;
+    gap: 0;
+    padding: 12px 5vw;
     position: relative;
   }
 
   .header-left {
-    width: auto;
+    width: 100%;
     flex-direction: row;
+    flex-wrap: wrap;
     align-items: center;
     gap: 8px;
+    padding-right: 120px;
+  }
+
+  .hamburger-menu-button {
+    order: 1;
+  }
+
+  .logo {
+    order: 2;
   }
 
   .header-tagline {
-    display: none;
+    display: block;
+    order: 3;
+    width: 100%;
+    margin-top: 8px;
+    font-size: 10px;
+    letter-spacing: 0.6px;
+    padding-left: 44px;
   }
 
   .logo-img {
@@ -3158,7 +3199,7 @@ main {
     width: 40px;
     height: 40px;
     right: 60px;
-    top: 18px;
+    top: 12px;
   }
 
   .mobile-cart-button svg {
@@ -3169,7 +3210,7 @@ main {
   .header-menu {
     display: block;
     position: absolute;
-    top: 18px;
+    top: 12px;
     right: 5vw;
   }
 
