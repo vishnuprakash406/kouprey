@@ -298,6 +298,18 @@ button {
   cursor: pointer;
   transition: all 0.3s ease;
   padding: 0;
+  flex-shrink: 0;
+}
+
+@media (max-width: 720px) {
+  .hamburger-menu-button {
+    width: 36px;
+    height: 36px;
+  }
+  
+  .hamburger-line {
+    width: 18px;
+  }
 }
 
 .hamburger-menu-button:hover {
@@ -740,7 +752,7 @@ button {
   display: none;
   position: absolute;
   top: 16px;
-  right: 120px;
+  right: 60px;
   width: 48px;
   height: 48px;
   border-radius: 50%;
@@ -3111,20 +3123,26 @@ main {
 
 @media (max-width: 720px) {
   .site-header {
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     gap: 12px;
     padding: 16px 5vw;
     position: relative;
   }
 
   .header-left {
-    width: 100%;
-    flex-direction: column;
-    align-items: flex-start;
+    width: auto;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
   }
 
   .header-tagline {
-    font-size: 11px;
+    display: none;
+  }
+
+  .logo-img {
+    height: 36px;
+    width: auto;
   }
 
   .nav {
@@ -3137,17 +3155,31 @@ main {
 
   .mobile-cart-button {
     display: flex;
+    width: 40px;
+    height: 40px;
+    right: 60px;
+    top: 18px;
+  }
+
+  .mobile-cart-button svg {
+    width: 20px;
+    height: 20px;
   }
 
   .header-menu {
     display: block;
     position: absolute;
-    top: 16px;
+    top: 18px;
     right: 5vw;
   }
 
+  .header-menu-button {
+    width: 40px;
+    height: 40px;
+  }
+
   .menu-bar {
-    padding: 8px 5vw 0;
+    display: none;
   }
 
   .hero,
