@@ -332,6 +332,12 @@ function renderProduct(product) {
   const modalImage = document.getElementById('modalImage');
   const closeImageModal = document.getElementById('closeImageModal');
 
+  if (modalImage) {
+    modalImage.addEventListener('error', () => {
+      if (modalImage.src !== fallbackSrc) modalImage.src = fallbackSrc;
+    });
+  }
+
   mainImage?.addEventListener('click', () => {
     if (imageModal && modalImage) {
       modalImage.src = mainImage.src;
