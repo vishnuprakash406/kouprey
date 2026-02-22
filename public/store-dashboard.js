@@ -507,7 +507,10 @@ function mergeCsvValue(input, items) {
 
 function renderUploadPreview(images) {
   if (!uploadPreview) return;
-  uploadPreview.innerHTML = images
+  const safeImages = images.filter(
+    (img) => typeof img === 'string' && /^(https?:|\/|data:image\/|blob:)/.test(img)
+  );
+  uploadPreview.innerHTML = safeImages
     .map(
       (src) => `
         <button type="button" class="upload-thumb" data-src="${src}">

@@ -128,15 +128,20 @@ function renderBag() {
 }
 
 function renderProduct(product) {
+  const isValidMediaUrl = (value) =>
+    typeof value === 'string' && /^(https?:|\/|data:image\/|blob:)/.test(value);
+
   const rawImages = Array.isArray(product.images) ? product.images : [];
-  const cleanedImages = rawImages.filter(Boolean);
-  const baseImage = product.image || '';
+  const cleanedImages = rawImages.filter((img) => isValidMediaUrl(img));
+  const baseImage = isValidMediaUrl(product.image) ? product.image : '';
   const images = cleanedImages.length
     ? cleanedImages
     : baseImage
       ? [baseImage]
       : ['/assets/logo.png'];
-  const videos = Array.from(new Set((product.videos || []).filter(Boolean)));
+  const videos = Array.from(
+    new Set((product.videos || []).filter((video) => typeof video === 'string' && video.trim()))
+  );
   const instagramVideo = product.instagram_video || '';
   productDetail.innerHTML = `
     <div class="product-detail">

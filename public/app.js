@@ -157,10 +157,13 @@ function renderProducts() {
 
   productGrid.innerHTML = '';
 
+  const isValidMediaUrl = (value) =>
+    typeof value === 'string' && /^(https?:|\/|data:image\/|blob:)/.test(value);
+
   const getProductImage = (product) => {
-    if (product.image) return product.image;
+    if (isValidMediaUrl(product.image)) return product.image;
     if (Array.isArray(product.images) && product.images.length) {
-      const first = product.images.find((img) => Boolean(img));
+      const first = product.images.find((img) => isValidMediaUrl(img));
       if (first) return first;
     }
     return '/assets/logo.png';
