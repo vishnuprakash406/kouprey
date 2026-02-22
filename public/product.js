@@ -136,7 +136,7 @@ function renderProduct(product) {
     : baseImage
       ? [baseImage]
       : ['/assets/logo.png'];
-  const videos = product.videos || [];
+  const videos = Array.from(new Set((product.videos || []).filter(Boolean)));
   const instagramVideo = product.instagram_video || '';
   productDetail.innerHTML = `
     <div class="product-detail">
@@ -293,7 +293,7 @@ function renderProduct(product) {
     const button = event.target.closest('button');
     if (!button) return;
     mainImage.src = button.dataset.src;
-    thumbs.querySelectorAll('.thumb').forEach((thumb) => thumb.classList.remove('active'));
+    thumbs.querySelectorAll('.thumb-vertical').forEach((thumb) => thumb.classList.remove('active'));
     button.classList.add('active');
   });
 
