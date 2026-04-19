@@ -568,7 +568,7 @@ app.post('/api/master/database/query', authRole('master'), async (req, res) => {
   }
 });
 
-app.post('/api/store/login', async (req, res) => {
+async function handleStoreLogin(req, res) {
   const { email, password } = req.body;
   if (!email || !password) {
     return res.status(400).json({ error: 'Email and password required' });
@@ -586,7 +586,10 @@ app.post('/api/store/login', async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: 'Failed to login' });
   }
-});
+}
+
+app.post('/api/store/login', handleStoreLogin);
+app.post('/api/staff/login', handleStoreLogin);
 
 app.get('/api/orders', authRole('store'), async (req, res) => {
   try {
