@@ -731,8 +731,16 @@ if (upload) {
   });
 }
 
+app.get('/store-login', (req, res) => {
+  res.sendFile(path.join(__dirname, '..', 'public', 'store.html'));
+});
+
 app.get('/staff-login', (req, res) => {
   res.sendFile(path.join(__dirname, '..', 'public', 'store.html'));
+});
+
+app.get('/store-login/dashboard', (req, res) => {
+  res.sendFile(path.join(__dirname, '..', 'public', 'store-dashboard.html'));
 });
 
 app.get('/staff-login/dashboard', (req, res) => {
