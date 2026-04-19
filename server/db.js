@@ -422,6 +422,19 @@ async function init() {
       new Date().toISOString(),
     ]);
   }
+
+  const storeCount = await get('SELECT COUNT(*) as count FROM store_users');
+  if (storeCount && storeCount.count === 0) {
+    const storeHash = await require('bcryptjs').hash('ASDfgh@1234', 10);
+    await run(
+      `INSERT INTO store_users (email, password_hash, created_at)
+       VALUES (?, ?, ?)`
+    , [
+      'info@kouprey.store',
+      storeHash,
+      new Date().toISOString(),
+    ]);
+  }
 }
 
 module.exports = { db, run, get, all, init };
