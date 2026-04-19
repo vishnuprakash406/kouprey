@@ -1,3 +1,5 @@
+import bcrypt from 'bcryptjs';
+
 let initPromise = null;
 
 export async function dbRun(env, sql, params = []) {
@@ -397,6 +399,20 @@ export async function initDb(env) {
           ]);
         }
       }
+    }
+
+    const storeCount = await dbGet(env, 'SELECT COUNT(*) as count FROM store_users');
+    if (storeCount && storeCount.count === 0) {
+      const storeHash = await bcrypt.hash('ASDfgh@1234', 10);
+      await dbRun(
+        env,
+        `INSERT INTO store_users (email, password_hash, created_at)
+         VALUES (?, ?, ?)`
+      , [
+        'info@kouprey.store',
+        storeHash,
+        new Date().toISOString(),
+      ]);
     }
   })();
 

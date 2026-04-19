@@ -677,6 +677,26 @@ export async function onRequest(context) {
     }
   }
 
+  if (segments[0] === 'staff' && segments[1] === 'login' && method === 'POST') {
+    const { email, password } = await readBody(request);
+    if (!email || !password) {
+      return jsonResponse({ error: 'Email and password required' }, 400);
+    }
+
+    try {
+      const user = await dbGet(env, 'SELECT * FROM store_users WHERE email = ?', [email]);
+      if (!user) return jsonResponse({ error: 'Invalid staff credentials' }, 401);
+
+      const match = await bcrypt.compare(password, user.password_hash);
+      if (!match) return jsonResponse({ error: 'Invalid staff credentials' }, 401);
+
+      const token = await signToken({ role: 'store', email }, env);
+      return jsonResponse({ token });
+    } catch {
+      return jsonResponse({ error: 'Failed to login' }, 500);
+    }
+  }
+
   if (segments[0] === 'orders' && method === 'GET') {
     if (segments.length === 1) {
       const auth = await requireAuth(request, env, ['store']);
