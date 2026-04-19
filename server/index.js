@@ -108,6 +108,65 @@ function authRoles(roles) {
   };
 }
 
+async function loadSettingsSnapshot() {
+  const rows = await all('SELECT key, value FROM app_settings');
+  const result = {};
+  rows.forEach((row) => {
+    try {
+      result[row.key] = JSON.parse(row.value);
+    } catch {
+      result[row.key] = null;
+    }
+  });
+  return result;
+}
+
+async function saveSettingValue(key, value) {
+  const payload = JSON.stringify(value ?? null);
+  await run(
+    `INSERT INTO app_settings (key, value)
+     VALUES (?, ?)
+     ON CONFLICT(key) DO UPDATE SET value = excluded.value`,
+    [key, payload]
+  );
+}
+
+app.get('/api/settings', async (req, res) => {
+  try {
+    // Prevent browser caching of settings
+    res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+    res.setHeader('Pragma', 'no-cache');
+    res.setHeader('Expires', '0');
+    
+    const snapshot = await loadSettingsSnapshot();
+    res.json(snapshot);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to load settings' });
+  }
+});
+
+app.put('/api/settings', authRole('master'), async (req, res) => {
+  const payload = req.body || {};
+  const keys = ['settings', 'theme', 'home', 'colors'];
+  const updates = keys.filter((key) => Object.prototype.hasOwnProperty.call(payload, key));
+
+  if (!updates.length) {
+    return res.status(400).json({ error: 'No settings provided' });
+  }
+
+  try {
+    for (const key of updates) {
+      await saveSettingValue(key, payload[key]);
+    }
+    // Save cache version to bust browser cache
+    const cacheVersion = Date.now();
+    await saveSettingValue('cacheVersion', cacheVersion);
+    res.json({ success: true, cacheVersion });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to save settings' });
+  }
+});
+
 app.get('/api/products', async (req, res) => {
   try {
     const rows = await all('SELECT * FROM products ORDER BY updated_at DESC');
@@ -116,6 +175,7 @@ app.get('/api/products', async (req, res) => {
       sizes: row.sizes.split(',').map((s) => s.trim()),
       images: row.images ? JSON.parse(row.images) : row.image ? [row.image] : [],
       videos: row.videos ? JSON.parse(row.videos) : [],
+      instagram_video: row.instagram_video || '',
       color: row.color || '',
       rating: row.rating || 0,
       review_count: row.review_count || 0,
@@ -136,6 +196,7 @@ app.get('/api/products/:id', async (req, res) => {
       sizes: product.sizes.split(',').map((s) => s.trim()),
       images: product.images ? JSON.parse(product.images) : product.image ? [product.image] : [],
       videos: product.videos ? JSON.parse(product.videos) : [],
+      instagram_video: product.instagram_video || '',
       color: product.color || '',
       rating: product.rating || 0,
       review_count: product.review_count || 0,
@@ -159,6 +220,7 @@ app.post('/api/products', authRole('store'), async (req, res) => {
     image,
     images = [],
     videos = [],
+    instagram_video,
     color,
     subcategory,
     rating,
@@ -182,8 +244,8 @@ app.post('/api/products', authRole('store'), async (req, res) => {
 
   try {
     await run(
-      `INSERT INTO products (id, name, category, subcategory, price, discount, sizes, stock, availability, image, images, videos, color, rating, review_count, description, updated_at)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+      `INSERT INTO products (id, name, category, subcategory, price, discount, sizes, stock, availability, image, images, videos, instagram_video, color, rating, review_count, description, updated_at)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
     , [
       productId,
       name,
@@ -197,6 +259,7 @@ app.post('/api/products', authRole('store'), async (req, res) => {
       image || (Array.isArray(images) && images[0]) || '',
       Array.isArray(images) ? JSON.stringify(images) : JSON.stringify(String(images).split(',')),
       Array.isArray(videos) ? JSON.stringify(videos) : JSON.stringify(String(videos).split(',')),
+      instagram_video || '',
       color || '',
       Number(rating) || 0,
       Number(review_count) || 0,
@@ -238,7 +301,7 @@ app.put('/api/products/:id', authRole('store'), async (req, res) => {
   try {
     await run(
       `UPDATE products
-       SET name = ?, category = ?, subcategory = ?, price = ?, discount = ?, sizes = ?, stock = ?, availability = ?, image = ?, images = ?, videos = ?, color = ?, rating = ?, review_count = ?, description = ?, updated_at = ?
+       SET name = ?, category = ?, subcategory = ?, price = ?, discount = ?, sizes = ?, stock = ?, availability = ?, image = ?, images = ?, videos = ?, instagram_video = ?, color = ?, rating = ?, review_count = ?, description = ?, updated_at = ?
        WHERE id = ?`
     , [
       updated.name,
@@ -256,6 +319,7 @@ app.put('/api/products/:id', authRole('store'), async (req, res) => {
       Array.isArray(updated.videos)
         ? JSON.stringify(updated.videos)
         : JSON.stringify(String(updated.videos || '').split(',').filter(Boolean)),
+      updated.instagram_video || '',
       updated.color || '',
       Number(updated.rating) || 0,
       Number(updated.review_count) || 0,
@@ -304,6 +368,50 @@ app.delete('/api/products/:id', authRole('store'), async (req, res) => {
     res.json({ success: true });
   } catch (error) {
     res.status(500).json({ error: 'Failed to delete product' });
+  }
+});
+
+// Review endpoints
+app.post('/api/reviews', async (req, res) => {
+  try {
+    const { productId, displayName, email, rating, title, content } = req.body;
+    
+    if (!productId || !displayName || !email || !rating || !content) {
+      return res.status(400).json({ error: 'Missing required fields' });
+    }
+
+    const timestamp = new Date().toISOString();
+    await run(
+      `INSERT INTO reviews (productId, displayName, email, rating, title, content, timestamp, created_at)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+      [productId, displayName, email, rating, title || '', content, timestamp, timestamp]
+    );
+
+    res.json({ success: true, message: 'Review submitted successfully' });
+  } catch (error) {
+    console.error('Review submission error:', error);
+    res.status(500).json({ error: 'Failed to submit review' });
+  }
+});
+
+app.get('/api/reviews', async (req, res) => {
+  try {
+    const productId = req.query.productId;
+    if (!productId) {
+      return res.status(400).json({ error: 'Product ID required' });
+    }
+
+    const reviews = await all(
+      `SELECT displayName, rating, title, content, timestamp FROM reviews 
+       WHERE productId = ? AND email IS NOT NULL
+       ORDER BY timestamp DESC LIMIT 50`,
+      [productId]
+    );
+
+    res.json(reviews || []);
+  } catch (error) {
+    console.error('Review retrieval error:', error);
+    res.status(500).json({ error: 'Failed to load reviews' });
   }
 });
 
@@ -736,7 +844,7 @@ app.get('/store-login', (req, res) => {
 });
 
 app.get('/staff-login', (req, res) => {
-  res.sendFile(path.join(__dirname, '..', 'public', 'store.html'));
+  res.sendFile(path.join(__dirname, '..', 'public', 'staff-login.html'));
 });
 
 app.get('/store-login/dashboard', (req, res) => {

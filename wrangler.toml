@@ -1,0 +1,21 @@
+name = "kouprey"
+compatibility_date = "2024-02-01"
+main = "src/index.ts"
+
+# Cloudflare Pages configuration
+[site]
+bucket = "./public"
+
+# Environment variables
+[vars]
+PORT = "8787"
+NODE_ENV = "production"
+R2_PUBLIC_URL = "https://pub-89b5e27379404ae880af465e3773471f.r2.dev"
+
+# Cloudflare D1 Database
+[[d1_databases]]
+binding = "DB"
+database_name = "kouprey-production"
+database_id = "4e2f5ed4-dffd-4d47-86a9-620f478ae7a2"
+
+

@@ -4,27 +4,126 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Kouprey Product</title>
+    <link rel="icon" href="/assets/logo.png" />
     <link rel="stylesheet" href="/styles.css" />
     <script src="/theme.js"></script>
   </head>
   <body>
+    <!-- Loading Spinner -->
+    <div id="pageLoader" class="page-loader">
+      <div class="loader-spinner"></div>
+      <p class="loader-text">Kouprey</p>
+    </div>
+
     <header class="site-header">
       <div class="logo">
-        <img class="logo-img" src="/assets/logo.png" alt="Kouprey logo" />
+        <a class="logo-link" href="/">
+          <img class="logo-img" src="/assets/logo.png" alt="Kouprey logo" />
+        </a>
       </div>
       <nav class="nav">
         <a href="/">Store</a>
         <a href="/#new">New</a>
-        <a href="/#sale">Sale</a>
+        <a href="/#sale">Sale offers</a>
         <a href="/returns">Returns</a>
       </nav>
-      <button class="bag-button" id="bagButton" aria-expanded="false">
-        Bag <span id="bagCount">0</span>
+      <div class="header-actions">
+        <a class="ghost" href="/wishlist">Wishlist</a>
+        <button class="bag-button" id="bagButton" aria-expanded="false">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <path d="M16 10a4 4 0 0 1-8 0"></path>
+          </svg>
+          <span id="bagCount">0</span>
+        </button>
+      </div>
+      <button class="mobile-cart-button" id="mobileCartButton" aria-expanded="false">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <path d="M16 10a4 4 0 0 1-8 0"></path>
+        </svg>
+        <span id="mobileBagCount" class="mobile-bag-count">0</span>
       </button>
     </header>
 
     <main>
       <section class="section" id="productDetail"></section>
+      <section class="section alt" id="reviews">
+        <div class="section-header">
+          <h2>Customer Reviews</h2>
+        </div>
+        <div class="reviews-container">
+          <div class="reviews-list" id="reviewsList"></div>
+          <div class="reviews-pagination" id="reviewsPagination" style="display: none;">
+            <button class="pagination-btn" id="reviewsPrevBtn" disabled>← Previous</button>
+            <span class="pagination-info" id="reviewsPaginationInfo">Page 1</span>
+            <button class="pagination-btn" id="reviewsNextBtn">Next →</button>
+          </div>
+          <div class="review-form-wrapper">
+            <div class="review-header">
+              <div class="review-stars" id="reviewStarsDisplay">
+                <button class="star-btn" data-rating="1">★</button>
+                <button class="star-btn" data-rating="2">★</button>
+                <button class="star-btn" data-rating="3">★</button>
+                <button class="star-btn" data-rating="4">★</button>
+                <button class="star-btn" data-rating="5">★</button>
+              </div>
+              <span class="review-prompt" id="reviewPrompt">Be the first to write a review</span>
+              <button class="ghost mini" id="cancelReview">Cancel review</button>
+            </div>
+            <form class="review-form" id="reviewForm" style="display: none;">
+              <div class="form-group">
+                <label for="displayName">Display name (displayed publicly like John Smith)</label>
+                <div class="display-name-wrapper">
+                  <input type="text" id="displayName" name="displayName" placeholder="Display name" required />
+                  <select id="displayNameDropdown">
+                    <option value="anonymous">Anonymous</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="emailAddress">Email address</label>
+                <input type="email" id="emailAddress" name="emailAddress" placeholder="Your email address" required />
+              </div>
+              <div class="form-group">
+                <label>Rating</label>
+                <div class="rating-selector" id="ratingSelectorForm">
+                  <button type="button" class="star-select" data-rating="1">★</button>
+                  <button type="button" class="star-select" data-rating="2">★</button>
+                  <button type="button" class="star-select" data-rating="3">★</button>
+                  <button type="button" class="star-select" data-rating="4">★</button>
+                  <button type="button" class="star-select" data-rating="5">★</button>
+                </div>
+                <input type="hidden" id="ratingValue" name="rating" value="0" />
+              </div>
+              <div class="form-group">
+                <label for="reviewTitle">Review Title</label>
+                <input type="text" id="reviewTitle" name="reviewTitle" placeholder="Give your review a title" />
+              </div>
+              <div class="form-group">
+                <label for="reviewContent">Review content</label>
+                <textarea id="reviewContent" name="reviewContent" placeholder="Start writing here..." rows="6"></textarea>
+              </div>
+              <div class="form-group">
+                <label>Picture/Video (optional)</label>
+                <div class="image-upload-area" id="imageUploadArea">
+                  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                    <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                    <polyline points="21 15 16 10 5 21"></polyline>
+                  </svg>
+                  <input type="file" id="reviewImage" name="reviewImage" accept="image/*,video/*" style="display: none;" />
+                </div>
+                <small id="imagePreview"></small>
+              </div>
+              <small class="privacy-notice">How we use your data: We'll only contact you about the review you left, and only if necessary. By submitting your review, you agree to Judge.me's terms, privacy and content policies.</small>
+              <button class="primary" type="submit">SUBMIT REVIEW</button>
+            </form>
+          </div>
+        </div>
+      </section>
       <section class="section alt" id="suggestions">
         <div class="section-header">
           <h2>You may also like</h2>
@@ -50,6 +149,20 @@
       </div>
     </aside>
 
+    <!-- Image Zoom Modal -->
+    <div class="image-modal" id="imageModal">
+      <div class="image-modal-overlay"></div>
+      <button class="image-modal-close" id="closeImageModal" aria-label="Close zoom">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+      <div class="image-modal-content">
+        <img id="modalImage" src="" alt="Product zoom" />
+      </div>
+    </div>
+
     <footer class="site-footer">
       <div class="footer-grid">
         <div class="footer-brand">
@@ -65,11 +178,33 @@
           <p id="footerEmail">support@kouprey.com</p>
           <p id="footerWhatsApp">WhatsApp: 8438217212</p>
           <p id="footerHours">Mon-Sat, 10:00-19:00</p>
+          <div class="footer-social" id="footerSocial">
+            <a id="footerInstagram" href="#" target="_blank" rel="noopener" aria-label="Instagram" style="display: none;">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+              </svg>
+            </a>
+            <a id="footerFacebook" href="#" target="_blank" rel="noopener" aria-label="Facebook" style="display: none;">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+              </svg>
+            </a>
+          </div>
         </div>
       </div>
     </footer>
 
-    <script src="/settings.js"></script>
+    <script>
+      // Load settings.js with cache-busting
+      const scriptEl = document.createElement('script');
+      const cacheVersion = localStorage.getItem('kouprey_cache_version') || Date.now();
+      scriptEl.src = `/settings.js?v=${cacheVersion}`;
+      document.head.appendChild(scriptEl);
+    </script>
+    <!-- Firebase SDK (Compat for global access) -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-compat/app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-compat/database.js"></script>
+    <script src="/firebase-reviews.js"></script>
     <script src="/product.js"></script>
   </body>
 </html>

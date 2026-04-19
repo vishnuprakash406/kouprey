@@ -181,6 +181,11 @@ async function sha512(value) {
     .join('');
 }
 
+function toBase64Url(input) {
+  const encoded = btoa(unescape(encodeURIComponent(input)));
+  return encoded.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/g, '');
+}
+
 async function renderPayU(settings) {
   paypalContainer.innerHTML = '';
   const cart = loadCart();
@@ -237,7 +242,7 @@ async function renderPayU(settings) {
       return;
     }
 
-    const udf1 = btoa(unescape(encodeURIComponent(JSON.stringify(orderPayload))));
+    const udf1 = toBase64Url(JSON.stringify(orderPayload));
     const udf2 = shippingAddress;
     const udf3 = orderId;
     const udfFields = [udf1, udf2, udf3, '', '', '', '', '', '', ''];

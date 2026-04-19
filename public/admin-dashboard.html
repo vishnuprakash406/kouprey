@@ -4,20 +4,36 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Kouprey Admin Studio</title>
+    <link rel="icon" href="/assets/logo.png" />
     <link rel="stylesheet" href="/styles.css" />
     <script src="/theme.js"></script>
   </head>
   <body class="dashboard-body admin-dashboard">
+    <!-- Loading Spinner -->
+    <div id="pageLoader" class="page-loader">
+      <div class="loader-spinner"></div>
+      <p class="loader-text">Kouprey</p>
+    </div>
+
     <header class="dashboard-header">
       <div class="dashboard-brand">
-        <span class="logo-text">Admin Studio</span>
+        <a class="logo-link" href="/">
+          <span class="logo-text">Admin Studio</span>
+        </a>
         <small>User Management</small>
       </div>
       <nav class="nav">
         <a href="/staff-login/dashboard">Store Studio</a>
         <a href="#users">Staff Users</a>
+        <a href="/health.html" target="_blank">Health Check</a>
       </nav>
-      <button class="ghost" id="logout">Log out</button>
+      <div class="dashboard-actions">
+        <div class="publish-block">
+          <button class="primary" id="publishChanges" type="button">Publish</button>
+          <small class="hint" id="publishStatus"></small>
+        </div>
+        <button class="ghost" id="logout" type="button">Log out</button>
+      </div>
     </header>
 
     <main class="dashboard-main">
@@ -66,6 +82,7 @@
             <label>
               Payment gateway
               <select id="paymentGateway">
+                <option value="stripe">Stripe</option>
                 <option value="paypal">PayPal</option>
                 <option value="razorpay">Razorpay</option>
                 <option value="payu">PayU</option>
@@ -78,6 +95,14 @@
                 <option value="USD">USD</option>
                 <option value="INR">INR</option>
               </select>
+            </label>
+            <label>
+              Stripe Publishable Key
+              <input type="text" id="stripePublishableKey" placeholder="Paste Stripe publishable key" />
+            </label>
+            <label>
+              Stripe Secret Key
+              <input type="password" id="stripeSecretKey" placeholder="Paste Stripe secret key" />
             </label>
             <label>
               PayPal Client ID
@@ -163,6 +188,28 @@
                 <input type="text" id="footerHoursInput" placeholder="Mon-Sat, 10:00-19:00" />
               </label>
             </div>
+            <div class="panel-split">
+              <label>
+                Instagram
+                <input type="text" id="footerInstagramInput" placeholder="kouprey_official" />
+              </label>
+              <label>
+                Facebook
+                <input type="text" id="footerFacebookInput" placeholder="kouprey.official" />
+              </label>
+            </div>
+            <h4 style="margin-top: 20px;">Store Email Access</h4>
+            <p style="font-size: 12px; color: rgba(30, 27, 24, 0.6); margin-bottom: 12px;">Configure email credentials for store staff to access https://secureserver.titan.email/mail/</p>
+            <div class="panel-split">
+              <label>
+                Store Email Username
+                <input type="text" id="storeEmailUsername" placeholder="store@kouprey.com" />
+              </label>
+              <label>
+                Store Email Password
+                <input type="password" id="storeEmailPassword" placeholder="Email password" />
+              </label>
+            </div>
             <label class="full">
               Note
               <input type="text" id="footerNoteInput" value="Premium retail experience tailored for Kouprey." />
@@ -176,7 +223,7 @@
       <section class="section">
         <div class="section-header">
           <h2>Home page content</h2>
-          <p>Edit hero text, live stock card, and stats. Hide sections if needed.</p>
+          <p>Edit hero text and home sections. Hide sections if needed.</p>
         </div>
         <div class="panel">
           <div class="theme-picker">
@@ -191,34 +238,6 @@
             <label>
               Hero copy
               <input type="text" id="heroCopyInput" value="Elevated basics and expressive statement pieces. Transparent pricing, quality fabrics, and a faster path from store to wardrobe." />
-            </label>
-            <label>
-              Live stock tag
-              <input type="text" id="heroTagInput" value="Live Stock" />
-            </label>
-            <label>
-              Card title
-              <input type="text" id="heroCardTitleInput" value="Track what matters" />
-            </label>
-            <label>
-              Card copy
-              <input type="text" id="heroCardCopyInput" value="Update price, availability, sizes, discount pricing, and images in one place. Payment gateway is ready for integration later." />
-            </label>
-            <label>
-              Stat 1 value
-              <input type="text" id="stat1ValueInput" value="25" />
-            </label>
-            <label>
-              Stat 1 label
-              <input type="text" id="stat1LabelInput" value="Active Styles" />
-            </label>
-            <label>
-              Stat 2 value
-              <input type="text" id="stat2ValueInput" value="4" />
-            </label>
-            <label>
-              Stat 2 label
-              <input type="text" id="stat2LabelInput" value="Stores Online" />
             </label>
           </div>
           <div class="theme-picker">
@@ -279,10 +298,6 @@
             <label>
               Show New In section
               <input type="checkbox" id="showNew" checked />
-            </label>
-            <label>
-              Show Live Stock card
-              <input type="checkbox" id="showHeroCard" checked />
             </label>
             <label>
               Show Essential 1
@@ -386,55 +401,6 @@
             <button class="primary" id="saveHeroImage">Save hero image</button>
           </div>
           <small class="hint" id="heroImageStatus"></small>
-        </div>
-      </section>
-
-      <section class="section">
-        <div class="section-header">
-          <h2>Health check</h2>
-          <p>Server, database, and payment status for live troubleshooting.</p>
-        </div>
-        <div class="panel">
-          <div class="panel-split">
-            <div>
-              <small>Status</small>
-              <h3 id="healthStatus">Checking...</h3>
-            </div>
-            <div>
-              <small>Database</small>
-              <h3 id="healthDb">Checking...</h3>
-            </div>
-          </div>
-          <div class="panel-split">
-            <div>
-              <small>Payment gateway</small>
-              <p id="healthGateway">-</p>
-            </div>
-            <div>
-              <small>Last PayU callback</small>
-              <p id="healthPayu">-</p>
-            </div>
-          </div>
-          <div class="panel-split">
-            <div>
-              <small>Server time</small>
-              <p id="healthTime">-</p>
-            </div>
-            <div>
-              <small>Uptime</small>
-              <p id="healthUptime">-</p>
-            </div>
-          </div>
-          <div class="panel-split">
-            <div>
-              <small>Node</small>
-              <p id="healthNode">-</p>
-            </div>
-            <div>
-              <button class="ghost" id="refreshHealth">Refresh</button>
-            </div>
-          </div>
-          <p class="hint" id="healthError"></p>
         </div>
       </section>
 
@@ -653,10 +619,28 @@
           <p id="footerEmail">support@kouprey.com</p>
           <p id="footerWhatsApp">WhatsApp: 8438217212</p>
           <p id="footerHours">Mon-Sat, 10:00-19:00</p>
+          <div class="footer-social" id="footerSocial">
+            <a id="footerInstagram" href="#" target="_blank" rel="noopener" aria-label="Instagram" style="display: none;">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+              </svg>
+            </a>
+            <a id="footerFacebook" href="#" target="_blank" rel="noopener" aria-label="Facebook" style="display: none;">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+              </svg>
+            </a>
+          </div>
         </div>
       </div>
     </footer>
-    <script src="/settings.js"></script>
+    <script>
+      // Load settings.js with cache-busting
+      const scriptEl = document.createElement('script');
+      const cacheVersion = localStorage.getItem('kouprey_cache_version') || Date.now();
+      scriptEl.src = `/settings.js?v=${cacheVersion}`;
+      document.head.appendChild(scriptEl);
+    </script>
     <script src="/admin-dashboard.js"></script>
   </body>
 </html>

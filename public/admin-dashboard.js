@@ -1,3 +1,4 @@
+const pageLoader = document.getElementById('pageLoader');
 const userForm = document.getElementById('userForm');
 const userList = document.getElementById('userList');
 const userStatus = document.getElementById('userStatus');
@@ -13,6 +14,8 @@ const themeStatus = document.getElementById('themeStatus');
 const logoUrl = document.getElementById('logoUrl');
 const logoUpload = document.getElementById('logoUpload');
 const paymentGateway = document.getElementById('paymentGateway');
+const stripePublishableKey = document.getElementById('stripePublishableKey');
+const stripeSecretKey = document.getElementById('stripeSecretKey');
 const paypalClientId = document.getElementById('paypalClientId');
 const razorpayKeyId = document.getElementById('razorpayKeyId');
 const payuKey = document.getElementById('payuKey');
@@ -32,19 +35,16 @@ const footerPhoneInput = document.getElementById('footerPhoneInput');
 const footerEmailInput = document.getElementById('footerEmailInput');
 const footerWhatsAppInput = document.getElementById('footerWhatsAppInput');
 const footerHoursInput = document.getElementById('footerHoursInput');
+const footerInstagramInput = document.getElementById('footerInstagramInput');
+const footerFacebookInput = document.getElementById('footerFacebookInput');
+const storeEmailUsername = document.getElementById('storeEmailUsername');
+const storeEmailPassword = document.getElementById('storeEmailPassword');
 const footerNoteInput = document.getElementById('footerNoteInput');
 const saveSettings = document.getElementById('saveSettings');
 const settingsStatus = document.getElementById('settingsStatus');
 const heroEyebrowInput = document.getElementById('heroEyebrowInput');
 const heroTitleInput = document.getElementById('heroTitleInput');
 const heroCopyInput = document.getElementById('heroCopyInput');
-const heroTagInput = document.getElementById('heroTagInput');
-const heroCardTitleInput = document.getElementById('heroCardTitleInput');
-const heroCardCopyInput = document.getElementById('heroCardCopyInput');
-const stat1ValueInput = document.getElementById('stat1ValueInput');
-const stat1LabelInput = document.getElementById('stat1LabelInput');
-const stat2ValueInput = document.getElementById('stat2ValueInput');
-const stat2LabelInput = document.getElementById('stat2LabelInput');
 const newSubtitleInput = document.getElementById('newSubtitleInput');
 const essentialsSubtitleInput = document.getElementById('essentialsSubtitleInput');
 const essential1TitleInput = document.getElementById('essential1TitleInput');
@@ -59,7 +59,6 @@ const saleBannerCopyInput = document.getElementById('saleBannerCopyInput');
 const showEssentials = document.getElementById('showEssentials');
 const showSale = document.getElementById('showSale');
 const showNew = document.getElementById('showNew');
-const showHeroCard = document.getElementById('showHeroCard');
 const showEssential1 = document.getElementById('showEssential1');
 const showEssential2 = document.getElementById('showEssential2');
 const showEssential3 = document.getElementById('showEssential3');
@@ -88,6 +87,8 @@ const masterEmailInput = document.getElementById('masterEmail');
 const masterPasswordInput = document.getElementById('masterPassword');
 const masterStatus = document.getElementById('masterStatus');
 const masterList = document.getElementById('masterList');
+const publishChanges = document.getElementById('publishChanges');
+const publishStatus = document.getElementById('publishStatus');
 const hashKey = document.getElementById('hashKey');
 const hashSalt = document.getElementById('hashSalt');
 const hashTxnId = document.getElementById('hashTxnId');
@@ -108,15 +109,6 @@ const tableColumns = document.getElementById('tableColumns');
 const sqlInput = document.getElementById('sqlInput');
 const runSql = document.getElementById('runSql');
 const sqlOutput = document.getElementById('sqlOutput');
-const healthStatus = document.getElementById('healthStatus');
-const healthDb = document.getElementById('healthDb');
-const healthGateway = document.getElementById('healthGateway');
-const healthPayu = document.getElementById('healthPayu');
-const healthTime = document.getElementById('healthTime');
-const healthUptime = document.getElementById('healthUptime');
-const healthNode = document.getElementById('healthNode');
-const healthError = document.getElementById('healthError');
-const refreshHealth = document.getElementById('refreshHealth');
 const failedOrders = document.getElementById('failedOrders');
 const healthErrors = document.getElementById('healthErrors');
 
@@ -152,6 +144,33 @@ function formatUptime(seconds) {
   return parts.join(' ');
 }
 
+function showLoader() {
+  if (pageLoader) {
+    pageLoader.style.display = 'flex';
+  }
+}
+
+function hideLoader() {
+  if (pageLoader) {
+    pageLoader.style.display = 'none';
+  }
+}
+
+// Save settings to API (server-side D1 database)
+async function saveSettingsToAPI(settings) {
+  try {
+    await apiFetch('/api/settings', {
+      method: 'PUT',
+      headers: { Authorization: `Bearer ${masterToken}` },
+      body: JSON.stringify(settings),
+    });
+    return true;
+  } catch (error) {
+    console.error('Failed to save settings:', error);
+    return false;
+  }
+}
+
 async function apiFetch(url, options = {}) {
   const headers = {
     'Content-Type': 'application/json',
@@ -163,6 +182,12 @@ async function apiFetch(url, options = {}) {
     throw new Error(payload.error || 'Request failed');
   }
   return response.json();
+}
+
+function hideLoader() {
+  if (pageLoader) {
+    pageLoader.classList.add('hidden');
+  }
 }
 
 async function loadUsers() {
@@ -197,82 +222,6 @@ async function loadMasters() {
   }
 }
 
-async function loadHealth() {
-  if (!healthStatus) return;
-  healthError.textContent = '';
-  healthStatus.textContent = 'Checking...';
-  healthDb.textContent = 'Checking...';
-  healthGateway.textContent = 'Checking...';
-  try {
-    const data = await apiFetch('/api/health', {
-      headers: { Authorization: `Bearer ${masterToken}` },
-    });
-    healthStatus.textContent = data.status === 'ok' ? 'Online' : 'Degraded';
-    healthDb.textContent = data.database === 'ok' ? 'Connected' : 'Error';
-    healthTime.textContent = new Date(data.time).toLocaleString();
-    healthUptime.textContent = formatUptime(data.uptime_seconds || 0);
-    healthNode.textContent = data.node || '-';
-    healthPayu.textContent = data.last_payu_callback
-      ? new Date(data.last_payu_callback).toLocaleString()
-      : 'Never';
-
-    try {
-      const settings = JSON.parse(localStorage.getItem(SETTINGS_KEY) || '{}');
-      const gateway = settings.paymentGateway || 'not configured';
-      const detail =
-        gateway === 'payu'
-          ? settings.payuKey
-            ? 'PayU configured'
-            : 'PayU missing key'
-          : gateway;
-      healthGateway.textContent = detail;
-    } catch {
-      healthGateway.textContent = 'Unavailable';
-    }
-
-    if (failedOrders) {
-      if (!data.failed_orders || data.failed_orders.length === 0) {
-        failedOrders.innerHTML = '<p class="hint">No failed orders found.</p>';
-      } else {
-        failedOrders.innerHTML = data.failed_orders
-          .map(
-            (order) => `
-            <div class="orders-row">
-              <span>${order.id}</span>
-              <span>${order.customer_name || '-'}</span>
-              <span>₹${Number(order.total || 0).toFixed(2)}</span>
-              <span>${order.status}</span>
-              <span>${order.payment_status}</span>
-              <span>${formatDate(order.created_at)}</span>
-            </div>
-          `
-          )
-          .join('');
-      }
-    }
-
-    if (healthErrors) {
-      if (!data.errors || data.errors.length === 0) {
-        healthErrors.textContent = 'No logs.';
-      } else {
-        healthErrors.textContent = data.errors
-          .map((entry) => `[${entry.time}] ${entry.level || 'info'} ${entry.message}`)
-          .join('\n');
-      }
-    }
-  } catch (error) {
-    healthStatus.textContent = 'Offline';
-    healthDb.textContent = '-';
-    healthTime.textContent = '-';
-    healthUptime.textContent = '-';
-    healthNode.textContent = '-';
-    healthGateway.textContent = '-';
-    healthPayu.textContent = '-';
-    healthError.textContent = error.message;
-    if (failedOrders) failedOrders.innerHTML = '<p class="hint">Unable to load failed orders.</p>';
-    if (healthErrors) healthErrors.textContent = 'Unable to load logs.';
-  }
-}
 function renderUsers() {
   userList.innerHTML = '';
   const filtered = users.filter((user) =>
@@ -417,6 +366,94 @@ function loadTheme() {
   }
 }
 
+async function loadSettingsFromAPI() {
+  try {
+    // Add timeout to prevent hanging
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout
+    
+    const response = await fetch('/api/settings', {
+      signal: controller.signal,
+      cache: 'no-store',
+      headers: {
+        'Cache-Control': 'no-cache'
+      }
+    });
+    clearTimeout(timeoutId);
+    
+    if (response.ok) {
+      const serverSettings = await response.json();
+      
+      // Update localStorage cache
+      if (serverSettings.theme) {
+        localStorage.setItem(THEME_KEY, JSON.stringify(serverSettings.theme));
+        if (serverSettings.theme.colors) {
+          themeA.value = serverSettings.theme.colors[0] || themeA.value;
+          themeB.value = serverSettings.theme.colors[1] || themeB.value;
+          themeC.value = serverSettings.theme.colors[2] || themeC.value;
+        }
+      }
+      
+      if (serverSettings.settings) {
+        localStorage.setItem(SETTINGS_KEY, JSON.stringify(serverSettings.settings));
+        const saved = serverSettings.settings;
+        logoUrl.value = saved.logoUrl || logoUrl.value;
+        paymentGateway.value = saved.paymentGateway || paymentGateway.value;
+        paymentCurrency.value = saved.paymentCurrency || paymentCurrency.value;
+        stripePublishableKey.value = saved.stripePublishableKey || stripePublishableKey.value;
+        stripeSecretKey.value = saved.stripeSecretKey || stripeSecretKey.value;
+        paypalClientId.value = saved.paypalClientId || paypalClientId.value;
+        razorpayKeyId.value = saved.razorpayKeyId || razorpayKeyId.value;
+        payuKey.value = saved.payuKey || payuKey.value;
+        payuSalt.value = saved.payuSalt || payuSalt.value;
+        hashKey.value = saved.payuKey || hashKey.value;
+        hashSalt.value = saved.payuSalt || hashSalt.value;
+        if (!hashProductInfo.value) {
+          hashProductInfo.value = `${saved.brandName || 'Kouprey'} Order`;
+        }
+        returnDays.value = saved.returnDays || returnDays.value;
+        returnWhatsAppInput.value = saved.returnWhatsApp || returnWhatsAppInput.value;
+        returnPolicyInput.value = saved.returnPolicyText || returnPolicyInput.value;
+        returnConditionInput.value = saved.returnConditionText || returnConditionInput.value;
+        showReturnCondition.checked = saved.showReturnCondition !== false;
+        brandNameInput.value = saved.brandName || brandNameInput.value;
+        footerTextInput.value = saved.footerText || footerTextInput.value;
+        footerUrlInput.value = saved.footerUrl || footerUrlInput.value;
+        footerAddressInput.value = saved.footerAddress || footerAddressInput.value;
+        footerPhoneInput.value = saved.footerPhone || footerPhoneInput.value;
+        footerEmailInput.value = saved.footerEmail || footerEmailInput.value;
+        footerWhatsAppInput.value = saved.footerWhatsApp || footerWhatsAppInput.value;
+        footerHoursInput.value = saved.footerHours || footerHoursInput.value;
+        footerInstagramInput.value = saved.footerInstagram || footerInstagramInput.value;
+        footerFacebookInput.value = saved.footerFacebook || footerFacebookInput.value;
+        storeEmailUsername.value = saved.storeEmailUsername || storeEmailUsername.value;
+        storeEmailPassword.value = saved.storeEmailPassword || storeEmailPassword.value;
+        footerNoteInput.value = saved.footerNote || footerNoteInput.value;
+        headerImageUrl.value = saved.headerImageUrl || headerImageUrl.value;
+        heroImageUrl.value = saved.heroImageUrl || heroImageUrl.value;
+      }
+      
+      if (serverSettings.home) {
+        localStorage.setItem(HOME_KEY, JSON.stringify(serverSettings.home));
+      }
+      
+      if (serverSettings.colors) {
+        localStorage.setItem(COLOR_KEY, JSON.stringify(serverSettings.colors));
+        const colors = serverSettings.colors;
+        headerBgColor.value = colors.headerBgColor || headerBgColor.value;
+        essentialsBgColor.value = colors.essentialsBgColor || essentialsBgColor.value;
+        saleBgStart.value = colors.saleBgStart || saleBgStart.value;
+        saleBgEnd.value = colors.saleBgEnd || saleBgEnd.value;
+        saleTextColor.value = colors.saleTextColor || saleTextColor.value;
+      }
+    }
+  } catch (error) {
+    // Fallback to loading from localStorage
+    loadTheme();
+    loadSettings();
+  }
+}
+
 function loadSettings() {
   try {
     const saved = JSON.parse(localStorage.getItem(SETTINGS_KEY));
@@ -424,6 +461,8 @@ function loadSettings() {
     logoUrl.value = saved.logoUrl || logoUrl.value;
     paymentGateway.value = saved.paymentGateway || paymentGateway.value;
     paymentCurrency.value = saved.paymentCurrency || paymentCurrency.value;
+    stripePublishableKey.value = saved.stripePublishableKey || stripePublishableKey.value;
+    stripeSecretKey.value = saved.stripeSecretKey || stripeSecretKey.value;
     paypalClientId.value = saved.paypalClientId || paypalClientId.value;
     razorpayKeyId.value = saved.razorpayKeyId || razorpayKeyId.value;
     payuKey.value = saved.payuKey || payuKey.value;
@@ -446,6 +485,10 @@ function loadSettings() {
     footerEmailInput.value = saved.footerEmail || footerEmailInput.value;
     footerWhatsAppInput.value = saved.footerWhatsApp || footerWhatsAppInput.value;
     footerHoursInput.value = saved.footerHours || footerHoursInput.value;
+    footerInstagramInput.value = saved.footerInstagram || footerInstagramInput.value;
+    footerFacebookInput.value = saved.footerFacebook || footerFacebookInput.value;
+    storeEmailUsername.value = saved.storeEmailUsername || storeEmailUsername.value;
+    storeEmailPassword.value = saved.storeEmailPassword || storeEmailPassword.value;
     footerNoteInput.value = saved.footerNote || footerNoteInput.value;
     headerImageUrl.value = saved.headerImageUrl || headerImageUrl.value;
     heroImageUrl.value = saved.heroImageUrl || heroImageUrl.value;
@@ -461,13 +504,6 @@ function loadHomeSettings() {
     heroEyebrowInput.value = saved.heroEyebrow || heroEyebrowInput.value;
     heroTitleInput.value = saved.heroTitle || heroTitleInput.value;
     heroCopyInput.value = saved.heroCopy || heroCopyInput.value;
-    heroTagInput.value = saved.heroTag || heroTagInput.value;
-    heroCardTitleInput.value = saved.heroCardTitle || heroCardTitleInput.value;
-    heroCardCopyInput.value = saved.heroCardCopy || heroCardCopyInput.value;
-    stat1ValueInput.value = saved.stat1Value || stat1ValueInput.value;
-    stat1LabelInput.value = saved.stat1Label || stat1LabelInput.value;
-    stat2ValueInput.value = saved.stat2Value || stat2ValueInput.value;
-    stat2LabelInput.value = saved.stat2Label || stat2LabelInput.value;
     newSubtitleInput.value = saved.newSubtitle || newSubtitleInput.value;
     essentialsSubtitleInput.value = saved.essentialsSubtitle || essentialsSubtitleInput.value;
     essential1TitleInput.value = saved.essential1Title || essential1TitleInput.value;
@@ -506,19 +542,16 @@ function loadColorSettings() {
   }
 }
 
-applyTheme.addEventListener('click', () => {
-  const theme = { colors: [themeA.value, themeB.value, themeC.value] };
-  localStorage.setItem(THEME_KEY, JSON.stringify(theme));
-  document.documentElement.style.setProperty('--theme-a', themeA.value);
-  document.documentElement.style.setProperty('--theme-b', themeB.value);
-  document.documentElement.style.setProperty('--theme-c', themeC.value);
-  themeStatus.textContent = 'Theme updated.';
-});
+function buildThemePayload() {
+  return { colors: [themeA.value, themeB.value, themeC.value] };
+}
 
-saveSettings.addEventListener('click', () => {
-  const settings = {
+function buildSettingsPayload() {
+  return {
     logoUrl: logoUrl.value.trim(),
     paymentGateway: paymentGateway.value,
+    stripePublishableKey: stripePublishableKey.value.trim(),
+    stripeSecretKey: stripeSecretKey.value.trim(),
     paypalClientId: paypalClientId.value.trim(),
     razorpayKeyId: razorpayKeyId.value.trim(),
     payuKey: payuKey.value.trim(),
@@ -537,27 +570,210 @@ saveSettings.addEventListener('click', () => {
     footerEmail: footerEmailInput.value.trim(),
     footerWhatsApp: footerWhatsAppInput.value.trim(),
     footerHours: footerHoursInput.value.trim(),
+    footerInstagram: footerInstagramInput.value.trim(),
+    footerFacebook: footerFacebookInput.value.trim(),
+    storeEmailUsername: storeEmailUsername.value.trim(),
+    storeEmailPassword: storeEmailPassword.value.trim(),
     footerNote: footerNoteInput.value.trim(),
     headerImageUrl: headerImageUrl.value.trim(),
     heroImageUrl: heroImageUrl.value.trim(),
   };
-  localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
-  settingsStatus.textContent = 'Settings saved.';
+}
+
+function buildHomePayload() {
+  return {
+    heroEyebrow: heroEyebrowInput.value.trim(),
+    heroTitle: heroTitleInput.value.trim(),
+    heroCopy: heroCopyInput.value.trim(),
+    newSubtitle: newSubtitleInput.value.trim(),
+    essentialsSubtitle: essentialsSubtitleInput.value.trim(),
+    essential1Title: essential1TitleInput.value.trim(),
+    essential1Copy: essential1CopyInput.value.trim(),
+    essential2Title: essential2TitleInput.value.trim(),
+    essential2Copy: essential2CopyInput.value.trim(),
+    essential3Title: essential3TitleInput.value.trim(),
+    essential3Copy: essential3CopyInput.value.trim(),
+    saleSubtitle: saleSubtitleInput.value.trim(),
+    saleBannerTitle: saleBannerTitleInput.value.trim(),
+    saleBannerCopy: saleBannerCopyInput.value.trim(),
+    hiddenSections: {
+      new: !showNew.checked,
+      essentials: !showEssentials.checked,
+      sale: !showSale.checked,
+    },
+    hiddenItems: {
+      essential1: !showEssential1.checked,
+      essential2: !showEssential2.checked,
+      essential3: !showEssential3.checked,
+      saleBanner: !showSaleBanner.checked,
+    },
+  };
+}
+
+function buildColorPayload() {
+  return {
+    headerBgColor: headerBgColor.value,
+    essentialsBgColor: essentialsBgColor.value,
+    saleBgStart: saleBgStart.value,
+    saleBgEnd: saleBgEnd.value,
+    saleTextColor: saleTextColor.value,
+  };
+}
+
+function applyThemeVariables(theme) {
+  if (theme && theme.colors && theme.colors.length >= 3) {
+    document.documentElement.style.setProperty('--bg-a', theme.colors[0]);
+    document.documentElement.style.setProperty('--bg-b', theme.colors[1]);
+    document.documentElement.style.setProperty('--bg-c', theme.colors[2]);
+  }
+}
+
+function applyColorVariables(colors) {
+  if (!colors) return;
+  if (colors.headerBgColor) {
+    document.documentElement.style.setProperty('--header-bg', colors.headerBgColor);
+  }
+  if (colors.essentialsBgColor) {
+    document.documentElement.style.setProperty('--essentials-bg', colors.essentialsBgColor);
+  }
+  if (colors.saleBgStart && colors.saleBgEnd) {
+    document.documentElement.style.setProperty(
+      '--sale-bg',
+      `linear-gradient(120deg, ${colors.saleBgStart}, ${colors.saleBgEnd})`
+    );
+  }
+  if (colors.saleTextColor) {
+    document.documentElement.style.setProperty('--sale-text', colors.saleTextColor);
+  }
+}
+
+async function publishAllChanges() {
+  if (!publishChanges) return;
+  publishStatus.textContent = 'Publishing...';
+  publishChanges.disabled = true;
+
+  const theme = buildThemePayload();
+  const settings = buildSettingsPayload();
+  const home = buildHomePayload();
+  const colors = buildColorPayload();
+
+  try {
+    const response = await apiFetch('/api/settings', {
+      method: 'PUT',
+      headers: { Authorization: `Bearer ${masterToken}` },
+      body: JSON.stringify({ theme, settings, home, colors }),
+    });
+
+    const cacheVersion = response.cacheVersion || Date.now();
+
+    // Update localStorage with new values
+    localStorage.setItem(THEME_KEY, JSON.stringify(theme));
+    localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+    localStorage.setItem(HOME_KEY, JSON.stringify(home));
+    localStorage.setItem(COLOR_KEY, JSON.stringify(colors));
+    localStorage.setItem('kouprey_cache_version', cacheVersion.toString());
+
+    // Apply changes immediately on this client
+    applyThemeVariables(theme);
+    applyColorVariables(colors);
+
+    // Signal other tabs/windows to reload
+    reloadSettingsGlobally(cacheVersion);
+
+    publishStatus.textContent = 'Published to all devices.';
+  } catch (error) {
+    console.error('Publish error:', error);
+    publishStatus.textContent = 'Publish failed.';
+  }
+
+  publishChanges.disabled = false;
+}
+
+function reloadSettingsGlobally(cacheVersion) {
+  // Signal other tabs/windows to reload settings
+  localStorage.setItem('kouprey_publish_event', JSON.stringify({
+    timestamp: Date.now(),
+    cacheVersion: cacheVersion
+  }));
+}
+
+publishChanges?.addEventListener('click', publishAllChanges);
+
+applyTheme.addEventListener('click', async () => {
+  const theme = { colors: [themeA.value, themeB.value, themeC.value] };
+  const saved = await saveSettingsToAPI({ theme });
+  if (saved) {
+    localStorage.setItem(THEME_KEY, JSON.stringify(theme));
+    document.documentElement.style.setProperty('--bg-a', theme.colors[0]);
+    document.documentElement.style.setProperty('--bg-b', theme.colors[1]);
+    document.documentElement.style.setProperty('--bg-c', theme.colors[2]);
+    themeStatus.textContent = 'Theme applied for all users.';
+  } else {
+    themeStatus.textContent = 'Failed to save theme.';
+  }
 });
 
-savePayment.addEventListener('click', () => {
+saveSettings.addEventListener('click', async () => {
+  const settings = {
+    logoUrl: logoUrl.value.trim(),
+    paymentGateway: paymentGateway.value,
+    stripePublishableKey: stripePublishableKey.value.trim(),
+    stripeSecretKey: stripeSecretKey.value.trim(),
+    paypalClientId: paypalClientId.value.trim(),
+    razorpayKeyId: razorpayKeyId.value.trim(),
+    payuKey: payuKey.value.trim(),
+    payuSalt: payuSalt.value.trim(),
+    paymentCurrency: paymentCurrency.value,
+    returnDays: returnDays.value,
+    returnWhatsApp: returnWhatsAppInput.value.trim(),
+    returnPolicyText: returnPolicyInput.value.trim(),
+    returnConditionText: returnConditionInput.value.trim(),
+    showReturnCondition: showReturnCondition.checked,
+    brandName: brandNameInput.value.trim(),
+    footerText: footerTextInput.value.trim(),
+    footerUrl: footerUrlInput.value.trim(),
+    footerAddress: footerAddressInput.value.trim(),
+    footerPhone: footerPhoneInput.value.trim(),
+    footerEmail: footerEmailInput.value.trim(),
+    footerWhatsApp: footerWhatsAppInput.value.trim(),
+    footerHours: footerHoursInput.value.trim(),
+    footerInstagram: footerInstagramInput.value.trim(),
+    footerFacebook: footerFacebookInput.value.trim(),
+    storeEmailUsername: storeEmailUsername.value.trim(),
+    storeEmailPassword: storeEmailPassword.value.trim(),
+    footerNote: footerNoteInput.value.trim(),
+    headerImageUrl: headerImageUrl.value.trim(),
+    heroImageUrl: heroImageUrl.value.trim(),
+  };
+  const saved = await saveSettingsToAPI({ settings });
+  if (saved) {
+    localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+    settingsStatus.textContent = 'Settings saved for all users.';
+  } else {
+    settingsStatus.textContent = 'Failed to save settings.';
+  }
+});
+
+savePayment.addEventListener('click', async () => {
   const saved = JSON.parse(localStorage.getItem(SETTINGS_KEY) || '{}');
   const settings = {
     ...saved,
     paymentGateway: paymentGateway.value,
     paymentCurrency: paymentCurrency.value,
+    stripePublishableKey: stripePublishableKey.value.trim(),
+    stripeSecretKey: stripeSecretKey.value.trim(),
     paypalClientId: paypalClientId.value.trim(),
     razorpayKeyId: razorpayKeyId.value.trim(),
     payuKey: payuKey.value.trim(),
     payuSalt: payuSalt.value.trim(),
   };
-  localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
-  settingsStatus.textContent = 'Payment settings saved.';
+  const saved_api = await saveSettingsToAPI({ settings });
+  if (saved_api) {
+    localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+    settingsStatus.textContent = 'Payment settings saved for all users.';
+  } else {
+    settingsStatus.textContent = 'Failed to save payment settings.';
+  }
 });
 
 async function sha512(value) {
@@ -708,18 +924,11 @@ generateHash.addEventListener('click', async () => {
   hashOutput.value = await sha512(hashString);
 });
 
-saveHome.addEventListener('click', () => {
+saveHome.addEventListener('click', async () => {
   const home = {
     heroEyebrow: heroEyebrowInput.value.trim(),
     heroTitle: heroTitleInput.value.trim(),
     heroCopy: heroCopyInput.value.trim(),
-    heroTag: heroTagInput.value.trim(),
-    heroCardTitle: heroCardTitleInput.value.trim(),
-    heroCardCopy: heroCardCopyInput.value.trim(),
-    stat1Value: stat1ValueInput.value.trim(),
-    stat1Label: stat1LabelInput.value.trim(),
-    stat2Value: stat2ValueInput.value.trim(),
-    stat2Label: stat2LabelInput.value.trim(),
     newSubtitle: newSubtitleInput.value.trim(),
     essentialsSubtitle: essentialsSubtitleInput.value.trim(),
     essential1Title: essential1TitleInput.value.trim(),
@@ -737,27 +946,36 @@ saveHome.addEventListener('click', () => {
       sale: !showSale.checked,
     },
     hiddenItems: {
-      heroCard: !showHeroCard.checked,
       essential1: !showEssential1.checked,
       essential2: !showEssential2.checked,
       essential3: !showEssential3.checked,
       saleBanner: !showSaleBanner.checked,
     },
   };
-  localStorage.setItem(HOME_KEY, JSON.stringify(home));
-  homeStatus.textContent = 'Home content updated.';
+  const saved = await saveSettingsToAPI({ home });
+  if (saved) {
+    localStorage.setItem(HOME_KEY, JSON.stringify(home));
+    homeStatus.textContent = 'Home content saved for all users.';
+  } else {
+    homeStatus.textContent = 'Failed to save home content.';
+  }
 });
 
-saveColors.addEventListener('click', () => {
-  const payload = {
+saveColors.addEventListener('click', async () => {
+  const colors = {
     headerBgColor: headerBgColor.value,
     essentialsBgColor: essentialsBgColor.value,
     saleBgStart: saleBgStart.value,
     saleBgEnd: saleBgEnd.value,
     saleTextColor: saleTextColor.value,
   };
-  localStorage.setItem(COLOR_KEY, JSON.stringify(payload));
-  colorStatus.textContent = 'Color settings saved.';
+  const saved = await saveSettingsToAPI({ colors });
+  if (saved) {
+    localStorage.setItem(COLOR_KEY, JSON.stringify(colors));
+    colorStatus.textContent = 'Color settings saved for all users.';
+  } else {
+    colorStatus.textContent = 'Failed to save color settings.';
+  }
 });
 
 headerImageUpload.addEventListener('change', async (event) => {
@@ -783,25 +1001,35 @@ headerImageUpload.addEventListener('change', async (event) => {
   }
 });
 
-saveHeaderImage.addEventListener('click', () => {
+saveHeaderImage.addEventListener('click', async () => {
   const saved = JSON.parse(localStorage.getItem(SETTINGS_KEY) || '{}');
   const settings = {
     ...saved,
     headerImageUrl: headerImageUrl.value.trim(),
   };
-  localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
-  headerImageStatus.textContent = 'Header image saved.';
+  const saved_api = await saveSettingsToAPI({ settings });
+  if (saved_api) {
+    localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+    headerImageStatus.textContent = 'Header image saved for all users.';
+  } else {
+    headerImageStatus.textContent = 'Failed to save header image.';
+  }
 });
 
-removeHeaderImage.addEventListener('click', () => {
+removeHeaderImage.addEventListener('click', async () => {
   headerImageUrl.value = '';
   const saved = JSON.parse(localStorage.getItem(SETTINGS_KEY) || '{}');
   const settings = {
     ...saved,
     headerImageUrl: '',
   };
-  localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
-  headerImageStatus.textContent = 'Header image removed.';
+  const saved_api = await saveSettingsToAPI({ settings });
+  if (saved_api) {
+    localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+    headerImageStatus.textContent = 'Header image removed for all users.';
+  } else {
+    headerImageStatus.textContent = 'Failed to remove header image.';
+  }
 });
 
 heroImageUpload.addEventListener('change', async (event) => {
@@ -827,25 +1055,35 @@ heroImageUpload.addEventListener('change', async (event) => {
   }
 });
 
-saveHeroImage.addEventListener('click', () => {
+saveHeroImage.addEventListener('click', async () => {
   const saved = JSON.parse(localStorage.getItem(SETTINGS_KEY) || '{}');
   const settings = {
     ...saved,
     heroImageUrl: heroImageUrl.value.trim(),
   };
-  localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
-  heroImageStatus.textContent = 'Hero image saved.';
+  const saved_api = await saveSettingsToAPI({ settings });
+  if (saved_api) {
+    localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+    heroImageStatus.textContent = 'Hero image saved for all users.';
+  } else {
+    heroImageStatus.textContent = 'Failed to save hero image.';
+  }
 });
 
-removeHeroImage.addEventListener('click', () => {
+removeHeroImage.addEventListener('click', async () => {
   heroImageUrl.value = '';
   const saved = JSON.parse(localStorage.getItem(SETTINGS_KEY) || '{}');
   const settings = {
     ...saved,
     heroImageUrl: '',
   };
-  localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
-  heroImageStatus.textContent = 'Hero image removed.';
+  const saved_api = await saveSettingsToAPI({ settings });
+  if (saved_api) {
+    localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+    heroImageStatus.textContent = 'Hero image removed for all users.';
+  } else {
+    heroImageStatus.textContent = 'Failed to remove hero image.';
+  }
 });
 
 logoUpload.addEventListener('change', async (event) => {
@@ -879,12 +1117,29 @@ userSearch.addEventListener('input', (event) => {
 if (!masterToken) {
   window.location.href = '/master-login';
 } else {
-  loadUsers();
-  loadAuditLogs();
-loadTheme();
-loadSettings();
-loadHomeSettings();
-loadColorSettings();
-  loadMasters();
-  loadTables();
+  showLoader();
+  async function initDashboard() {
+    try {
+      // Load critical data first
+      await Promise.all([
+        loadUsers(),
+        loadAuditLogs(),
+        loadMasters(),
+        loadTables()
+      ]);
+      
+      // Load settings in background (non-blocking)
+      loadSettingsFromAPI().catch(() => {
+        // Fallback to localStorage on error
+        loadTheme();
+        loadSettings();
+      });
+      
+      loadHomeSettings();
+      loadColorSettings();
+    } finally {
+      hideLoader();
+    }
+  }
+  initDashboard();
 }

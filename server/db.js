@@ -46,6 +46,7 @@ async function init() {
       image TEXT,
       images TEXT,
       videos TEXT,
+      instagram_video TEXT,
       color TEXT,
       rating REAL,
       review_count INTEGER,
@@ -53,6 +54,13 @@ async function init() {
       updated_at TEXT NOT NULL
     )`
   );
+
+  // Migration: add instagram_video column if it doesn't exist
+  try {
+    await run(`ALTER TABLE products ADD COLUMN instagram_video TEXT`);
+  } catch (e) {
+    // Column already exists, ignore error
+  }
 
   await run(
     `CREATE TABLE IF NOT EXISTS store_users (
@@ -134,6 +142,28 @@ async function init() {
       level TEXT NOT NULL,
       message TEXT NOT NULL,
       created_at TEXT NOT NULL
+    )`
+  );
+
+  await run(
+    `CREATE TABLE IF NOT EXISTS app_settings (
+      key TEXT PRIMARY KEY,
+      value TEXT NOT NULL
+    )`
+  );
+
+  await run(
+    `CREATE TABLE IF NOT EXISTS reviews (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      productId TEXT NOT NULL,
+      displayName TEXT NOT NULL,
+      email TEXT,
+      rating INTEGER NOT NULL,
+      title TEXT,
+      content TEXT NOT NULL,
+      timestamp TEXT NOT NULL,
+      created_at TEXT NOT NULL,
+      FOREIGN KEY(productId) REFERENCES products(id)
     )`
   );
 

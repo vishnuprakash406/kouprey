@@ -1,3 +1,4 @@
+const pageLoader = document.getElementById('pageLoader');
 const inventoryBody = document.getElementById('inventoryBody');
 const inventorySearch = document.getElementById('inventorySearch');
 const inventoryFilter = document.getElementById('inventoryFilter');
@@ -10,8 +11,12 @@ const drawerContent = document.getElementById('drawerContent');
 const studioForm = document.getElementById('studioForm');
 const resetFormButton = document.getElementById('resetForm');
 const logoutButton = document.getElementById('logout');
-const mediaUpload = document.getElementById('mediaUpload');
+const emailAccessBtn = document.getElementById('emailAccessBtn');
+const emailStatus = document.getElementById('emailStatus');
+const primaryUpload = document.getElementById('primaryUpload');
+const galleryUpload = document.getElementById('galleryUpload');
 const uploadStatus = document.getElementById('uploadStatus');
+const uploadPreview = document.getElementById('uploadPreview');
 const stockInput = document.getElementById('stock');
 const availabilitySelect = document.getElementById('availability');
 
@@ -19,12 +24,21 @@ const metricProducts = document.getElementById('metricProducts');
 const metricStock = document.getElementById('metricStock');
 const metricDiscounts = document.getElementById('metricDiscounts');
 const metricPending = document.getElementById('metricPending');
+const ordersSearch = document.getElementById('ordersSearch');
+const ordersFilter = document.getElementById('ordersFilter');
 
 let products = [];
 let inventoryQuery = '';
 let inventoryCategory = 'all';
 let orders = [];
+let ordersQuery = '';
+let ordersStatusFilter = 'all';
 const storeToken = localStorage.getItem('kouprey_store_token') || '';
+
+// Pagination state
+let inventoryPage = 1;
+let ordersPage = 1;
+const itemsPerPage = 15;
 
 function formatPrice(value) {
   return `₹${Number(value).toFixed(2)}`;
@@ -68,9 +82,23 @@ async function apiFetch(url, options = {}) {
   return response.json();
 }
 
+function hideLoader() {
+  if (pageLoader) {
+    pageLoader.classList.add('hidden');
+  }
+}
+
+function showLoader() {
+  if (pageLoader) {
+    pageLoader.classList.remove('hidden');
+  }
+}
+
 async function loadProducts() {
+  showLoader();
   products = await apiFetch('/api/products');
   renderProducts();
+  hideLoader();
 }
 
 function renderProducts() {
@@ -84,9 +112,16 @@ function renderProducts() {
     return matchesCategory && matchesQuery;
   });
 
+  const totalItems = filtered.length;
+  const startIndex = (inventoryPage - 1) * itemsPerPage;
+  const endIndex = Math.min(startIndex + itemsPerPage, totalItems);
+  const paginatedProducts = filtered.slice(startIndex, endIndex);
+
+  updateInventoryPagination(startIndex, endIndex, totalItems);
+
   inventoryBody.innerHTML = '';
 
-  filtered.forEach((product) => {
+  paginatedProducts.forEach((product) => {
     const row = document.createElement('div');
     row.className = 'inventory-row';
     row.innerHTML = `
@@ -117,6 +152,23 @@ function renderProducts() {
   updateMetrics();
 }
 
+function updateInventoryPagination(startIndex, endIndex, totalItems) {
+  const paginationInfo = document.getElementById('inventoryPaginationInfo');
+  const prevBtn = document.getElementById('inventoryPrevBtn');
+  const nextBtn = document.getElementById('inventoryNextBtn');
+  
+  if (!paginationInfo || !prevBtn || !nextBtn) return;
+  
+  if (totalItems === 0) {
+    paginationInfo.textContent = '0 items';
+  } else {
+    paginationInfo.textContent = `${startIndex + 1} to ${endIndex} of ${totalItems}`;
+  }
+  
+  prevBtn.disabled = inventoryPage === 1;
+  nextBtn.disabled = endIndex >= totalItems;
+}
+
 function updateMetrics() {
   metricProducts.textContent = products.length;
   metricStock.textContent = products.reduce((sum, item) => sum + Number(item.stock || 0), 0);
@@ -130,8 +182,25 @@ function formatDate(value) {
 }
 
 function renderOrders() {
+  const filtered = orders.filter((order) => {
+    const matchesStatus = ordersStatusFilter === 'all' || order.status === ordersStatusFilter;
+    const query = ordersQuery.toLowerCase();
+    const matchesQuery =
+      !query ||
+      order.id.toLowerCase().includes(query) ||
+      (order.customer_name || '').toLowerCase().includes(query);
+    return matchesStatus && matchesQuery;
+  });
+
+  const totalItems = filtered.length;
+  const startIndex = (ordersPage - 1) * itemsPerPage;
+  const endIndex = Math.min(startIndex + itemsPerPage, totalItems);
+  const paginatedOrders = filtered.slice(startIndex, endIndex);
+
+  updateOrdersPagination(startIndex, endIndex, totalItems);
+
   ordersBody.innerHTML = '';
-  orders.forEach((order) => {
+  paginatedOrders.forEach((order) => {
     const row = document.createElement('div');
     row.className = 'orders-row';
     row.innerHTML = `
@@ -155,7 +224,25 @@ function renderOrders() {
   });
 }
 
+function updateOrdersPagination(startIndex, endIndex, totalItems) {
+  const paginationInfo = document.getElementById('ordersPaginationInfo');
+  const prevBtn = document.getElementById('ordersPrevBtn');
+  const nextBtn = document.getElementById('ordersNextBtn');
+  
+  if (!paginationInfo || !prevBtn || !nextBtn) return;
+  
+  if (totalItems === 0) {
+    paginationInfo.textContent = '0 items';
+  } else {
+    paginationInfo.textContent = `${startIndex + 1} to ${endIndex} of ${totalItems}`;
+  }
+  
+  prevBtn.disabled = ordersPage === 1;
+  nextBtn.disabled = endIndex >= totalItems;
+}
+
 async function loadOrders() {
+  showLoader();
   try {
     orders = await apiFetch('/api/orders', {
       headers: { Authorization: `Bearer ${storeToken}` },
@@ -163,6 +250,8 @@ async function loadOrders() {
     renderOrders();
   } catch (error) {
     ordersBody.innerHTML = `<p class="hint">Unable to load orders: ${error.message}</p>`;
+  } finally {
+    hideLoader();
   }
 }
 
@@ -208,6 +297,7 @@ async function openOrder(id) {
             <option value="packed" ${order.status === 'packed' ? 'selected' : ''}>Packed</option>
             <option value="shipped" ${order.status === 'shipped' ? 'selected' : ''}>Shipped</option>
             <option value="delivered" ${order.status === 'delivered' ? 'selected' : ''}>Delivered</option>
+            <option value="canceled" ${order.status === 'canceled' ? 'selected' : ''}>Canceled</option>
           </select>
         </div>
         <div class="drawer-field">
@@ -273,7 +363,10 @@ function populateForm(product) {
   studioForm.image.value = product.image;
   studioForm.images.value = (product.images || []).join(',');
   studioForm.videos.value = (product.videos || []).join(',');
+  studioForm.instagram_video.value = product.instagram_video || '';
   studioForm.description.value = product.description;
+  const previewImages = [product.image, ...(product.images || [])].filter(Boolean);
+  renderUploadPreview(previewImages);
 }
 
 function resetForm() {
@@ -343,6 +436,7 @@ studioForm.addEventListener('submit', async (event) => {
     image: data.image,
     images: data.images ? data.images.split(',').map((item) => item.trim()).filter(Boolean) : [],
     videos: data.videos ? data.videos.split(',').map((item) => item.trim()).filter(Boolean) : [],
+    instagram_video: data.instagram_video || '',
     description: data.description,
   };
 
@@ -375,14 +469,89 @@ logoutButton.addEventListener('click', () => {
   window.location.href = '/staff-login';
 });
 
-mediaUpload.addEventListener('change', async (event) => {
-  if (!storeToken) return;
-  const files = Array.from(event.target.files || []);
-  if (files.length === 0) return;
+emailAccessBtn.addEventListener('click', () => {
+  const SETTINGS_KEY = 'kouprey_settings';
+  try {
+    const settings = JSON.parse(localStorage.getItem(SETTINGS_KEY) || '{}');
+    const username = settings.storeEmailUsername;
+    const password = settings.storeEmailPassword;
+    
+    if (!username || !password) {
+      emailStatus.textContent = 'Email credentials not configured. Contact admin.';
+      emailStatus.style.color = '#d34f2f';
+      return;
+    }
+    
+    // Open Titan email portal in new tab
+    const emailUrl = 'https://secureserver.titan.email/mail/';
+    window.open(emailUrl, '_blank', 'noopener,noreferrer');
+    
+    // Show credentials for manual login
+    emailStatus.textContent = `Username: ${username} | Password: ${password}`;
+    emailStatus.style.color = 'rgba(30, 27, 24, 0.6)';
+    
+  } catch (error) {
+    emailStatus.textContent = 'Error accessing email settings.';
+    emailStatus.style.color = '#d34f2f';
+  }
+});
 
-  uploadStatus.textContent = 'Uploading...';
+function mergeCsvValue(input, items) {
+  const existing = input.value
+    ? input.value.split(',').map((value) => value.trim()).filter(Boolean)
+    : [];
+  const combined = [...existing, ...items].filter(Boolean);
+  input.value = combined.join(',');
+  return combined;
+}
+
+function renderUploadPreview(images) {
+  if (!uploadPreview) return;
+  const safeImages = images.filter(
+    (img) => typeof img === 'string' && /^(https?:|\/|data:image\/|blob:)/.test(img)
+  );
+  uploadPreview.innerHTML = safeImages
+    .map(
+      (src) => `
+        <button type="button" class="upload-thumb" data-src="${src}">
+          <img src="${src}" alt="Uploaded preview" />
+        </button>
+      `
+    )
+    .join('');
+
+  const buttons = Array.from(uploadPreview.querySelectorAll('.upload-thumb'));
+  const selectPrimary = (btn) => {
+    buttons.forEach((item) => item.classList.remove('active'));
+    btn.classList.add('active');
+    studioForm.image.value = btn.dataset.src;
+  };
+
+  buttons.forEach((btn) => {
+    btn.addEventListener('click', () => selectPrimary(btn));
+  });
+
+  if (studioForm.image.value) {
+    const active = buttons.find((btn) => btn.dataset.src === studioForm.image.value);
+    if (active) selectPrimary(active);
+  }
+}
+
+function readFileAsDataUrl(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = () => reject(new Error('Unable to read file'));
+    reader.readAsDataURL(file);
+  });
+}
+
+async function uploadImages(files) {
+  const imageFiles = files.filter((file) => file.type.startsWith('image/'));
+  if (!imageFiles.length) return [];
+
   const formData = new FormData();
-  files.forEach((file) => formData.append('files', file));
+  imageFiles.forEach((file) => formData.append('files', file));
 
   try {
     const response = await fetch('/api/uploads', {
@@ -392,30 +561,73 @@ mediaUpload.addEventListener('change', async (event) => {
     });
     if (!response.ok) throw new Error('Upload failed');
     const payload = await response.json();
-    const images = [];
-    const videos = [];
+    return payload.files
+      .filter((file) => file.type.startsWith('image/'))
+      .map((file) => file.url)
+      .filter(Boolean);
+  } catch (error) {
+    try {
+      return (await Promise.all(imageFiles.map((file) => readFileAsDataUrl(file)))).filter(Boolean);
+    } catch {
+      return [];
+    }
+  }
+}
 
-    payload.files.forEach((file) => {
-      if (file.type.startsWith('image/')) images.push(file.url);
-      if (file.type.startsWith('video/')) videos.push(file.url);
-    });
+function applyUploadedImages(images, { setPrimary }) {
+  if (!images.length) return;
+
+  let combined = mergeCsvValue(studioForm.images, images);
+  if (setPrimary) {
+    studioForm.image.value = images[0];
+  } else if (!studioForm.image.value) {
+    studioForm.image.value = images[0];
+  }
+
+  if (studioForm.image.value) {
+    const primary = studioForm.image.value;
+    combined = [primary, ...combined.filter((item) => item !== primary)];
+    studioForm.images.value = combined.join(',');
+  }
+
+  renderUploadPreview(combined);
+}
+
+if (primaryUpload) {
+  primaryUpload.addEventListener('change', async (event) => {
+    if (!storeToken) return;
+    const files = Array.from(event.target.files || []);
+    if (files.length === 0) return;
+
+    uploadStatus.textContent = 'Uploading primary photo...';
+    const images = await uploadImages(files);
 
     if (images.length) {
-      const existing = studioForm.images.value ? studioForm.images.value.split(',') : [];
-      studioForm.images.value = [...existing, ...images].join(',');
-      if (!studioForm.image.value) studioForm.image.value = images[0];
+      applyUploadedImages(images, { setPrimary: true });
+      uploadStatus.textContent = 'Primary photo uploaded.';
+    } else {
+      uploadStatus.textContent = 'No images uploaded.';
     }
+  });
+}
 
-    if (videos.length) {
-      const existing = studioForm.videos.value ? studioForm.videos.value.split(',') : [];
-      studioForm.videos.value = [...existing, ...videos].join(',');
+if (galleryUpload) {
+  galleryUpload.addEventListener('change', async (event) => {
+    if (!storeToken) return;
+    const files = Array.from(event.target.files || []);
+    if (files.length === 0) return;
+
+    uploadStatus.textContent = 'Uploading gallery photos...';
+    const images = await uploadImages(files);
+
+    if (images.length) {
+      applyUploadedImages(images, { setPrimary: false });
+      uploadStatus.textContent = `Uploaded ${images.length} gallery photo(s).`;
+    } else {
+      uploadStatus.textContent = 'No images uploaded.';
     }
-
-    uploadStatus.textContent = `Uploaded ${images.length + videos.length} file(s).`;
-  } catch (error) {
-    uploadStatus.textContent = 'Upload failed. Try again.';
-  }
-});
+  });
+}
 
 function autoSetAvailability() {
   const value = Number(stockInput.value);
@@ -440,13 +652,69 @@ if (!storeToken) {
 
 inventorySearch.addEventListener('input', (event) => {
   inventoryQuery = event.target.value;
+  inventoryPage = 1;
   renderProducts();
 });
 
 inventoryFilter.addEventListener('change', (event) => {
   inventoryCategory = event.target.value;
+  inventoryPage = 1;
   renderProducts();
 });
+
+ordersSearch.addEventListener('input', (event) => {
+  ordersQuery = event.target.value;
+  ordersPage = 1;
+  renderOrders();
+});
+
+ordersFilter.addEventListener('change', (event) => {
+  ordersStatusFilter = event.target.value;
+  ordersPage = 1;
+  renderOrders();
+});
+
+// Pagination event listeners
+const inventoryPrevBtn = document.getElementById('inventoryPrevBtn');
+const inventoryNextBtn = document.getElementById('inventoryNextBtn');
+const ordersPrevBtn = document.getElementById('ordersPrevBtn');
+const ordersNextBtn = document.getElementById('ordersNextBtn');
+
+if (inventoryPrevBtn) {
+  inventoryPrevBtn.addEventListener('click', () => {
+    if (inventoryPage > 1) {
+      inventoryPage--;
+      renderProducts();
+      document.getElementById('inventory')?.scrollIntoView({ behavior: 'smooth' });
+    }
+  });
+}
+
+if (inventoryNextBtn) {
+  inventoryNextBtn.addEventListener('click', () => {
+    inventoryPage++;
+    renderProducts();
+    document.getElementById('inventory')?.scrollIntoView({ behavior: 'smooth' });
+  });
+}
+
+if (ordersPrevBtn) {
+  ordersPrevBtn.addEventListener('click', () => {
+    if (ordersPage > 1) {
+      ordersPage--;
+      renderOrders();
+      document.getElementById('orders')?.scrollIntoView({ behavior: 'smooth' });
+    }
+  });
+}
+
+if (ordersNextBtn) {
+  ordersNextBtn.addEventListener('click', () => {
+    ordersPage++;
+    renderOrders();
+    document.getElementById('orders')?.scrollIntoView({ behavior: 'smooth' });
+  });
+}
 
 ordersBody.addEventListener('click', (event) => {
   const button = event.target.closest('button');

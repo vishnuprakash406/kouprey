@@ -4,63 +4,141 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Kouprey — Modern Essentials</title>
+    <link rel="icon" href="/assets/logo.png" />
     <link rel="stylesheet" href="/styles.css" />
     <script src="/theme.js"></script>
   </head>
   <body>
+    <!-- Loading Spinner -->
+    <div id="pageLoader" class="page-loader">
+      <div class="loader-spinner"></div>
+      <p class="loader-text">Kouprey</p>
+    </div>
+
     <header class="site-header">
-      <div class="logo">
-        <img class="logo-img" src="/assets/logo.png" alt="Kouprey logo" />
+      <div class="header-left">
+        <button class="hamburger-menu-button" id="hamburgerMenuButton" aria-label="Open categories">
+          <span class="hamburger-line"></span>
+          <span class="hamburger-line"></span>
+          <span class="hamburger-line"></span>
+        </button>
+        <div class="logo">
+          <a class="logo-link" href="/">
+            <img class="logo-img" src="/assets/logo.png" alt="Kouprey logo" />
+          </a>
+        </div>
+        <p class="header-tagline">Kouprey — Elegance in Every Thread.</p>
       </div>
       <nav class="nav">
         <a href="#new">New</a>
-        <a href="#essentials">Essentials</a>
-        <a href="#sale">Sale</a>
-        <a href="/track">Track Order</a>
+        <a href="#trending">Trending</a>
+        <a href="#sale">Sale offers</a>
+        <a href="/track">Orders</a>
         <a href="/returns">Returns</a>
       </nav>
-      <button class="bag-button" id="bagButton" aria-expanded="false">
-        Bag <span id="bagCount">0</span>
+      <div class="header-actions">
+        <a class="wishlist-button" href="/wishlist" aria-label="Wishlist">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+          </svg>
+        </a>
+        <button class="bag-button" id="bagButton" aria-expanded="false">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <path d="M16 10a4 4 0 0 1-8 0"></path>
+          </svg>
+          <span id="bagCount">0</span>
+        </button>
+      </div>
+      <button class="mobile-cart-button" id="mobileCartButton" aria-expanded="false">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <path d="M16 10a4 4 0 0 1-8 0"></path>
+        </svg>
+        <span id="mobileBagCount" class="mobile-bag-count">0</span>
       </button>
+      <div class="header-menu">
+        <button class="header-menu-button" id="headerMenuButton" aria-expanded="false" aria-controls="headerMenuPanel">
+          <span class="kebab"></span>
+          <span class="sr-only">Open menu</span>
+        </button>
+        <div class="header-menu-panel" id="headerMenuPanel" aria-hidden="true">
+          <a href="#new">New</a>
+          <a href="#trending">Trending</a>
+          <a href="#sale">Sale offers</a>
+          <a href="/track">Orders</a>
+          <a href="/returns">Returns</a>
+          <a href="/wishlist">Wishlist</a>
+        </div>
+      </div>
     </header>
 
-    <main>
-      <section class="hero">
-        <div class="hero-content">
-          <p class="eyebrow" id="heroEyebrow">Kouprey — Elegance in Every Thread.</p>
-          <h1 id="heroTitle">Minimal, bold, and built to move with you.</h1>
-          <p class="hero-copy" id="heroCopy">
-            Elevated basics and expressive statement pieces. Transparent pricing, quality fabrics,
-            and a faster path from store to wardrobe.
-          </p>
-          <div class="hero-actions">
-            <button class="primary" data-scroll="#new">Shop New In</button>
-          </div>
-        </div>
-        <div class="hero-card" id="heroCard" data-home-item="heroCard">
-          <div class="hero-tag" id="heroTag">Live Stock</div>
-          <h2 id="heroCardTitle">Track what matters</h2>
-          <p id="heroCardCopy">
-            Update price, availability, sizes, discount pricing, and images in one place. Payment
-            gateway is ready for integration later.
-          </p>
-          <div class="hero-meta">
-            <div>
-              <span id="stat1Value">25</span>
-              <small id="stat1Label">Active Styles</small>
-            </div>
-            <div>
-              <span id="stat2Value">4</span>
-              <small id="stat2Label">Stores Online</small>
-            </div>
-          </div>
-        </div>
-      </section>
+    <!-- Category Sidebar -->
+    <div class="category-sidebar" id="categorySidebar">
+      <div class="category-sidebar-header">
+        <h3>Categories</h3>
+        <button class="category-close-btn" id="categorySidebarClose" aria-label="Close">×</button>
+      </div>
+      <div class="category-sidebar-content" id="categorySidebarContent">
+        <div class="category-loader">Loading categories...</div>
+      </div>
+    </div>
+    <div class="category-overlay" id="categoryOverlay"></div>
 
+    <aside class="menu-panel" id="productMenu" aria-hidden="true">
+      <div class="menu-header">
+        <h4>Products</h4>
+        <button class="ghost menu-close" id="menuClose" type="button">Close</button>
+      </div>
+      <div class="menu-columns">
+        <div>
+          <p class="menu-title">Categories</p>
+          <div class="menu-list" id="categoryList"></div>
+        </div>
+        <div>
+          <p class="menu-title">Subcategories</p>
+          <div class="menu-list" id="subcategoryList"></div>
+        </div>
+      </div>
+    </aside>
+
+    <main>
       <section class="section" id="new" data-section="new">
         <div class="section-header">
-          <h2>New in</h2>
-          <p id="newSubtitle">Fresh arrivals curated for the Kouprey season.</p>
+          <div class="sort-controls">
+            <label for="sortSelect" class="sr-only">Sort by</label>
+            <select id="sortSelect">
+              <option value="featured">Featured</option>
+              <option value="best-selling">Best selling</option>
+              <option value="alpha-asc">Alphabetically, A-Z</option>
+              <option value="alpha-desc">Alphabetically, Z-A</option>
+              <option value="price-asc">Price, low to high</option>
+              <option value="price-desc">Price, high to low</option>
+              <option value="date-desc">Date, new to old</option>
+              <option value="date-asc">Date, old to new</option>
+            </select>
+          </div>
+          <div class="view-controls">
+            <button class="view-toggle" data-view="small" title="Small grid">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                <rect x="2" y="2" width="5" height="5"/><rect x="9.5" y="2" width="5" height="5"/><rect x="17" y="2" width="5" height="5"/>
+                <rect x="2" y="9.5" width="5" height="5"/><rect x="9.5" y="9.5" width="5" height="5"/><rect x="17" y="9.5" width="5" height="5"/>
+                <rect x="2" y="17" width="5" height="5"/><rect x="9.5" y="17" width="5" height="5"/><rect x="17" y="17" width="5" height="5"/>
+              </svg>
+            </button>
+            <button class="view-toggle active" data-view="grid" title="Grid view">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/>
+              </svg>
+            </button>
+            <button class="view-toggle" data-view="large" title="Large grid">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                <rect x="2" y="2" width="20" height="9"/><rect x="2" y="13" width="20" height="9"/>
+              </svg>
+            </button>
+          </div>
         </div>
         <div class="filters">
           <button class="chip active" data-filter="all">All</button>
@@ -71,12 +149,25 @@
         <div class="inventory-toolbar">
           <input id="productSearch" placeholder="Search by name, category, subcategory, or product code" />
         </div>
-        <div class="product-grid" id="productGrid"></div>
+        <div class="product-grid grid-view" id="productGrid"></div>
+        <div class="pagination" id="productPagination">
+          <button class="pagination-btn" id="productPrevBtn" disabled>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="15 18 9 12 15 6"></polyline>
+            </svg>
+          </button>
+          <span class="pagination-info" id="productPaginationInfo">1 to 15 of 0</span>
+          <button class="pagination-btn" id="productNextBtn" disabled>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+          </button>
+        </div>
       </section>
 
-      <section class="section alt" id="essentials" data-section="essentials">
+      <section class="section alt" id="trending" data-section="trending">
         <div class="section-header">
-          <h2>Essentials</h2>
+          <h2>Trending</h2>
           <p id="essentialsSubtitle">Everyday pieces with intentional cuts and flexible fits.</p>
         </div>
         <div class="essentials">
@@ -127,6 +218,24 @@
       </div>
     </aside>
 
+    <!-- Instagram Videos Carousel -->
+    <section class="instagram-carousel" id="instagramCarousel">
+      <div class="instagram-track" id="instagramTrack"></div>
+    </section>
+
+    <!-- WhatsApp Floating Button -->
+    <a href="https://wa.me/918438217212?text=Hi%20Kouprey%2C%20I%20have%20a%20question" 
+       class="whatsapp-float" 
+       target="_blank" 
+       rel="noopener noreferrer"
+       aria-label="Chat on WhatsApp">
+      <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path fill-rule="evenodd" clip-rule="evenodd" d="M16 31C24.2843 31 31 24.2843 31 16C31 7.71573 24.2843 1 16 1C7.71573 1 1 7.71573 1 16C1 19.0988 1.91776 22.0009 3.52686 24.4312L1.31618 30.4263C1.14002 30.9032 1.5968 31.36 2.07372 31.1838L8.06882 28.9731C10.4991 30.5822 13.4012 31.5 16 31Z" fill="#25D366"/>
+        <path d="M23.9862 19.8063C23.6587 19.6425 22.0675 18.8625 21.77 18.7563C21.4725 18.65 21.2587 18.595 21.045 18.9225C20.8312 19.25 20.2137 19.9713 20.0262 20.185C19.8387 20.3988 19.6512 20.425 19.3237 20.2613C18.9962 20.0975 17.9437 19.7638 16.6987 18.6638C15.7237 17.7988 15.0662 16.735 14.8787 16.4075C14.6912 16.08 14.8575 15.9063 15.0212 15.7425C15.1687 15.595 15.3487 15.3575 15.5125 15.17C15.6762 14.9825 15.7312 14.8475 15.8375 14.6338C15.9437 14.42 15.8912 14.2325 15.8087 14.0688C15.7262 13.905 15.0712 12.3125 14.8012 11.6575C14.5375 11.02 14.27 11.105 14.0725 11.095C13.885 11.085 13.6712 11.0825 13.4575 11.0825C13.2437 11.0825 12.8887 11.165 12.5912 11.4925C12.2937 11.82 11.4587 12.6 11.4587 14.1925C11.4587 15.785 12.6187 17.3238 12.7825 17.5375C12.9462 17.7513 15.0637 20.9925 18.3062 22.3988C19.0837 22.7438 19.6912 22.9475 20.1662 23.1C20.9462 23.3575 21.6512 23.3213 22.2087 23.2375C22.8312 23.1438 24.1437 22.4263 24.4137 21.6513C24.6837 20.8763 24.6837 20.2075 24.6012 20.0713C24.5187 19.935 24.3137 19.87 23.9862 19.8063Z" fill="white"/>
+      </svg>
+      <span class="whatsapp-text">Chat with us</span>
+    </a>
+
     <footer class="site-footer">
       <div class="footer-grid">
         <div class="footer-brand">
@@ -142,11 +251,29 @@
           <p id="footerEmail">support@kouprey.com</p>
           <p id="footerWhatsApp">WhatsApp: 8438217212</p>
           <p id="footerHours">Mon-Sat, 10:00-19:00</p>
+          <div class="footer-social" id="footerSocial">
+            <a id="footerInstagram" href="#" target="_blank" rel="noopener" aria-label="Instagram" style="display: none;">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+              </svg>
+            </a>
+            <a id="footerFacebook" href="#" target="_blank" rel="noopener" aria-label="Facebook" style="display: none;">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+              </svg>
+            </a>
+          </div>
         </div>
       </div>
     </footer>
 
-    <script src="/settings.js"></script>
+    <script>
+      // Load settings.js with cache-busting
+      const scriptEl = document.createElement('script');
+      const cacheVersion = localStorage.getItem('kouprey_cache_version') || Date.now();
+      scriptEl.src = `/settings.js?v=${cacheVersion}`;
+      document.head.appendChild(scriptEl);
+    </script>
     <script src="/app.js"></script>
   </body>
 </html>
